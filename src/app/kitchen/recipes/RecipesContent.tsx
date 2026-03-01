@@ -10,6 +10,8 @@ import {
   IoPeopleOutline,
   IoRestaurantOutline,
   IoWarningOutline,
+  IoListOutline,
+  IoBarChartOutline,
 } from "react-icons/io5";
 import {
   GiChopsticks, GiSushis, GiTacos, GiHamburger, GiPizzaSlice,
@@ -753,16 +755,6 @@ const RecipesContent: React.FC = () => {
                       Generando imagen...
                     </motion.div>
                   )}
-                  {imageDone && (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0 }}
-                      className="absolute bottom-3 right-3 flex items-center gap-2 bg-green-500/90 text-white px-3 py-1.5 rounded-full text-xs font-medium shadow-md"
-                    >
-                      <Check className="w-3.5 h-3.5" /> Imagen lista
-                    </motion.div>
-                  )}
                 </AnimatePresence>
               </div>
             </div>
@@ -910,7 +902,8 @@ const RecipesContent: React.FC = () => {
                           >
                             {tab === "ingredients" && (
                               <>
-                                🥕 {t("recipeDetail.sections.ingredients.title")}
+                                <IoListOutline className="inline mr-1" />
+                                {t("recipeDetail.sections.ingredients.title")}
                                 {displayRecipe?.ingredientes?.length
                                   ? ` (${displayRecipe.ingredientes.length})`
                                   : ""}
@@ -918,13 +911,19 @@ const RecipesContent: React.FC = () => {
                             )}
                             {tab === "steps" && (
                               <>
-                                👨‍🍳 {t("recipeDetail.sections.instructions.title")}
+                                <GiChefToque className="inline mr-1" />
+                                {t("recipeDetail.sections.instructions.title")}
                                 {displayRecipe?.instrucciones?.length
                                   ? ` (${displayRecipe.instrucciones.length})`
                                   : ""}
                               </>
                             )}
-                            {tab === "macros" && "📊 Macros"}
+                            {tab === "macros" && (
+                              <>
+                                <IoBarChartOutline className="inline mr-1" />
+                                Macros
+                              </>
+                            )}
                             {activeTab === tab && (
                               <motion.div
                                 layoutId="recipeTab"

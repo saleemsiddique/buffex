@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import NextLink from 'next/link';
 import { useUser } from '@/context/user-context';
 import { auth } from '@/lib/firebase';
-import { IoFunnel, IoClose, IoSearch, IoRestaurantOutline } from 'react-icons/io5';
+import { IoFunnel, IoClose, IoSearch, IoRestaurantOutline, IoTimeOutline, IoPeopleOutline, IoSunnyOutline } from 'react-icons/io5';
 import { useTranslation } from "react-i18next";
 
 // Define the Recipe type based on your provided structure
@@ -533,15 +533,15 @@ const RecipeListPage: React.FC = () => {
                     {recipe.descripcion}
                   </p>
                   <div className="flex flex-wrap items-center text-sm text-[#6B7280] mb-4">
-                    <span className="mr-4 flex items-center">
-                      <span className="text-[var(--highlight)] mr-1">⏱️</span> {recipe.tiempo_total_min} {t("recipes.recipeCard.time")}
+                    <span className="mr-4 flex items-center gap-1">
+                      <IoTimeOutline className="text-[var(--highlight)]" /> {recipe.tiempo_total_min} {t("recipes.recipeCard.time")}
                     </span>
-                    <span className="mr-4 flex items-center">
-                      <span className="text-[var(--highlight)] mr-1">🍽️</span> {recipe.porciones} {t("recipes.recipeCard.portions")}
+                    <span className="mr-4 flex items-center gap-1">
+                      <IoPeopleOutline className="text-[var(--highlight)]" /> {recipe.porciones} {t("recipes.recipeCard.portions")}
                     </span>
                     {recipe.momento_del_dia && (
-                      <span className="flex items-center">
-                        <span className="text-[var(--highlight)] mr-1">☀️</span> {mealTimes.find(m => m.value === recipe.momento_del_dia)?.label}
+                      <span className="flex items-center gap-1">
+                        <IoSunnyOutline className="text-[var(--highlight)]" /> {mealTimes.find(m => m.value === recipe.momento_del_dia)?.label}
                       </span>
                     )}
                   </div>

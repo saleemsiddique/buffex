@@ -315,6 +315,7 @@
         "title": "Política de Cookies"
       }
     },
+    "alwaysRequired": "Siempre requerido",
     "unauthenticated": {
       "title": "Gestionar consentimientos",
       "description": "Esta página solo está disponible para usuarios autenticados. Si quieres gestionar tus preferencias o conservarlas entre dispositivos, por favor inicia sesión.",
@@ -444,7 +445,7 @@
     "empty": {
       "title": "¡Ups! Parece que aún no has generado ninguna receta.",
       "description": "¡Es el momento perfecto para crear tu primera obra maestra culinaria!",
-      "button": "¡Empezar a Cocinar Ahora! 🍳"
+      "button": "¡Empezar a Cocinar Ahora!"
     },
     "recipeCard": {
       "time": "min",
@@ -453,11 +454,11 @@
     },
     "results": "Mostrando {{current}} de {{total}} recetas",
     "mealTimes": {
-      "breakfast": "🍳 Desayuno",
-      "lunch": "🍲 Comida",
-      "dinner": "🌙 Cena",
-      "snack": "🍎 Snack",
-      "default": "🍽️ Tu Receta"
+      "breakfast": "Desayuno",
+      "lunch": "Comida",
+      "dinner": "Cena",
+      "snack": "Snack",
+      "default": "Tu Receta"
     },
     "activeFilters": {
       "search": "Búsqueda: {{term}}"
@@ -713,22 +714,22 @@
   "onboarding": {
     "steps": [
       {
-        "title": "👋 Bienvenido a Culinarium",
+        "title": "Bienvenido a Culinarium",
         "text": "Genera recetas personalizadas con IA a partir de los ingredientes que tienes en casa. En 10 segundos, tienes tu receta lista con imagen incluida.",
         "image": "/onboarding/step1.jpg"
       },
       {
-        "title": "🍳 Así funciona",
+        "title": "Así funciona",
         "text": "Dinos qué tienes en la nevera, cuánto tiempo tienes y para cuántas personas. ¡La IA hace el resto! También puedes indicar los utensilios que tienes disponibles.",
         "image": "/onboarding/step2.jpg"
       },
       {
-        "title": "🎁 Tienes 5 recetas gratis",
+        "title": "Tienes 5 recetas gratis",
         "text": "Tu plan gratuito incluye 5 recetas al mes. Si quieres más, puedes comprar un pack de 15 recetas por €4.99 o suscribirte a Premium por €9.99/mes para recetas ilimitadas.",
         "image": "/onboarding/step3.jpg"
       },
       {
-        "title": "🚀 ¡A cocinar!",
+        "title": "¡A cocinar!",
         "text": "Ya lo sabes todo. Ahora rellena el formulario con tus ingredientes y genera tu primera receta. ¡Buen provecho!",
         "image": "/onboarding/step4.jpg"
       }
@@ -741,13 +742,13 @@
   },
   "payments": {
     "dashboard": {
-      "title": "💳 Historial de Pagos",
+      "title": "Historial de Pagos",
       "subtitle": "Gestiona tu suscripción y revisa tus compras de recetas",
       "loading": "Cargando datos...",
       "loginRequired": "Inicia sesión para ver tu historial"
     },
     "subscription": {
-      "title": "🔄 Suscripción Premium",
+      "title": "Suscripción Premium",
       "plan": "Plan Actual",
       "nextBilling": "Próxima Facturación",
       "monthlyAmount": "Monto Mensual",
@@ -840,7 +841,7 @@
       "success": {
         "title": "Éxito",
         "close": "Cerrar",
-        "cardDeleted": "La tarjeta se eliminó correctamente ✅"
+        "cardDeleted": "La tarjeta se eliminó correctamente"
       },
       "confirm": {
         "title": "Confirmar acción",

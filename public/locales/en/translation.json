@@ -315,6 +315,7 @@
         "title": "Cookies Policy"
       }
     },
+    "alwaysRequired": "Always required",
     "unauthenticated": {
       "title": "Manage consents",
       "description": "This page is only available for authenticated users. If you want to manage your preferences or keep them across devices, please log in.",
@@ -442,7 +443,7 @@
     "empty": {
       "title": "Oops! It seems you haven't generated any recipes yet.",
       "description": "It's the perfect time to create your first culinary masterpiece!",
-      "button": "Start Cooking Now! 🍳"
+      "button": "Start Cooking Now!"
     },
     "recipeCard": {
       "time": "min",
@@ -451,11 +452,11 @@
     },
     "results": "Showing {{current}} of {{total}} recipes",
     "mealTimes": {
-      "breakfast": "🍳 Breakfast",
-      "lunch": "🍲 Lunch",
-      "dinner": "🌙 Dinner",
-      "snack": "🍎 Snack",
-      "default": "🍽️ Your Recipe"
+      "breakfast": "Breakfast",
+      "lunch": "Lunch",
+      "dinner": "Dinner",
+      "snack": "Snack",
+      "default": "Your Recipe"
     },
     "activeFilters": {
       "search": "Search: {{term}}"
@@ -711,22 +712,22 @@
   "onboarding": {
     "steps": [
       {
-        "title": "👋 Welcome",
+        "title": "Welcome",
         "text": "Thank you for joining our application. We'll show you the essentials.",
         "image": "/onboarding/step1.jpg"
       },
       {
-        "title": "🥘 Your Recipes",
+        "title": "Your Recipes",
         "text": "Every time you create a recipe, it uses one of your available recipes. You'll always see how many you have left before generating.",
         "image": "/onboarding/step2.jpg"
       },
       {
-        "title": "🔄 Renewal",
+        "title": "Renewal",
         "text": "Your recipes are automatically renewed every month, on the same date you joined or activated your premium plan.",
         "image": "/onboarding/step3.jpg"
       },
       {
-        "title": "🚀 Ready",
+        "title": "Ready",
         "text": "You now know the basics, time to cook.",
         "image": "/onboarding/step4.jpg"
       }
@@ -739,13 +740,13 @@
   },
   "payments": {
     "dashboard": {
-      "title": "💳 Payment History",
+      "title": "Payment History",
       "subtitle": "Manage your subscription and review your recipe purchases",
       "loading": "Loading data...",
       "loginRequired": "Log in to view your history"
     },
     "subscription": {
-      "title": "🔄 Premium Subscription",
+      "title": "Premium Subscription",
       "plan": "Current Plan",
       "nextBilling": "Next Billing",
       "monthlyAmount": "Monthly Amount",
@@ -838,7 +839,7 @@
       "success": {
         "title": "Success",
         "close": "Close",
-        "cardDeleted": "Card deleted successfully ✅"
+        "cardDeleted": "Card deleted successfully"
       },
       "confirm": {
         "title": "Confirm action",

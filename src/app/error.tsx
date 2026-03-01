@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { AlertCircle } from 'lucide-react';
 
 export default function Error({
   error,
@@ -15,7 +16,7 @@ export default function Error({
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-[var(--background)] text-center px-4">
-      <div className="text-6xl mb-4">🍳</div>
+      <div className="mb-4 text-[var(--highlight)]"><AlertCircle size={56} strokeWidth={1.5} /></div>
       <h2 className="text-2xl font-bold text-[var(--foreground)] mb-2">
         Algo salió mal
       </h2>

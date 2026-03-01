@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
+import { AlertTriangle, XCircle } from "lucide-react";
 
 interface SessionData {
   status: string;
@@ -109,7 +110,7 @@ export default function CheckoutReturn() {
           className="bg-white rounded-3xl shadow-2xl p-10 max-w-md w-full text-center border border-red-100"
         >
           <div className="w-16 h-16 mx-auto mb-5 bg-red-100 rounded-full flex items-center justify-center">
-            <span className="text-3xl">⚠️</span>
+            <AlertTriangle className="w-8 h-8 text-red-500" strokeWidth={1.5} />
           </div>
           <h1 className="text-2xl font-bold text-gray-800 mb-3">{t("checkout.return.general.errorTitle")}</h1>
           <p className="text-gray-500 mb-6">{error}</p>
@@ -133,7 +134,7 @@ export default function CheckoutReturn() {
           className="bg-white rounded-3xl shadow-2xl p-10 max-w-md w-full text-center border border-orange-100"
         >
           <div className="w-16 h-16 mx-auto mb-5 bg-orange-100 rounded-full flex items-center justify-center">
-            <span className="text-3xl">😞</span>
+            <XCircle className="w-8 h-8 text-orange-500" strokeWidth={1.5} />
           </div>
           <h1 className="text-2xl font-bold text-gray-800 mb-3">{t("checkout.return.failed.title")}</h1>
           <p className="text-gray-500 mb-6">{t("checkout.return.failed.message")}</p>

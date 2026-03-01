@@ -7,7 +7,6 @@ import { motion } from 'framer-motion';
 import { ChefHat, ArrowRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-import HeroSection from "@/components/hero";
 import InfoBox from "@/components/infoBox";
 import FAQ from "@/components/faq";
 import Pricing from "@/components/pricing";
@@ -35,9 +34,6 @@ export default function Home() {
 
   return (
     <main className="h-full w-full bg-[var(--background)]">
-
-      {/* Hero */}
-      <HeroSection />
 
       {/* Recipe Form - the product front and center */}
       <section className="relative flex justify-center items-center min-h-[600px] md:min-h-[820px]">

@@ -181,39 +181,29 @@ export async function GET(req: Request) {
     const db = getFirestore();
     const consentTypes = ["terms_of_service", "privacy_policy", "cookies_policy"];
 
-    // Modificamos para guardar la versión aceptada o null
-    const consentStatus: Record<string, string | null> = {};
+    // Una sola query: registro más reciente del usuario (optimización 3→1 query)
+    const snapshot = await db
+      .collection("consents")
+      .where("user_id", "==", userId)
+      .orderBy("timestamp", "desc")
+      .limit(1)
+      .get();
 
-    for (const type of consentTypes) {
-      const consentsRef = db.collection("consents");
-      // buscamos el documento más reciente que contenga este tipo
-      const q = consentsRef
-        .where("user_id", "==", userId)
-        .where("accepted_types", "array-contains", type)
-        .orderBy("timestamp", "desc")
-        .limit(1);
+    const consentStatus: Record<string, { version: string; granted: boolean } | null> = {};
 
-      const snapshot = await q.get();
-
-      if (snapshot.empty) {
-        consentStatus[type] = null; // No hay consentimiento
-        continue;
+    if (snapshot.empty) {
+      consentTypes.forEach((type) => { consentStatus[type] = null; });
+    } else {
+      const acceptedArr: any[] = snapshot.docs[0].data().accepted || [];
+      for (const type of consentTypes) {
+        // Buscar cualquier entrada del tipo (sin filtrar por granted)
+        const entry = acceptedArr.find((e) => e.type === type);
+        if (!entry) {
+          consentStatus[type] = null;
+          continue;
+        }
+        consentStatus[type] = { version: entry.version || "", granted: !!entry.granted };
       }
-
-      const latestDoc = snapshot.docs[0].data();
-      // Encontramos dentro del array 'accepted' la entrada de este tipo
-      const acceptedArr: any[] = latestDoc.accepted || [];
-      const entry = acceptedArr.find((e) => e.type === type && e.granted === true);
-
-      if (!entry) {
-        consentStatus[type] = null; // Encontró un documento, pero no un consentimiento aceptado
-        continue;
-      }
-
-      const latestVersion = entry.version || null;
-
-      // Aquí deberías devolver la versión, no un booleano
-      consentStatus[type] = latestVersion;
     }
 
     return NextResponse.json({

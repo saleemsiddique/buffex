@@ -261,6 +261,17 @@ export function useRecipeForm() {
       setToastMessage("Autenticando usuario, por favor espera.");
       return;
     }
+
+    // Validate form first (applies to both guests and logged-in users)
+    setIngredientError(false);
+    setMealTimeError(false);
+    let isValid = true;
+
+    if (ingredients.length === 0) { setIngredientError(true); isValid = false; }
+    if (mealTime === null) { setMealTimeError(true); isValid = false; }
+    if (!isValid) { setStatus("idle"); return; }
+
+    // Guest: save form data and redirect to login
     if (!user || !firebaseUser) {
       if (typeof window !== "undefined") {
         sessionStorage.setItem(
@@ -271,7 +282,7 @@ export function useRecipeForm() {
           })
         );
       }
-      router.push("/auth/register");
+      router.push("/auth/login");
       return;
     }
 
@@ -300,14 +311,6 @@ export function useRecipeForm() {
       (user.extra_recipes || 0) === 0 &&
       typeof window !== "undefined" &&
       !localStorage.getItem("culinarium_first_recipe_shown");
-
-    setIngredientError(false);
-    setMealTimeError(false);
-    let isValid = true;
-
-    if (ingredients.length === 0) { setIngredientError(true); isValid = false; }
-    if (mealTime === null) { setMealTimeError(true); isValid = false; }
-    if (!isValid) { setStatus("idle"); return; }
 
     const selectedUtensils = Object.keys(utensils).filter((k) => utensils[k]);
 

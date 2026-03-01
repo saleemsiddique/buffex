@@ -65,11 +65,16 @@ export default function ConsentModal() {
       if (Array.isArray(obj.accepted)) {
         docs = [obj as ConsentDoc];
       } else {
-        const accepted: AcceptedItem[] = CONSENT_TYPES.map((type) => ({
-          type,
-          version: typeof obj[type] === "string" ? obj[type] : undefined,
-          granted: typeof obj[type] === "string" ? true : undefined,
-        }));
+        // API may return {version, granted} objects (new format) or strings (legacy)
+        const accepted: AcceptedItem[] = CONSENT_TYPES.map((type) => {
+          const val = obj[type];
+          if (typeof val === "string") {
+            return { type, version: val, granted: true };
+          } else if (val && typeof val === "object") {
+            return { type, version: val.version, granted: val.granted };
+          }
+          return { type, version: undefined, granted: undefined };
+        });
         docs = [{ accepted, accepted_types: CONSENT_TYPES, client_timestamp: obj.updatedAt || obj.timestamp }];
       }
     }
@@ -104,8 +109,12 @@ export default function ConsentModal() {
     });
 
     const missingTypes = CONSENT_TYPES.filter((t) => byType[t].version === undefined);
-    // allVersionsOk: all types must have a version recorded (granted or rejected)
-    const allVersionsOk = CONSENT_TYPES.every((t) => byType[t].version === POLICY_VERSION);
+    // allVersionsOk: required types must be granted+current; optional types just need a choice at current version
+    const allVersionsOk = CONSENT_TYPES.every((t) => {
+      const entry = byType[t];
+      if (t === "cookies_policy") return entry.version === POLICY_VERSION; // ok if user made any choice
+      return entry.version === POLICY_VERSION && entry.granted === true;   // required must be explicitly granted
+    });
 
     return { hasAnyRecord: true, latest, byType, missingTypes, allVersionsOk };
   }
@@ -219,7 +228,8 @@ export default function ConsentModal() {
             return;
           }
 
-          writeLocalStorageSnapshot(true);
+          const cookiesGranted = norm.byType.cookies_policy.granted ?? false;
+          writeLocalStorageSnapshot(cookiesGranted);
           setShow(false);
           setInitialized(true);
         } else {
@@ -343,24 +353,25 @@ export default function ConsentModal() {
     }
   };
 
-  // Accept all
+  // Accept all (cookies_policy follows analyticsChecked state)
   const handleAcceptAll = async () => {
     setLoading(true);
 
     const accepted = CONSENT_TYPES.map((type) => ({
       type,
       version: POLICY_VERSION,
-      granted: true,
+      granted: type === "cookies_policy" ? analyticsChecked : true,
       details: {},
     }));
+    const acceptedTypes = analyticsChecked ? CONSENT_TYPES : (["terms_of_service", "privacy_policy"] as ConsentType[]);
 
     if (!firebaseUser) {
       try {
-        writeLocalStorageSnapshot(true);
-        emitConsentUpdated?.(true, { accepted_types: CONSENT_TYPES });
+        writeLocalStorageSnapshot(analyticsChecked);
+        emitConsentUpdated?.(analyticsChecked, { accepted_types: acceptedTypes });
       } catch {
         if (typeof window !== "undefined") {
-          window.dispatchEvent(new CustomEvent("consent:updated", { detail: { analytics: true, accepted_types: CONSENT_TYPES } }));
+          window.dispatchEvent(new CustomEvent("consent:updated", { detail: { analytics: analyticsChecked, accepted_types: acceptedTypes } }));
           try { localStorage.setItem(LAST_UPDATE_KEY, String(Date.now())); } catch {}
         }
       }
@@ -389,11 +400,11 @@ export default function ConsentModal() {
         console.error(t("consent.modal.errors.saveConsent"), await res.text());
         setShow(true);
       } else {
-        writeLocalStorageSnapshot(true);
+        writeLocalStorageSnapshot(analyticsChecked);
         try {
-          emitConsentUpdated?.(true, { accepted_types: CONSENT_TYPES });
+          emitConsentUpdated?.(analyticsChecked, { accepted_types: acceptedTypes });
         } catch {
-          window.dispatchEvent(new CustomEvent("consent:updated", { detail: { analytics: true, accepted_types: CONSENT_TYPES } }));
+          window.dispatchEvent(new CustomEvent("consent:updated", { detail: { analytics: analyticsChecked, accepted_types: acceptedTypes } }));
           try { localStorage.setItem(LAST_UPDATE_KEY, String(Date.now())); } catch {}
         }
 

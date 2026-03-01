@@ -4,13 +4,14 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { Lock } from "lucide-react";
 import { motion } from "framer-motion";
 import { useUser } from "@/context/user-context";
 import { emitConsentUpdated } from "@/lib/consent-events";
 import { useTranslation } from "react-i18next";
 
 const CONSENT_TYPES = ["terms_of_service", "privacy_policy", "cookies_policy"] as const;
-const POLICY_VERSION = process.env.NEXT_PUBLIC_POLICY_VERSION || "1.0.0";
+const POLICY_VERSION = process.env.NEXT_PUBLIC_POLICY_VERSION || "1.0.5";
 
 type ConsentState = Record<typeof CONSENT_TYPES[number], boolean>;
 
@@ -163,10 +164,11 @@ export default function GestionConsentimientosPage() {
         }
 
         const data = await res.json();
+        // API returns {version, granted} objects (or null if no record)
         const nextStatus: ConsentState = {
-          terms_of_service: data.terms_of_service === POLICY_VERSION,
-          privacy_policy: data.privacy_policy === POLICY_VERSION,
-          cookies_policy: data.cookies_policy === POLICY_VERSION,
+          terms_of_service: data.terms_of_service?.version === POLICY_VERSION && data.terms_of_service?.granted === true,
+          privacy_policy: data.privacy_policy?.version === POLICY_VERSION && data.privacy_policy?.granted === true,
+          cookies_policy: data.cookies_policy?.version === POLICY_VERSION && data.cookies_policy?.granted === true,
         };
         setStatus(nextStatus);
 
@@ -331,17 +333,23 @@ export default function GestionConsentimientosPage() {
                   <p className="text-sm text-gray-500">{t("consentManagement.version")}: {POLICY_VERSION}</p>
                 </div>
                 <div className="flex items-center gap-4">
-                  <button
-                    onClick={() => toggle(tr)}
-                    className={`px-4 py-2 rounded-full font-medium transition-colors duration-200 ${status[tr]
-                      ? "bg-orange-600 text-white hover:bg-orange-700"
-                      : "bg-gray-700 text-gray-300 hover:bg-gray-600"
-                    }`}
-                    aria-pressed={status[tr]}
-                  >
-                    {status[tr] ? t("consentManagement.accepted") 
-                      : t("consentManagement.rejected")}
-                  </button>
+                  {tr === "terms_of_service" || tr === "privacy_policy" ? (
+                    <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-gray-700 text-gray-400 text-sm cursor-not-allowed select-none">
+                      <Lock className="w-3.5 h-3.5" /> {t("consentManagement.alwaysRequired")}
+                    </span>
+                  ) : (
+                    <button
+                      onClick={() => toggle(tr)}
+                      className={`px-4 py-2 rounded-full font-medium transition-colors duration-200 ${status[tr]
+                        ? "bg-orange-600 text-white hover:bg-orange-700"
+                        : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                      }`}
+                      aria-pressed={status[tr]}
+                    >
+                      {status[tr] ? t("consentManagement.accepted")
+                        : t("consentManagement.rejected")}
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
