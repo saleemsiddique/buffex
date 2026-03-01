@@ -87,30 +87,30 @@ export default function AdvancedOptionsPanel({
   ];
 
   return (
-    <section className="border border-[var(--primary)]/15 rounded-xl overflow-hidden">
+    <section className="rounded-xl overflow-hidden" style={{ border: "1px solid #E5E5E3" }}>
       {/* Tabs */}
-      <div className="flex border-b border-[var(--primary)]/15 bg-[var(--primary)]/3">
+      <div className="flex border-b bg-[#FAFAF9]" style={{ borderColor: "#E5E5E3" }}>
         {tabs.map((tab) => (
           <button
             key={tab.key}
             type="button"
             onClick={() => setActiveTab(tab.key)}
-            className={`flex-1 py-2.5 text-xs font-semibold transition-all relative ${
+            className={`flex-1 py-2.5 text-xs font-semibold transition-all duration-200 relative ${
               activeTab === tab.key
-                ? "text-[var(--highlight)]"
-                : "text-[var(--muted)] hover:text-[var(--foreground)]"
+                ? "text-[#f97316]"
+                : "text-[#6B7280] hover:text-[#111111]"
             }`}
           >
             <span className="flex items-center justify-center gap-1">
               {tab.label}
               {tab.premium && !isSubscribed && (
-                <Lock className="w-3 h-3 text-[var(--highlight)]" />
+                <Lock className="w-3 h-3 text-[#f97316]" />
               )}
             </span>
             {activeTab === tab.key && (
               <motion.div
                 layoutId="activeTab"
-                className="absolute bottom-0 left-0 right-0 h-0.5 bg-[var(--highlight)]"
+                className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#f97316]"
               />
             )}
           </button>
@@ -140,12 +140,12 @@ export default function AdvancedOptionsPanel({
                     type="button"
                     onClick={() => isSubscribed && onDietaryChange(opt.value)}
                     disabled={!isSubscribed}
-                    className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                    className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 ${
                       !isSubscribed
-                        ? "opacity-40 cursor-not-allowed border border-gray-300 bg-gray-50 text-gray-400"
+                        ? "opacity-40 cursor-not-allowed border border-[#E5E5E3] bg-[#F5F5F4] text-[#6B7280]"
                         : dietaryRestrictions.includes(opt.value)
-                          ? "bg-[var(--highlight)] text-white shadow-sm"
-                          : "border border-[var(--primary)]/20 text-[var(--foreground)] hover:bg-[var(--highlight)]/10"
+                          ? "bg-[#f97316] text-white shadow-sm"
+                          : "border border-[#E5E5E3] text-[#111111] hover:bg-[#f97316]/8 hover:border-[#f97316]/30"
                     }`}
                   >
                     {t(opt.labelKey)}
@@ -168,10 +168,10 @@ export default function AdvancedOptionsPanel({
                       : t("culinarium.form.sections.restrictions.premiumAvoid")
                   }
                   disabled={!isSubscribed}
-                  className={`w-full px-3 py-2 border rounded-lg text-sm ${
+                  className={`w-full px-3 py-2 border rounded-lg text-sm transition-colors duration-200 focus:outline-none ${
                     !isSubscribed
-                      ? "opacity-40 cursor-not-allowed border-gray-300 bg-gray-50"
-                      : "border-[var(--primary)]/20 focus:ring-2 focus:ring-[var(--highlight)]/40 focus:border-[var(--highlight)]"
+                      ? "opacity-40 cursor-not-allowed border-[#E5E5E3] bg-[#F5F5F4]"
+                      : "border-[#E5E5E3] focus:ring-2 focus:ring-[#f97316]/30 focus:border-[#f97316]"
                   }`}
                 />
                 <div className="mt-2 flex flex-wrap gap-1.5 max-h-[80px] overflow-y-auto">
@@ -208,12 +208,12 @@ export default function AdvancedOptionsPanel({
                       setCuisineStyle(cuisineStyle === style.value ? null : style.value);
                     }}
                     disabled={!isSubscribed}
-                    className={`flex flex-col items-center justify-center p-2.5 rounded-xl border-2 text-xs font-medium transition-all ${
+                    className={`flex flex-col items-center justify-center p-2.5 rounded-xl border-2 text-xs font-medium transition-all duration-200 ${
                       !isSubscribed
-                        ? "opacity-40 cursor-not-allowed border-gray-200 bg-gray-50"
+                        ? "opacity-40 cursor-not-allowed border-[#E5E5E3] bg-[#F5F5F4]"
                         : cuisineStyle === style.value
-                          ? "border-[var(--highlight)] bg-[var(--highlight)] text-white shadow-sm"
-                          : "border-[var(--primary)]/15 hover:border-[var(--highlight)] hover:bg-[var(--highlight)]/5"
+                          ? "border-[#f97316] bg-gradient-to-br from-[#f97316] to-[#ea580c] text-white shadow-sm"
+                          : "border-[#E5E5E3] text-[#111111] hover:border-[#f97316]/40 hover:bg-[#f97316]/5"
                     }`}
                   >
                     <span className="leading-tight text-center">{t(style.labelKey)}</span>
@@ -264,10 +264,10 @@ export default function AdvancedOptionsPanel({
                       type="button"
                       onClick={() => toggleUtensil(u.key)}
                       aria-pressed={active}
-                      className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all border text-xs ${
+                      className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-200 border text-xs ${
                         active
-                          ? "border-[var(--highlight)] bg-[var(--highlight)]/10 text-[var(--foreground)]"
-                          : "opacity-40 border-[var(--primary)]/20 text-[var(--muted)]"
+                          ? "border-[#f97316] bg-[#f97316]/8 text-[#111111]"
+                          : "opacity-40 border-[#E5E5E3] text-[#6B7280]"
                       }`}
                     >
                       <Icon path={u.icon} size={0.9} aria-hidden="true" />

@@ -92,7 +92,7 @@
       "dataCollected": {
         "title": "3. Datos que recogemos",
         "items": [
-          "<strong>Datos de cuenta y perfil:</strong> email, firstName, lastName, uid, created_at, campos de suscripción y tokens (monthly_tokens, extra_tokens, subscriptionId, stripeCustomerId, subscriptionStatus, subscriptionCanceled, lastRenewal, tokens_reset_date).",
+          "<strong>Datos de cuenta y perfil:</strong> email, firstName, lastName, uid, created_at, campos de suscripción y recetas (monthly_recipes, extra_recipes, subscriptionId, stripeCustomerId, subscriptionStatus, subscriptionCanceled, lastRenewal).",
           "<strong>Historial y uso:</strong> recetas generadas (created_recipes), ingredientes, instrucciones, timestamps, momento_del_dia, porciones, restricciones, img_url.",
           "<strong>Datos técnicos:</strong> IP (logs), user_agent, datos de dispositivo y métricas de uso (solo si das consentimiento).",
           "<strong>Datos de pago:</strong> no almacenamos números de tarjeta; Stripe gestiona datos de pago. Guardamos identificadores de Stripe (stripeCustomerId) y metadatos necesarios para facturación.",
@@ -169,20 +169,20 @@
       },
       "serviceDescription": {
         "title": "2. Descripción del servicio",
-        "content": "Culinarium permite generar recetas a partir de un formulario donde indicas ingredientes, tiempo disponible, momento del día, restricciones dietéticas y estilo culinario. Cada receta cuesta <strong>10 tokens</strong>."
+        "content": "Culinarium permite generar recetas a partir de un formulario donde indicas ingredientes, tiempo disponible, momento del día, restricciones dietéticas y estilo culinario. Cada receta consume 1 crédito de receta."
       },
       "models": {
         "title": "3. Modelos y contenido generado",
         "content": "Las recetas se generan mediante la API de OpenAI u otros modelos que podamos utilizar. La selección del modelo puede cambiar con el tiempo. Las recetas son sugerencias culinarias y el usuario es responsable de verificar alérgenos, seguridad alimentaria y adecuación de ingredientes."
       },
       "tokens": {
-        "title": "4. Tokens y planes",
+        "title": "4. Recetas y planes",
         "items": [
-          "<strong>Plan gratuito:</strong> 50 tokens al mes (equivalente a 5 recetas/mes).",
-          "<strong>Suscripción:</strong> por suscripción mensual se otorgan 300 tokens + funcionalidades extra. Los tokens de suscripción <em>expiran</em> al finalizar cada periodo de suscripción (no son permanentes).",
-          "<strong>Packs de tokens (1–6):</strong> paquetes de tokens que se compran por separado; esos tokens extra permanecen disponibles mientras el servicio exista.",
-          "<strong>Orden de gasto:</strong> los tokens de suscripción se consumen antes que los tokens comprados en packs.",
-          "<strong>Costos de generación:</strong> generar una nueva receta cuesta 10 tokens, regenerar una receta existente cuesta 5 tokens."
+          "<strong>Plan gratuito:</strong> 5 recetas/mes.",
+          "<strong>Suscripción:</strong> por suscripción mensual se otorgan 99 recetas/mes + funcionalidades extra. Las recetas de suscripción <em>expiran</em> al finalizar cada periodo de suscripción (no son permanentes).",
+          "<strong>Packs de recetas adicionales:</strong> paquetes de recetas que se compran por separado; esas recetas extra permanecen disponibles mientras el servicio exista.",
+          "<strong>Orden de uso:</strong> las recetas de suscripción se consumen antes que las recetas adicionales compradas.",
+          "<strong>Costos de generación:</strong> generar una nueva receta consume 1 crédito de receta."
         ]
       },
       "payments": {
@@ -191,17 +191,17 @@
       },
       "withdrawal": {
         "title": "6. Derecho de desistimiento y comienzo inmediato del servicio",
-        "content": "Debido a que el servicio se presta de forma inmediata (generación de recetas y consumición de tokens en el momento), el usuario deberá aceptar expresamente, en el momento del pago, que el servicio comience inmediatamente y renuncia al derecho de desistimiento cuando la ley lo permita."
+        "content": "Debido a que el servicio se presta de forma inmediata (generación de recetas y uso de recetas en el momento), el usuario deberá aceptar expresamente, en el momento del pago, que el servicio comience inmediatamente y renuncia al derecho de desistimiento cuando la ley lo permita."
       },
       "refunds": {
         "title": "7. Reembolsos",
-        "content": "<strong>No ofrecemos reembolsos en ningún caso.</strong> Esta política aplica a compras de tokens y suscripciones, salvo que la ley exija lo contrario en un caso concreto."
+        "content": "<strong>No ofrecemos reembolsos en ningún caso.</strong> Esta política aplica a compras de recetas y suscripciones, salvo que la ley exija lo contrario en un caso concreto."
       },
       "cancellation": {
-        "title": "8. Cancelación y gestión de tokens",
+        "title": "8. Cancelación y gestión de recetas",
         "items": [
-          "Si cancelas la suscripción, las funcionalidades extra se mantienen hasta el fin del periodo ya pagado; los tokens de suscripción no son acumulables ni permanentes.",
-          "Los tokens comprados en packs se mantendrán mientras el servicio esté activo (hasta posible cierre del servicio)."
+          "Si cancelas la suscripción, las funcionalidades extra se mantienen hasta el fin del periodo ya pagado; las recetas de suscripción no son acumulables ni permanentes.",
+          "Las recetas adicionales compradas se mantendrán mientras el servicio esté activo (hasta posible cierre del servicio)."
         ]
       },
       "suspension": {
@@ -531,6 +531,12 @@
       "extra": "extra",
       "monthly": "mensuales",
       "close": "Cerrar",
+      "or": "o",
+      "oneTime": "pago único",
+      "recipesPerMonth": "recetas/mes",
+      "perMonth": "/mes",
+      "perYear": "/año",
+      "disclaimer": "Las recetas no caducan y se acumulan con tu plan actual.",
       "packages": {
         "150": {
           "label": "15 recetas extra",
@@ -1100,9 +1106,9 @@
     "pro": {
       "calories": "Calorías",
       "caloriesLabel": "Calorías objetivo",
-      "protein": "Proteínas 🥩",
-      "carbs": "Carbohidratos 🍚",
-      "fats": "Grasas 🥑",
+      "protein": "Proteínas",
+      "carbs": "Carbohidratos",
+      "fats": "Grasas",
       "total": "Total",
       "approximate": "Valores aproximados",
       "grams": "g"

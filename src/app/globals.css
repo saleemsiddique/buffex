@@ -3,18 +3,21 @@
 @plugin "daisyui";
 
 :root {
-  /* Base colors - Warm kitchen inspired */
-  --background: #FDF5E6; /* Soft cream/off-white */
-  --foreground: #4A2C2A; /* Deep, rich brown for main text/elements */
-  --text: #4A2C2A; /* Same as foreground for general text */
+  /* Base colors - Clean neutral */
+  --background: #FAFAF9; /* Neutral off-white */
+  --foreground: #111111; /* Near-black sophisticated */
+  --text: #111111;
   --text2: #FFFFFF; /* Pure white for text on dark backgrounds */
+  --muted: #6B7280; /* Secondary/muted text */
+  --surface: #FFFFFF; /* Card surfaces */
+  --border: #E5E5E3; /* Subtle borders */
 
-  /* Brand colors - Orange and Dark Blue */
-  --primary: #2C3E50; /* Dark, sophisticated blue */
-  --highlight: #E67E22; /* Vibrant, earthy orange */
-  --highlight-dark: #C2651A; /* Darker shade of earthy orange for gradients */
+  /* Brand colors */
+  --primary: #111111; /* Unified with foreground */
+  --highlight: #f97316; /* Vibrant orange */
+  --highlight-dark: #ea580c; /* Darker orange for gradients */
 
-  /* Radius (kept as is) */
+  /* Radius */
   --radius: 0.625rem;
 }
 
@@ -51,8 +54,22 @@ body {
 }
 
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 8px rgba(230, 126, 34, 0.3); }
-  50% { box-shadow: 0 0 20px rgba(230, 126, 34, 0.6); }
+  0%, 100% { box-shadow: 0 0 8px rgba(249, 115, 22, 0.3); }
+  50% { box-shadow: 0 0 20px rgba(249, 115, 22, 0.6); }
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.12);
+  border-radius: 2px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(0,0,0,0.2);
 }
 
 .animate-shimmer {

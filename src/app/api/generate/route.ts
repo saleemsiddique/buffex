@@ -4,7 +4,7 @@ import { NextRequest } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
 import { auth, db } from '@/lib/firebase-admin';
 import { FieldValue } from 'firebase-admin/firestore';
-import { buildRecipePrompt } from '@/lib/buildRecipePrompt';
+import { buildStaticInstructions, buildDynamicInput } from '@/lib/buildRecipePrompt';
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -97,15 +97,30 @@ export async function POST(request: NextRequest) {
 
         sendEvent({ type: 'deducted', updatedUser });
 
-        // Build prompt and stream from Anthropic
-        const prompt = buildRecipePrompt(body, languageCode);
+        // Build prompt and stream from Anthropic (with prompt caching on static block)
+        const model = process.env.ANTHROPIC_MODEL ?? 'claude-sonnet-4-6';
 
         const sdkStream = anthropic.messages.stream({
-          model: 'claude-sonnet-4-6',
+          model,
           max_tokens: 4096,
           system:
             'Eres un ayudante de recetas experto, preciso y que sigue instrucciones al pie de la letra. Responde ÚNICAMENTE con JSON válido, sin texto adicional ni markdown.',
-          messages: [{ role: 'user', content: prompt }],
+          messages: [{
+            role: 'user',
+            content: [
+              {
+                type: 'text',
+                text: buildStaticInstructions(languageCode),
+                cache_control: { type: 'ephemeral' },
+              },
+              {
+                type: 'text',
+                text: buildDynamicInput(body),
+              },
+            ],
+          }],
+        }, {
+          headers: { 'anthropic-beta': 'prompt-caching-2024-07-31' },
         });
 
         for await (const event of sdkStream) {

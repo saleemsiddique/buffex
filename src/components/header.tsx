@@ -7,7 +7,6 @@ import { useUser, CustomUser } from '@/context/user-context';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, BookOpen, Menu, X, User, Sparkles, ChefHat } from 'lucide-react';
 import { TokensModal } from "./SideMenu/TokensModal";
-import { PremiumModal } from "./SideMenu/PremiumModal";
 import { useTranslation } from "react-i18next";
 
 // Definición de las props para los iconos de Lucide-React
@@ -54,7 +53,6 @@ export default function Header() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   // Estados para los modales a pantalla completa
   const [showTokens, setShowTokens] = useState(false);
-  const [showPremium, setShowPremium] = useState(false);
   // Estado para el popup de tokens en escritorio
   const [showTokensPopup, setShowTokensPopup] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -94,12 +92,12 @@ export default function Header() {
     <>
       {/* Modales a pantalla completa */}
       {showTokens && <TokensModal user={user as CustomUser | null} onClose={() => setShowTokens(false)} />}
-      {showPremium && <PremiumModal user={user as CustomUser | null} onClose={() => setShowPremium(false)} onSubscribe={() => setShowPremium(false)} />}
 
       <header
-        className={`w-full backdrop-blur-md bg-white/80 shadow-xl fixed top-0 left-0 z-50 transition-all duration-300
+        className={`w-full fixed top-0 left-0 z-50 transition-all duration-300
           ${shouldHideHeader ? 'hidden' : ''}
         `}
+        style={{ background: "#0f0f0f", borderBottom: "1px solid rgba(255,255,255,0.06)" }}
       >
         {/* Botón flotante y drawer animado para páginas de perfil en móvil */}
         {isMobileProfilePage && (
@@ -128,22 +126,23 @@ export default function Header() {
                   animate={{ x: '0%' }}
                   exit={{ x: '-100%' }}
                   transition={{ type: "tween", duration: 0.3 }}
-                  className="fixed top-0 left-0 w-screen h-screen z-40 bg-[var(--background)] md:hidden flex flex-col"
+                  className="fixed top-0 left-0 w-screen h-screen z-40 md:hidden flex flex-col"
+                  style={{ background: "#111111" }}
                 >
                   {/* Contenido del drawer */}
                   <div className="flex justify-between items-center p-4">
                     <Link href={isLoggedIn ? '/kitchen' : '/'}>
                       <motion.h1
-                        className="font-display text-2xl md:text-3xl font-extrabold tracking-tight text-[var(--foreground)] cursor-pointer flex items-center gap-2"
-                        whileHover={{ scale: 1.05, color: 'var(--highlight)' }}
+                        className="font-display text-2xl md:text-3xl font-extrabold tracking-tight text-white cursor-pointer flex items-center gap-2"
+                        whileHover={{ scale: 1.05, color: '#f97316' }}
                         transition={{ duration: 0.2 }}
                       >
-                        <ChefHat className="w-6 h-6 text-[var(--highlight)]" aria-hidden="true" />
+                        <ChefHat className="w-6 h-6 text-[#f97316]" aria-hidden="true" />
                         Culinarium
                       </motion.h1>
                     </Link>
                     <button
-                      className="text-[var(--muted)] hover:text-[var(--foreground)] transition "
+                      className="text-white/40 hover:text-white transition "
                       onClick={() => setDrawerOpen(false)}
                       aria-label="Cerrar menú"
                     >
@@ -161,7 +160,8 @@ export default function Header() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2, duration: 0.4 }}
-                        className="mt-8 p-6 bg-[var(--primary)] rounded-xl shadow-xl text-[var(--text2)] text-center w-full max-w-sm border-2 border-[var(--highlight)]"
+                        className="mt-8 p-6 rounded-xl shadow-xl text-white text-center w-full max-w-sm"
+                        style={{ background: "#1a1a1a", border: "1px solid rgba(249,115,22,0.25)" }}
                       >
                         <h3 className="text-xl font-bold mb-3">{t("header.tokens.popup.title")}</h3>
                         <div className="space-y-2 mb-4">
@@ -192,10 +192,10 @@ export default function Header() {
                             {t("header.tokens.buy")}
                           </motion.div>
                         </button>
-                        {/* Nuevo botón para el modal de Premium en móvil */}
+                        {/* Botón para el modal de Premium en móvil */}
                         <motion.button
                           onClick={() => {
-                            setShowPremium(true);
+                            setShowTokens(true);
                             setDrawerOpen(false);
                           }}
                           className="w-full py-3 mt-4 rounded-full text-lg font-bold shadow-lg transition-all duration-300
@@ -223,11 +223,11 @@ export default function Header() {
             <div className="flex justify-between items-center h-16">
               <Link href={isLoggedIn ? '/kitchen' : '/'}>
                 <motion.h1
-                  className="font-display text-2xl md:text-3xl font-extrabold tracking-tight text-[var(--foreground)] cursor-pointer flex items-center gap-2"
-                  whileHover={{ scale: 1.05, color: 'var(--highlight)' }}
+                  className="font-display text-2xl md:text-3xl font-extrabold tracking-tight text-white cursor-pointer flex items-center gap-2"
+                  whileHover={{ scale: 1.05, color: '#f97316' }}
                   transition={{ duration: 0.2 }}
                 >
-                  <ChefHat className="w-6 h-6 text-[var(--highlight)]" aria-hidden="true" />
+                  <ChefHat className="w-6 h-6 text-[#f97316]" aria-hidden="true" />
                   Culinarium
                 </motion.h1>
               </Link>
@@ -237,8 +237,8 @@ export default function Header() {
                   <li>
                     <Link href={isLoggedIn ? '/kitchen' : '/'} passHref>
                       <motion.span
-                        className={`text-[var(--foreground)] hover:text-[var(--highlight)] font-medium transition-colors duration-200 cursor-pointer
-                          ${pathname === (isLoggedIn ? '/kitchen' : '/') ? 'underline decoration-[var(--highlight)] underline-offset-4' : ''
+                        className={`text-white/60 hover:text-white font-medium transition-colors duration-200 cursor-pointer
+                          ${pathname === (isLoggedIn ? '/kitchen' : '/') ? 'text-white underline decoration-[#f97316] underline-offset-4' : ''
                         }`}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
@@ -251,8 +251,8 @@ export default function Header() {
                     <li>
                       <Link href="/profile" passHref>
                         <motion.span
-                          className={`text-[var(--foreground)] hover:text-[var(--highlight)] font-medium transition-colors duration-200 cursor-pointer
-                            ${pathname === '/profile' ? 'underline decoration-[var(--highlight)] underline-offset-4' : ''
+                          className={`text-white/60 hover:text-white font-medium transition-colors duration-200 cursor-pointer
+                            ${pathname === '/profile' ? 'text-white underline decoration-[#f97316] underline-offset-4' : ''
                           }`}
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
@@ -278,15 +278,14 @@ export default function Header() {
 
                 {isLoggedIn && (
                   <div
-                    className={`relative flex items-center bg-[var(--background)] p-2 rounded-full shadow-inner cursor-pointer border ${
-                      isLowRecipes
-                        ? 'border-[var(--highlight)] animate-pulse-glow'
-                        : 'border-[var(--highlight)]'
+                    className={`relative flex items-center p-2 rounded-full cursor-pointer transition-all duration-200 ${
+                      isLowRecipes ? 'animate-pulse-glow' : ''
                     }`}
+                  style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.12)" }}
                     onMouseEnter={() => setShowTokensPopup(true)}
                     onMouseLeave={() => setShowTokensPopup(false)}
                   >
-                    <span className="text-[var(--foreground)] font-semibold text-sm md:text-base mr-2">
+                    <span className="text-white font-semibold text-sm md:text-base mr-2">
                       {isActiveSubscriber
                         ? t("header.tokens.unlimited")
                         : t("header.tokens.recipes", { count: totalRecipes })}
@@ -301,8 +300,8 @@ export default function Header() {
                         exit={{ opacity: 0, scale: 0.9 }}
                         transition={{ duration: 0.2 }}
                         className="absolute top-full mt-2 left-1/2 -translate-x-1/2 w-64 p-4
-                                   bg-white rounded-lg shadow-xl border border-gray-200
-                                   text-[var(--foreground)] z-50"
+                                   bg-white rounded-2xl z-50 text-[#111111]"
+                        style={{ border: "1px solid #E5E5E3", boxShadow: "0 4px 24px rgba(0,0,0,0.12)" }}
                       >
                         <h3 className="text-lg font-bold mb-2 text-center">{t("header.tokens.popup.title")}</h3>
                         <div className="space-y-2">
@@ -313,13 +312,13 @@ export default function Header() {
                             <span>{t("header.tokens.popup.extra")}</span> <span className="font-bold text-[var(--highlight)]">{user?.extra_recipes || 0}</span>
                           </p>
                         </div>
-                        <div className="h-px bg-gray-200 my-3" />
+                        <div className="h-px my-3" style={{ background: "#E5E5E3" }} />
                         <p className="flex justify-between items-center text-base font-semibold">
                           <span>{t("header.tokens.popup.total")}</span>
                           <span className="text-[var(--highlight)] font-bold">
                             {isActiveSubscriber
                               ? t("header.tokens.unlimited")
-                              : `${totalRecipes} ${t("header.tokens.recipes", { count: totalRecipes })}`}
+                              : `${t("header.tokens.recipes", { count: totalRecipes })}`}
                           </span>
                         </p>
                         <motion.button
@@ -341,7 +340,7 @@ export default function Header() {
                           <motion.button
                             onClick={() => {
                               setShowTokensPopup(false);
-                              setShowPremium(true);
+                              setShowTokens(true);
                             }}
                             className="mt-2 w-full py-2 text-sm font-bold shadow-md text-center rounded-full transition-all duration-300
                                        bg-gradient-to-r from-yellow-400 to-yellow-600 text-white

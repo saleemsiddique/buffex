@@ -2,9 +2,17 @@
 
 /**
  * Builds the recipe generation prompt for Claude.
- * Extracted from /api/openai to be shared with the streaming /api/generate endpoint.
+ * Split into static (cacheable) and dynamic (per-user) parts for prompt caching.
+ *
+ * buildStaticInstructions() — ~3,000 tokens, varies only by language → cached
+ * buildDynamicInput()       — ~200–500 tokens, varies per user request → not cached
  */
-export function buildRecipePrompt(body: Record<string, any>, languageCode: string): string {
+
+/**
+ * Returns the static instructions portion of the prompt.
+ * Only varies by language code — suitable for Anthropic prompt caching.
+ */
+export function buildStaticInstructions(languageCode: string): string {
   return `Eres un asistente de recetas profesional y extremadamente preciso. Tu tarea es generar una receta basándote en los datos proporcionados por el usuario, adhiriéndote estrictamente al formato de salida JSON y a las reglas de validación.
 
 **IDIOMA DE SALIDA:**
@@ -133,7 +141,15 @@ export function buildRecipePrompt(body: Record<string, any>, languageCode: strin
 
 8.  **Datos de Entrada (Objeto Recibido del Usuario):**
 \`\`\`json
-${JSON.stringify(body, null, 2)}
+`;
+}
+
+/**
+ * Returns the dynamic user input portion of the prompt.
+ * Unique per request — not suitable for caching.
+ */
+export function buildDynamicInput(body: Record<string, any>): string {
+  return `${JSON.stringify(body, null, 2)}
 \`\`\`
 
 9.  **INSTRUCCIONES ADICIONALES PARA MACRONUTRIENTES (SI EL USUARIO LAS PROPORCIONA):**
@@ -147,4 +163,13 @@ ${JSON.stringify(body, null, 2)}
 
 **OBJETIVO FINAL:** Genera una receta útil y lista para cocinar con la máxima precisión, detalle y un toque creativo, adhiriéndote estrictamente al formato JSON.
 `;
+}
+
+/**
+ * Returns the full prompt as a single string.
+ * Kept for backwards compatibility — prefer using buildStaticInstructions + buildDynamicInput
+ * directly when prompt caching is needed.
+ */
+export function buildRecipePrompt(body: Record<string, any>, languageCode: string): string {
+  return buildStaticInstructions(languageCode) + buildDynamicInput(body);
 }

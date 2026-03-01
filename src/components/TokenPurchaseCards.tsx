@@ -137,7 +137,7 @@ export default function TokenPurchaseCards({
         borderRadius: "var(--radius)",
         ...promoStyles.cardStyle,
       }}
-      aria-label={`Comprar ${count} tokens por ${price.toFixed(2)}€`}
+      aria-label={`Comprar ${Math.round(count / 10)} recetas por ${price.toFixed(2)}€`}
     >
       {labelPromo && (
         <div
@@ -172,7 +172,7 @@ export default function TokenPurchaseCards({
             className="text-2xl font-bold ml-3"
             style={{ color: "var(--foreground)" }}
           >
-            {count} Tokens
+            {Math.round(count / 10)} Recetas
           </h3>
         </div>
         

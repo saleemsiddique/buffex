@@ -70,17 +70,21 @@ export default function ResetPasswordPage() {
     }
   };
 
+  const cardStyle = { border: "1px solid #E5E5E3", boxShadow: "0 4px 24px rgba(0,0,0,0.06)" };
+  const inputClass = "w-full pl-10 pr-4 py-3 rounded-xl bg-white text-[#111111] placeholder-[#6B7280] focus:outline-none focus:ring-2 focus:ring-[#f97316]/30 focus:border-[#f97316] transition-colors duration-200";
+  const inputStyle = { border: "1px solid #E5E5E3" };
+
   if (success) {
     return (
-      <div className="h-full w-full bg-[#FDF5E6] flex items-center justify-center p-4">
-        <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md border border-[#4A2C2A] text-center">
-          <h1 className="text-2xl md:text-3xl font-bold text-[#E67E22] mb-4">
+      <div className="h-full w-full flex items-center justify-center p-4" style={{ background: "#FAFAF9" }}>
+        <div className="bg-white rounded-3xl p-8 w-full max-w-md text-center" style={cardStyle}>
+          <h1 className="text-2xl md:text-3xl font-bold text-[#f97316] mb-4">
             {t("auth.resetPassword.successTitle")}
           </h1>
-          <p className="text-[#4A2C2A] mb-8">
+          <p className="text-[#6B7280] mb-8">
             {t("auth.resetPassword.successSubtitle")}
           </p>
-          <a href="/auth/login" className="text-[#E67E22] hover:text-[#C2651A] font-medium transition-colors">
+          <a href="/auth/login" className="text-[#f97316] hover:text-[#ea580c] font-medium transition-colors">
             {t("auth.resetPassword.backToLogin")}
           </a>
         </div>
@@ -89,21 +93,21 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div className="h-full w-full bg-[#FDF5E6] flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md border border-[#4A2C2A] text-center">
-        <h1 className="text-2xl md:text-3xl font-bold text-[#2C3E50] mb-2">
+    <div className="h-full w-full flex items-center justify-center p-4" style={{ background: "#FAFAF9" }}>
+      <div className="bg-white rounded-3xl p-8 w-full max-w-md text-center" style={cardStyle}>
+        <h1 className="text-2xl md:text-3xl font-bold text-[#111111] mb-2">
           {t("auth.resetPassword.title")}
         </h1>
-        <p className="text-[#4A2C2A] mb-8">
+        <p className="text-[#6B7280] mb-8">
           {t("auth.resetPassword.subtitle")}
         </p>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-[#4A2C2A] mb-2 text-left">
+            <label htmlFor="password" className="block text-sm font-medium text-[#111111] mb-2 text-left">
               {t("auth.resetPassword.newPasswordLabel")}
             </label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[#6B7280]" />
               <input
                 id="password"
                 type="password"
@@ -111,16 +115,17 @@ export default function ResetPasswordPage() {
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 placeholder={t("auth.resetPassword.newPasswordPlaceholder")}
-                className="w-full pl-10 pr-4 py-3 border border-[#4A2C2A] rounded-lg bg-[#FDF5E6] text-[#4A2C2A] focus:ring-2 focus:ring-[#E67E22] focus:border-transparent"
+                className={inputClass}
+                style={inputStyle}
               />
             </div>
           </div>
           <div>
-            <label htmlFor="confirm-password" className="block text-sm font-medium text-[#4A2C2A] mb-2 text-left">
+            <label htmlFor="confirm-password" className="block text-sm font-medium text-[#111111] mb-2 text-left">
               {t("auth.resetPassword.confirmPasswordLabel")}
             </label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[#6B7280]" />
               <input
                 id="confirm-password"
                 type="password"
@@ -128,14 +133,15 @@ export default function ResetPasswordPage() {
                 value={confirmPassword}
                 onChange={e => setConfirmPassword(e.target.value)}
                 placeholder={t("auth.resetPassword.confirmPasswordPlaceholder")}
-                className="w-full pl-10 pr-4 py-3 border border-[#4A2C2A] rounded-lg bg-[#FDF5E6] text-[#4A2C2A] focus:ring-2 focus:ring-[#E67E22] focus:border-transparent"
+                className={inputClass}
+                style={inputStyle}
               />
             </div>
           </div>
           {error && <div className="text-red-500 text-sm">{error}</div>}
           <button
             type="submit"
-            className="w-full bg-[#E67E22] hover:bg-[#C2651A] text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+            className="w-full bg-gradient-to-r from-[#f97316] to-[#ea580c] hover:from-[#ea580c] hover:to-[#f97316] text-white font-semibold py-3 rounded-xl transition-all duration-200 flex items-center justify-center gap-2"
             disabled={loading}
           >
             {loading && <Loader2 size={20} className="animate-spin" />}
@@ -143,7 +149,7 @@ export default function ResetPasswordPage() {
           </button>
         </form>
         <div className="mt-8">
-          <a href="/auth/login" className="text-[#E67E22] hover:text-[#C2651A] font-medium transition-colors">
+          <a href="/auth/login" className="text-[#f97316] hover:text-[#ea580c] font-medium transition-colors">
             {t("auth.resetPassword.backToLogin")}
           </a>
         </div>

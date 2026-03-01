@@ -10,14 +10,12 @@ import {
   IoPeopleOutline,
   IoRestaurantOutline,
   IoWarningOutline,
-  IoReloadOutline,
 } from "react-icons/io5";
 import {
   GiChopsticks, GiSushis, GiTacos, GiHamburger, GiPizzaSlice,
-  GiBowlOfRice, GiFruitBowl, GiChefToque,
+  GiBowlOfRice, GiChefToque,
 } from "react-icons/gi";
 import { MdOutlineFastfood, MdOutlineNoFood } from "react-icons/md";
-import { FaCoins } from "react-icons/fa";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { Check, ChefHat, RefreshCw } from "lucide-react";
@@ -53,6 +51,7 @@ type Recipe = {
 };
 
 type StreamPhase = "idle" | "connecting" | "streaming" | "saving" | "done" | "error";
+type TabId = "ingredients" | "steps" | "macros";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -115,7 +114,7 @@ function parseStreamingRecipe(text: string): Partial<Recipe> {
 const RecipesContent: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const isGenerating = searchParams.get("generating") === "true";
   const recipeIdParam = searchParams.get("id");
@@ -139,9 +138,12 @@ const RecipesContent: React.FC = () => {
   // ── UI state ──
   const [showCookingMode, setShowCookingMode] = useState(false);
   const [showFirstRecipeModal, setShowFirstRecipeModal] = useState(false);
+  const [activeTab, setActiveTab] = useState<TabId>("ingredients");
 
   // Ref to skip API refetch for a recipe we just streamed
   const justStreamedIdRef = useRef<string | null>(null);
+  // Ref to prevent StrictMode double-invocation of startStreaming
+  const streamStartedRef = useRef(false);
 
   // ─── Background image generation ──────────────────────────────────────────
 
@@ -166,8 +168,11 @@ const RecipesContent: React.FC = () => {
 
       const imageData = await imageRes.json().catch(() => ({}));
       if (imageRes.ok && imageData?.img_url) {
+        // maxBytes targets the BINARY size, but Firestore stores the base64 STRING
+        // which is 4/3 larger. Firestore doc limit = 1MB total, so:
+        //   700_000 binary → ~933_333 base64 chars → leaves ~115KB for recipe text ✓
         const compressed = await compressDataUrlToJpeg(imageData.img_url, {
-          maxBytes: 1_000_000, maxWidth: 1024, maxHeight: 1024,
+          maxBytes: 700_000, maxWidth: 1024, maxHeight: 1024,
         });
 
         const updatedRecipe = { ...recipeData, img_url: compressed };
@@ -231,8 +236,9 @@ const RecipesContent: React.FC = () => {
 
       const { id: recipeId } = await saveRes.json();
 
-      // Set recipe directly to avoid refetch flash
+      // Set recipe directly to avoid refetch flash; clear partial to avoid stale flicker
       justStreamedIdRef.current = recipeId;
+      setPartialRecipe(null);
       setRecipe(fullRecipe);
       setStreamPhase("done");
 
@@ -288,7 +294,7 @@ const RecipesContent: React.FC = () => {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${idToken}`,
-          "Accept-Language": navigator.language || "es",
+          "Accept-Language": i18n.language || "es",
         },
         body: JSON.stringify(formData),
       });
@@ -325,7 +331,6 @@ const RecipesContent: React.FC = () => {
           try { event = JSON.parse(line.slice(6)); } catch { continue; }
 
           if (event.type === "deducted") {
-            // Refresh user context via the existing token_update event
             window.dispatchEvent(new Event("token_update"));
           }
 
@@ -358,6 +363,10 @@ const RecipesContent: React.FC = () => {
   // Start streaming when ?generating=true
   useEffect(() => {
     if (!isGenerating) return;
+    // Guard against React StrictMode double-invocation: two concurrent streams
+    // would alternate setPartialRecipe calls causing text to flicker between recipes
+    if (streamStartedRef.current) return;
+    streamStartedRef.current = true;
 
     const raw = typeof window !== "undefined"
       ? sessionStorage.getItem("pendingGenerationData")
@@ -381,17 +390,15 @@ const RecipesContent: React.FC = () => {
 
   // Fetch recipe by ID (or load from sessionStorage)
   useEffect(() => {
-    if (isGenerating) return; // handled by streaming effect
+    if (isGenerating) return;
 
     if (recipeIdParam) {
-      // Skip fetch if we just streamed this recipe
       if (justStreamedIdRef.current === recipeIdParam) {
         justStreamedIdRef.current = null;
         return;
       }
       fetchRecipeById(recipeIdParam);
     } else {
-      // Fall back to sessionStorage
       const stored =
         typeof window !== "undefined" ? sessionStorage.getItem("generatedRecipe") : null;
       if (stored) {
@@ -405,7 +412,9 @@ const RecipesContent: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recipeIdParam, isGenerating]);
 
-  // Poll for image updates from background generation (legacy fallback)
+  // Poll sessionStorage for image — only updates imageSrc, never recipe state
+  // (generateImageInBackground already calls setImageSrc+setRecipe when it succeeds;
+  //  this is a safety fallback for cases where the component remounts mid-generation)
   useEffect(() => {
     if (!recipe || imageSrc) return;
     if (recipe.titulo?.startsWith("ERROR:")) return;
@@ -413,29 +422,25 @@ const RecipesContent: React.FC = () => {
     let retryCount = 0;
     const maxRetries = 20;
 
-    const checkForImage = () => {
+    const interval = setInterval(() => {
       retryCount++;
       const stored =
         typeof window !== "undefined" ? sessionStorage.getItem("generatedRecipe") : null;
       if (stored) {
-        const parsed: Recipe = JSON.parse(stored);
-        if (parsed.img_url) {
-          setImageSrc(parsed.img_url);
-          setRecipe(parsed);
-          return true;
-        }
+        try {
+          const parsed: Recipe = JSON.parse(stored);
+          if (parsed.img_url) {
+            setImageSrc(parsed.img_url);
+            clearInterval(interval);
+            return;
+          }
+        } catch { /* ignore */ }
       }
-      if (retryCount >= maxRetries) return false;
-      return false;
-    };
-
-    checkForImage();
-    const interval = setInterval(() => {
-      if (checkForImage()) clearInterval(interval);
+      if (retryCount >= maxRetries) clearInterval(interval);
     }, 2000);
 
     return () => clearInterval(interval);
-  }, [recipe, imageSrc]);
+  }, [recipe?.titulo, imageSrc]); // depend on titulo (stable ID) not the whole recipe object
 
   // ─── Fetch by ID ──────────────────────────────────────────────────────────
 
@@ -500,15 +505,16 @@ const RecipesContent: React.FC = () => {
   };
 
   const getCuisineIcon = (style: string | null) => {
+    const cls = "w-3.5 h-3.5 text-[var(--highlight)]";
     switch (style) {
-      case "japanese": return <GiSushis className="w-6 h-6 text-[var(--highlight)]" />;
-      case "mexican": return <GiTacos className="w-6 h-6 text-[var(--highlight)]" />;
-      case "italian": return <GiPizzaSlice className="w-6 h-6 text-[var(--highlight)]" />;
-      case "american": return <GiHamburger className="w-6 h-6 text-[var(--highlight)]" />;
-      case "spanish": return <GiBowlOfRice className="w-6 h-6 text-[var(--highlight)]" />;
-      case "jamaican": return <GiChopsticks className="w-6 h-6 text-[var(--highlight)] rotate-45" />;
-      case "indian": return <MdOutlineFastfood className="w-6 h-6 text-[var(--highlight)]" />;
-      default: return <IoRestaurantOutline className="w-6 h-6 text-[var(--highlight)]" />;
+      case "japanese": return <GiSushis className={cls} />;
+      case "mexican": return <GiTacos className={cls} />;
+      case "italian": return <GiPizzaSlice className={cls} />;
+      case "american": return <GiHamburger className={cls} />;
+      case "spanish": return <GiBowlOfRice className={cls} />;
+      case "jamaican": return <GiChopsticks className={`${cls} rotate-45`} />;
+      case "indian": return <MdOutlineFastfood className={cls} />;
+      default: return <IoRestaurantOutline className={cls} />;
     }
   };
 
@@ -523,46 +529,74 @@ const RecipesContent: React.FC = () => {
   // ─── Render helpers ───────────────────────────────────────────────────────
 
   const Skeleton = ({ className }: { className?: string }) => (
-    <div className={`animate-pulse bg-gray-200 rounded-lg ${className ?? ""}`} />
+    <div className={`animate-pulse bg-gray-200/80 rounded-lg ${className ?? ""}`} />
   );
 
-  // ─── Stream: connecting / early streaming ─────────────────────────────────
-
-  if (streamPhase === "connecting" || (streamPhase === "streaming" && !partialRecipe?.titulo)) {
-    return (
-      <div className="min-h-screen bg-[var(--background)] flex flex-col items-center justify-center gap-6 px-4">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-        >
-          <ChefHat className="w-16 h-16 text-[var(--highlight)]" />
-        </motion.div>
-        <h2 className="text-2xl font-bold text-[var(--foreground)] text-center">
-          Creando tu receta...
-        </h2>
-        <div className="w-64 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-          <motion.div
-            className="h-full bg-gradient-to-r from-[var(--highlight)] to-[var(--highlight-dark)] rounded-full"
-            animate={{ x: ["-100%", "100%"] }}
-            transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
+  const DotsLoader = ({ text }: { text?: string }) => (
+    <div className="flex items-center gap-3">
+      <div className="flex gap-1.5">
+        {[0, 1, 2].map((i) => (
+          <motion.span
+            key={i}
+            className="w-2 h-2 rounded-full bg-[var(--highlight)]"
+            animate={{ y: [0, -7, 0] }}
+            transition={{ duration: 0.7, delay: i * 0.15, repeat: Infinity, ease: "easeInOut" }}
           />
-        </div>
-        <p className="text-sm text-[var(--foreground)]/50">Analizando ingredientes y generando pasos...</p>
+        ))}
       </div>
-    );
-  }
+      {text && <p className="text-sm font-medium text-[var(--foreground)]/60">{text}</p>}
+    </div>
+  );
 
-  // ─── Stream: error ────────────────────────────────────────────────────────
+  const Chip = ({
+    icon,
+    label,
+    colorClass,
+  }: {
+    icon?: React.ReactNode;
+    label: string;
+    colorClass?: string;
+  }) => (
+    <span
+      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium ${
+        colorClass ?? "bg-[var(--primary)]/8 text-[var(--foreground)]"
+      }`}
+    >
+      {icon}
+      {label}
+    </span>
+  );
+
+  const DifficultyChip = ({ dificultad }: { dificultad: string }) => {
+    const isEasy = dificultad === "Principiante" || dificultad === "Beginner";
+    const isMedium = dificultad === "Intermedio" || dificultad === "Intermediate";
+    const colorClass = isEasy
+      ? "bg-green-100 text-green-700"
+      : isMedium
+      ? "bg-yellow-100 text-yellow-700"
+      : "bg-purple-100 text-purple-700";
+    return (
+      <span
+        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium ${colorClass}`}
+      >
+        <GiChefToque className="w-3.5 h-3.5" />
+        {t(`recipeDetail.difficulty.levels.${getDifficultyKey(dificultad)}`)}
+      </span>
+    );
+  };
+
+  // ─── Early returns ─────────────────────────────────────────────────────────
 
   if (streamPhase === "error") {
     return (
-      <div className="min-h-screen bg-[var(--background)] flex items-center justify-center px-4">
+      <div className="min-h-screen bg-[var(--background)] flex items-center justify-center px-4 pt-16">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.25, ease: "easeOut" }}
           className="bg-white rounded-3xl shadow-xl p-8 max-w-md w-full text-center"
         >
-          <IoWarningOutline className="w-16 h-16 text-red-500 mx-auto mb-4" />
+          <IoWarningOutline className="w-14 h-14 text-red-500 mx-auto mb-4" />
           <h2 className="text-xl font-bold text-[var(--foreground)] mb-2">
             Error al generar la receta
           </h2>
@@ -570,7 +604,7 @@ const RecipesContent: React.FC = () => {
           <div className="flex flex-col gap-3">
             <button
               onClick={handleRetryStream}
-              className="flex items-center justify-center gap-2 w-full py-3 px-6 bg-gradient-to-r from-[var(--highlight)] to-[var(--highlight-dark)] text-white rounded-full font-semibold shadow-lg hover:shadow-xl transition-all"
+              className="flex items-center justify-center gap-2 w-full py-3 px-6 bg-gradient-to-r from-[var(--highlight)] to-[var(--highlight-dark)] text-white rounded-full font-semibold shadow-md hover:shadow-lg transition-all"
             >
               <RefreshCw className="w-4 h-4" />
               Reintentar
@@ -587,26 +621,19 @@ const RecipesContent: React.FC = () => {
     );
   }
 
-  // ─── Normal loading (no stream) ───────────────────────────────────────────
-
   if (loadingRecipe || (!recipe && !partialRecipe && streamPhase === "idle")) {
     return (
-      <div className="min-h-screen bg-[var(--background)] flex items-center justify-center">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
-          className="w-16 h-16 border-4 border-t-4 border-[var(--primary)] border-t-transparent rounded-full"
-        />
-        <p className="ml-4 text-xl font-semibold text-[var(--foreground)]">
-          {t("recipeDetail.loadingRecipe")}
-        </p>
+      <div className="min-h-screen bg-[var(--background)] flex items-center justify-center pt-16">
+        <div className="flex flex-col items-center gap-4">
+          <DotsLoader />
+          <p className="text-sm text-[var(--foreground)]/60">{t("recipeDetail.loadingRecipe")}</p>
+        </div>
       </div>
     );
   }
 
-  // ─── Decide which recipe data to display ──────────────────────────────────
+  // ─── Derived display state ────────────────────────────────────────────────
 
-  // During saving phase, show partialRecipe (full accumulated). After done, show recipe.
   const displayRecipe: Partial<Recipe> | null =
     streamPhase === "streaming" || streamPhase === "saving"
       ? partialRecipe
@@ -614,456 +641,441 @@ const RecipesContent: React.FC = () => {
 
   const isErrorRecipe = displayRecipe?.titulo?.startsWith("ERROR:") ?? false;
   const isStreaming = streamPhase === "streaming" || streamPhase === "saving";
+  const isLoadingContent =
+    streamPhase === "connecting" || (streamPhase === "streaming" && !partialRecipe?.titulo);
 
-  // ─── Main recipe view ─────────────────────────────────────────────────────
+  const hasMacros = !!((recipe ?? partialRecipe) as Recipe | null)?.macronutrientes;
+  const hasInstructions = (((recipe ?? partialRecipe)?.instrucciones?.length) ?? 0) > 0;
+
+  const cookingInstructions = (recipe ?? partialRecipe)?.instrucciones ?? [];
+  const cookingTitle = (recipe ?? partialRecipe)?.titulo ?? "";
+
+  const tabs: TabId[] = ["ingredients", "steps", ...(hasMacros ? (["macros"] as TabId[]) : [])];
+
+  // ─── Main layout ──────────────────────────────────────────────────────────
 
   return (
     <>
-      <div className="min-h-screen bg-[var(--background)] py-[5%] flex items-center justify-center font-sans">
+      {/* Page wrapper
+          pt-20/pt-24 → clears fixed header (h-16=64px) + breathing room
+          md:pr-16    → compensates sidebar w-24 (96px) vs main ml-20 (80px):
+                        shifts centering point 32px left so card is visually
+                        centered in the available space after the sidebar */}
+      <div className="min-h-screen bg-[var(--background)] flex items-start justify-center px-4 pt-20 pb-6 md:pr-16 lg:pt-24 lg:pb-10">
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
+          initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="w-full px-4 lg:px-8 xl:px-12 bg-white rounded-3xl shadow-xl py-4 md:py-8 max-w-screen-xl mx-auto"
+          transition={{ duration: 0.25, ease: "easeOut" }}
+          className="w-full max-w-screen-xl bg-white rounded-2xl sm:rounded-3xl overflow-hidden flex flex-col lg:h-[720px] lg:max-h-[calc(100vh-4rem)]"
+          style={{ border: "1px solid #E5E5E3", boxShadow: "0 1px 3px rgba(0,0,0,0.06), 0 8px 32px rgba(0,0,0,0.06)" }}
         >
-          <div className="flex flex-col space-y-8">
-            {/* Back Button — hidden during active streaming */}
-            {!isStreaming && (
-              <motion.button
-                type="button"
-                onClick={handleGoBack}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="flex items-center self-start px-6 py-3 bg-[var(--primary)] text-[var(--text2)] rounded-full shadow-md hover:bg-[var(--primary)]/80 transition-colors text-lg font-semibold"
-              >
-                <IoArrowBackCircleOutline className="w-6 h-6 mr-2" />
+          {/* ── HEADER BAR ─────────────────────────────────────────────────── */}
+          <div className="flex-none h-14 flex items-center justify-between px-4 border-b border-[#E5E5E3]">
+            {/* Back button */}
+            <button
+              type="button"
+              onClick={handleGoBack}
+              className="flex items-center gap-1.5 text-sm font-semibold text-[var(--foreground)]/60 hover:text-[var(--foreground)] transition-colors"
+            >
+              <IoArrowBackCircleOutline className="w-5 h-5 flex-none" />
+              <span className="hidden sm:inline">
                 {recipeIdParam
                   ? t("recipeDetail.backButton.toRecipes")
                   : t("recipeDetail.backButton.toForm")}
-              </motion.button>
-            )}
+              </span>
+            </button>
 
-            {/* Recipe Header */}
-            <section className="text-center mb-6">
-              {isStreaming && !displayRecipe?.titulo ? (
-                <Skeleton className="h-10 w-3/4 mx-auto mb-4" />
-              ) : (
+            {/* Truncated title — desktop only */}
+            <p className="hidden lg:block text-sm font-medium text-[var(--foreground)]/40 truncate max-w-xs mx-4 flex-1">
+              {displayRecipe?.titulo ?? ""}
+            </p>
+
+            {/* Action buttons */}
+            <div className="flex items-center gap-2">
+              {hasInstructions && (
+                <button
+                  type="button"
+                  onClick={() => setShowCookingMode(true)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold bg-[var(--highlight)] text-white hover:bg-[var(--highlight-dark)] transition-colors"
+                >
+                  <ChefHat className="w-4 h-4 flex-none" />
+                  <span className="hidden sm:inline">Modo Cocina</span>
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={handleGenerateAnother}
+                disabled={isStreaming}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed text-[#6B7280] hover:text-[#111111] hover:border-[#f97316]/40"
+                style={{ border: "1px solid #E5E5E3" }}
+              >
+                <RefreshCw className="w-3.5 h-3.5 flex-none" />
+                <span className="hidden sm:inline">
+                  {recipeIdParam
+                    ? t("recipeDetail.actions.goToKitchen")
+                    : t("recipeDetail.actions.generateAnother")}
+                </span>
+              </button>
+            </div>
+          </div>
+
+          {/* ── BODY ───────────────────────────────────────────────────────── */}
+          <div className="flex-1 min-h-0 flex flex-col lg:flex-row">
+
+            {/* LEFT PANEL — Image */}
+            <div className="flex-none lg:w-2/5 relative overflow-hidden bg-gray-100">
+              {/* Aspect ratio on mobile; absolute fill on desktop */}
+              <div className="aspect-[4/3] lg:aspect-auto lg:absolute lg:inset-0 relative">
+                {imageSrc ? (
+                  <Image
+                    key={imageKey}
+                    src={imageSrc}
+                    alt={displayRecipe?.titulo ?? "Receta"}
+                    fill
+                    className="object-cover"
+                    unoptimized
+                    onError={handleImageError}
+                  />
+                ) : (
+                  <div className="absolute inset-0 bg-gradient-to-br from-gray-100 via-gray-50 to-gray-200 animate-pulse" />
+                )}
+
+                {/* Image generation badges */}
                 <AnimatePresence>
-                  <motion.h1
-                    key={displayRecipe?.titulo ?? "loading"}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="text-4xl md:text-5xl font-extrabold text-[var(--foreground)] mb-4 leading-tight font-[Fraunces]"
-                  >
-                    {isErrorRecipe ? (
-                      <span className="text-red-600 flex items-center justify-center">
-                        <IoWarningOutline className="w-10 h-10 mr-3" />
-                        {displayRecipe?.titulo}
-                      </span>
-                    ) : (
-                      displayRecipe?.titulo ?? ""
-                    )}
-                  </motion.h1>
+                  {imageGenerating && !imageDone && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0 }}
+                      className="absolute bottom-3 right-3 flex items-center gap-2 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs font-medium shadow-md"
+                    >
+                      <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse" />
+                      Generando imagen...
+                    </motion.div>
+                  )}
+                  {imageDone && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="absolute bottom-3 right-3 flex items-center gap-2 bg-green-500/90 text-white px-3 py-1.5 rounded-full text-xs font-medium shadow-md"
+                    >
+                      <Check className="w-3.5 h-3.5" /> Imagen lista
+                    </motion.div>
+                  )}
                 </AnimatePresence>
-              )}
+              </div>
+            </div>
 
-              {isStreaming && !displayRecipe?.descripcion ? (
-                <div className="space-y-2 max-w-2xl mx-auto">
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-4 w-5/6 mx-auto" />
+            {/* RIGHT PANEL — Content */}
+            <div className="flex-1 min-h-0 lg:overflow-y-auto flex flex-col gap-3 p-4 lg:p-6">
+
+              {isLoadingContent ? (
+                /* ── Skeleton loading state ── */
+                <div className="flex flex-col gap-3">
+                  <DotsLoader text="Preparando tu receta..." />
+                  <Skeleton className="h-8 w-3/4 mt-1" />
+                  <div className="space-y-1.5">
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-5/6" />
+                    <Skeleton className="h-4 w-3/4" />
+                  </div>
+                  <div className="flex gap-2 flex-wrap">
+                    <Skeleton className="h-7 w-20 rounded-full" />
+                    <Skeleton className="h-7 w-16 rounded-full" />
+                    <Skeleton className="h-7 w-24 rounded-full" />
+                  </div>
+                  <div className="flex gap-1 pb-1 border-b border-gray-100">
+                    <Skeleton className="h-9 flex-1 rounded-lg" />
+                    <Skeleton className="h-9 flex-1 rounded-lg" />
+                  </div>
+                  <div className="space-y-2.5">
+                    {[...Array(6)].map((_, i) => (
+                      <Skeleton key={i} className="h-5 w-full" />
+                    ))}
+                  </div>
                 </div>
               ) : (
-                <AnimatePresence>
-                  <motion.p
-                    key={displayRecipe?.descripcion ?? "desc-loading"}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="text-lg md:text-xl text-[var(--foreground)]/80 max-w-3xl mx-auto italic"
-                  >
-                    {displayRecipe?.descripcion ?? ""}
-                  </motion.p>
-                </AnimatePresence>
-              )}
-            </section>
-
-            {/* Hero Image with live badge */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="relative w-full h-64 md:h-96 rounded-2xl overflow-hidden shadow-lg mb-8"
-            >
-              {imageSrc ? (
-                <Image
-                  key={imageKey}
-                  src={imageSrc}
-                  alt={displayRecipe?.titulo ?? "Receta"}
-                  fill
-                  className="object-cover"
-                  unoptimized
-                  onError={handleImageError}
-                />
-              ) : (
-                <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-pulse" />
-              )}
-
-              {/* Live image generation badge */}
-              <AnimatePresence>
-                {imageGenerating && !imageDone && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    className="absolute bottom-3 right-3 flex items-center gap-2 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full text-sm font-medium shadow-lg"
-                  >
-                    <span className="w-2 h-2 rounded-full bg-orange-400 animate-pulse" />
-                    Generando imagen...
-                  </motion.div>
-                )}
-                {imageDone && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="absolute bottom-3 right-3 flex items-center gap-2 bg-green-500/90 text-white px-3 py-1.5 rounded-full text-sm font-medium shadow-lg"
-                  >
-                    <Check className="w-4 h-4" /> Imagen lista
-                  </motion.div>
-                )}
-                {/* Fallback badge when no streaming image but no src yet */}
-                {!isStreaming && !imageSrc && !imageGenerating && !imageDone && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="absolute inset-0 bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center"
-                  >
-                    <div className="bg-white/90 p-4 rounded-2xl flex flex-col items-center space-y-3">
-                      <motion.div
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
-                        className="w-8 h-8 border-2 border-t-2 border-[var(--primary)] border-t-transparent rounded-full"
-                      />
-                      <p className="text-sm font-medium text-[var(--foreground)] text-center">
-                        {t("recipeDetail.loading.generatingImage")}
-                      </p>
+                /* ── Real content ── */
+                <>
+                  {/* Title */}
+                  {isErrorRecipe ? (
+                    <div className="flex items-center gap-2 text-red-600">
+                      <IoWarningOutline className="w-6 h-6 flex-none" />
+                      <h1 className="text-xl font-bold font-[Fraunces]">{displayRecipe?.titulo}</h1>
                     </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.div>
+                  ) : (
+                    <AnimatePresence mode="wait">
+                      <motion.h1
+                        key={displayRecipe?.titulo ?? "title"}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.25, ease: "easeOut" }}
+                        className="text-2xl lg:text-3xl font-extrabold text-[var(--foreground)] leading-tight font-[Fraunces]"
+                      >
+                        {displayRecipe?.titulo ?? ""}
+                      </motion.h1>
+                    </AnimatePresence>
+                  )}
 
-            {/* Metadata Section */}
-            {!isErrorRecipe && (
-              <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                <div className="bg-[var(--primary)]/10 p-4 rounded-xl shadow-sm flex items-center space-x-3">
-                  <IoTimeOutline className="w-8 h-8 text-[var(--primary)]" />
-                  <div>
-                    <h3 className="text-md font-semibold text-[var(--foreground)]">
-                      {t("recipeDetail.metadata.totalTime")}
-                    </h3>
-                    {isStreaming && !displayRecipe?.tiempo_total_min ? (
-                      <Skeleton className="h-6 w-16 mt-1" />
-                    ) : (
-                      <p className="text-lg font-bold text-[var(--primary)]">
-                        {displayRecipe?.tiempo_total_min ?? "—"} min
-                      </p>
-                    )}
-                  </div>
-                </div>
+                  {/* Description */}
+                  {displayRecipe?.descripcion && (
+                    <motion.p
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.25 }}
+                      className="text-sm leading-relaxed text-[var(--foreground)]/70 italic line-clamp-3"
+                    >
+                      {displayRecipe.descripcion}
+                    </motion.p>
+                  )}
 
-                <div className="bg-[var(--highlight)]/10 p-4 rounded-xl shadow-sm flex items-center space-x-3">
-                  <IoPeopleOutline className="w-8 h-8 text-[var(--highlight)]" />
-                  <div>
-                    <h3 className="text-md font-semibold text-[var(--foreground)]">
-                      {t("recipeDetail.metadata.portions")}
-                    </h3>
-                    {isStreaming && !displayRecipe?.porciones ? (
-                      <Skeleton className="h-6 w-8 mt-1" />
-                    ) : (
-                      <p className="text-lg font-bold text-[var(--highlight)]">
-                        {displayRecipe?.porciones ?? "—"}
-                      </p>
-                    )}
-                  </div>
-                </div>
+                  {/* Meta chips */}
+                  {!isErrorRecipe && (
+                    <div className="flex items-center gap-2 flex-wrap">
+                      {displayRecipe?.tiempo_total_min ? (
+                        <Chip
+                          icon={<IoTimeOutline className="w-3.5 h-3.5" />}
+                          label={`${displayRecipe.tiempo_total_min} min`}
+                          colorClass="bg-[var(--primary)]/8 text-[var(--foreground)]"
+                        />
+                      ) : isStreaming ? (
+                        <Skeleton className="h-7 w-20 rounded-full" />
+                      ) : null}
 
-                {(recipe as Recipe)?.estilo && (
-                  <div className="bg-[var(--highlight)]/10 p-4 rounded-xl shadow-sm flex items-center space-x-3">
-                    {getCuisineIcon((recipe as Recipe).estilo)}
-                    <div>
-                      <h3 className="text-md font-semibold text-[var(--foreground)]">
-                        {t("recipeDetail.metadata.style")}
-                      </h3>
-                      <p className="text-lg font-bold text-[var(--highlight)] capitalize">
-                        {(recipe as Recipe).estilo}
-                      </p>
+                      {displayRecipe?.porciones ? (
+                        <Chip
+                          icon={<IoPeopleOutline className="w-3.5 h-3.5" />}
+                          label={`${displayRecipe.porciones} pax`}
+                          colorClass="bg-[var(--highlight)]/8 text-[var(--foreground)]"
+                        />
+                      ) : isStreaming ? (
+                        <Skeleton className="h-7 w-16 rounded-full" />
+                      ) : null}
+
+                      {(recipe ?? (partialRecipe as any))?.dificultad && (
+                        <DifficultyChip dificultad={(recipe ?? (partialRecipe as any)).dificultad} />
+                      )}
+
+                      {(recipe as Recipe)?.estilo && (
+                        <Chip
+                          icon={getCuisineIcon((recipe as Recipe).estilo)}
+                          label={(recipe as Recipe).estilo!}
+                          colorClass="bg-[var(--highlight)]/8 text-[var(--foreground)] capitalize"
+                        />
+                      )}
+
+                      {(recipe as Recipe)?.restricciones?.map((r, i) => (
+                        <Chip
+                          key={i}
+                          label={getRestrictionLabel(r)}
+                          colorClass="bg-[var(--highlight)]/8 text-[var(--foreground)]"
+                        />
+                      ))}
                     </div>
-                  </div>
-                )}
+                  )}
 
-                {(recipe as Recipe)?.restricciones?.length > 0 && (
-                  <div className="bg-[var(--highlight)]/10 p-4 rounded-xl shadow-sm flex items-center space-x-3">
-                    <GiFruitBowl className="w-8 h-8 text-[var(--highlight)]" />
-                    <div>
-                      <h3 className="text-md font-semibold text-[var(--foreground)]">
-                        {t("recipeDetail.metadata.restrictions")}
-                      </h3>
-                      <div className="flex flex-wrap gap-1">
-                        {(recipe as Recipe).restricciones.map((r, i) => (
+                  {/* Excluded ingredients */}
+                  {!isErrorRecipe && (recipe as Recipe)?.excluidos?.length > 0 && (
+                    <div className="flex items-start gap-2 flex-wrap">
+                      <MdOutlineNoFood className="w-4 h-4 text-red-400 flex-none mt-0.5" />
+                      <div className="flex flex-wrap gap-1.5">
+                        {(recipe as Recipe).excluidos.map((ex, i) => (
                           <span
                             key={i}
-                            className="text-sm font-bold text-[var(--highlight)] bg-[var(--highlight)]/20 px-2 py-0.5 rounded-full"
+                            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700"
                           >
-                            {getRestrictionLabel(r)}
+                            {ex}
                           </span>
                         ))}
                       </div>
                     </div>
-                  </div>
-                )}
-
-                {/* Dificultad */}
-                {(recipe as Recipe)?.dificultad && (
-                  <div
-                    className="p-4 rounded-xl shadow-sm flex items-center space-x-3"
-                    style={{
-                      background:
-                        (recipe as Recipe).dificultad === "Principiante" ||
-                        (recipe as Recipe).dificultad === "Beginner"
-                          ? "rgba(16,185,129,0.08)"
-                          : (recipe as Recipe).dificultad === "Intermedio" ||
-                            (recipe as Recipe).dificultad === "Intermediate"
-                          ? "rgba(250,204,21,0.08)"
-                          : "rgba(139,92,246,0.06)",
-                    }}
-                  >
-                    <div
-                      className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                        (recipe as Recipe).dificultad === "Principiante" ||
-                        (recipe as Recipe).dificultad === "Beginner"
-                          ? "bg-green-100 text-green-600"
-                          : (recipe as Recipe).dificultad === "Intermedio" ||
-                            (recipe as Recipe).dificultad === "Intermediate"
-                          ? "bg-yellow-100 text-yellow-600"
-                          : "bg-purple-100 text-purple-600"
-                      }`}
-                    >
-                      <GiChefToque className="w-6 h-6" />
-                    </div>
-                    <div>
-                      <h3 className="text-md font-semibold text-[var(--foreground)]">
-                        {t("recipeDetail.difficulty.title")}
-                      </h3>
-                      <p
-                        className="text-lg font-bold"
-                        style={{
-                          color:
-                            (recipe as Recipe).dificultad === "Principiante" ||
-                            (recipe as Recipe).dificultad === "Beginner"
-                              ? "var(--success)"
-                              : (recipe as Recipe).dificultad === "Intermedio" ||
-                                (recipe as Recipe).dificultad === "Intermediate"
-                              ? "var(--highlight)"
-                              : "var(--primary)",
-                        }}
-                      >
-                        {t(
-                          `recipeDetail.difficulty.levels.${getDifficultyKey(
-                            (recipe as Recipe).dificultad
-                          )}`
-                        )}
-                      </p>
-                      <p className="text-xs text-[var(--muted)] mt-1">
-                        {t(
-                          `recipeDetail.difficulty.descriptions.${getDifficultyKey(
-                            (recipe as Recipe).dificultad
-                          )}`
-                        )}
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                {/* Macronutrientes */}
-                {(recipe as Recipe)?.macronutrientes && (
-                  <div className="bg-[var(--primary)]/10 p-4 rounded-xl shadow-sm flex flex-col space-y-2">
-                    <h3 className="text-md font-semibold text-[var(--foreground)] flex items-center">
-                      <MdOutlineFastfood className="w-6 h-6 mr-2 text-[var(--primary)]" />
-                      {t("recipeDetail.macronutrients.title")}
-                    </h3>
-                    <div className="grid grid-cols-2 gap-2 text-sm">
-                      <span className="text-[var(--foreground)]">{t("recipeDetail.macronutrients.calories")}:</span>
-                      <span className="font-bold text-[var(--primary)]">
-                        {(recipe as Recipe).macronutrientes!.calorias ?? "-"} kcal
-                      </span>
-                      <span className="text-[var(--foreground)]">{t("recipeDetail.macronutrients.protein")}:</span>
-                      <span className="font-bold text-[var(--primary)]">
-                        {(recipe as Recipe).macronutrientes!.proteinas_g ?? "-"} g
-                      </span>
-                      <span className="text-[var(--foreground)]">{t("recipeDetail.macronutrients.carbs")}:</span>
-                      <span className="font-bold text-[var(--primary)]">
-                        {(recipe as Recipe).macronutrientes!.carbohidratos_g ?? "-"} g
-                      </span>
-                      <span className="text-[var(--foreground)]">{t("recipeDetail.macronutrients.fats")}:</span>
-                      <span className="font-bold text-[var(--primary)]">
-                        {(recipe as Recipe).macronutrientes!.grasas_g ?? "-"} g
-                      </span>
-                    </div>
-                  </div>
-                )}
-              </section>
-            )}
-
-            {/* Ingredients & Instructions */}
-            {!isErrorRecipe && (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Ingredients */}
-                <section className="bg-[var(--background)] p-6 rounded-2xl shadow-inner">
-                  <h2 className="text-3xl font-bold text-[var(--foreground)] mb-6 flex items-center">
-                    <span className="mr-3 text-[var(--highlight)] text-4xl">🥕</span>
-                    {t("recipeDetail.sections.ingredients.title")}
-                  </h2>
-                  {isStreaming && !displayRecipe?.ingredientes?.length ? (
-                    <div className="space-y-3">
-                      {[...Array(5)].map((_, i) => (
-                        <Skeleton key={i} className="h-6 w-full" />
-                      ))}
-                    </div>
-                  ) : (
-                    <ul className="list-none space-y-3">
-                      {(displayRecipe?.ingredientes ?? []).map((ingredient, index) => (
-                        <motion.li
-                          key={index}
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ duration: 0.3, delay: index * 0.05 }}
-                          className="flex items-start text-lg text-[var(--foreground)] border-b border-[var(--foreground)]/20 pb-2 last:border-b-0"
-                        >
-                          <span className="text-[var(--primary)] mr-3 mt-1">●</span>
-                          {`${ingredient.cantidad ?? ""}${
-                            ingredient.cantidad && ingredient.unidad
-                              ? ` ${ingredient.unidad}`
-                              : ""
-                          }: ${ingredient.nombre}`}
-                        </motion.li>
-                      ))}
-                    </ul>
                   )}
-                </section>
 
-                {/* Instructions */}
-                <section className="bg-[var(--background)] p-6 rounded-2xl shadow-inner">
-                  <h2 className="text-3xl font-bold text-[var(--foreground)] mb-6 flex items-center">
-                    <span className="mr-3 text-[var(--highlight)] text-4xl">👨‍🍳</span>
-                    {t("recipeDetail.sections.instructions.title")}
-                  </h2>
-                  {isStreaming && !displayRecipe?.instrucciones?.length ? (
-                    <div className="space-y-4">
-                      {[...Array(4)].map((_, i) => (
-                        <Skeleton key={i} className="h-16 w-full" />
-                      ))}
+                  {/* Tabs — Ingredientes / Pasos / Macros */}
+                  {!isErrorRecipe && (
+                    <div className="flex-1 flex flex-col min-h-0">
+                      {/* Tab bar */}
+                      <div className="flex border-b border-[#E5E5E3] flex-none">
+                        {tabs.map((tab) => (
+                          <button
+                            key={tab}
+                            type="button"
+                            onClick={() => setActiveTab(tab)}
+                            className={`flex-1 py-2.5 text-sm font-semibold relative transition-colors duration-200 ${
+                              activeTab === tab
+                                ? "text-[#f97316]"
+                                : "text-[#6B7280] hover:text-[#111111]"
+                            }`}
+                          >
+                            {tab === "ingredients" && (
+                              <>
+                                🥕 {t("recipeDetail.sections.ingredients.title")}
+                                {displayRecipe?.ingredientes?.length
+                                  ? ` (${displayRecipe.ingredientes.length})`
+                                  : ""}
+                              </>
+                            )}
+                            {tab === "steps" && (
+                              <>
+                                👨‍🍳 {t("recipeDetail.sections.instructions.title")}
+                                {displayRecipe?.instrucciones?.length
+                                  ? ` (${displayRecipe.instrucciones.length})`
+                                  : ""}
+                              </>
+                            )}
+                            {tab === "macros" && "📊 Macros"}
+                            {activeTab === tab && (
+                              <motion.div
+                                layoutId="recipeTab"
+                                className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#f97316]"
+                              />
+                            )}
+                          </button>
+                        ))}
+                      </div>
+
+                      {/* Tab content */}
+                      <div className="flex-1 pt-3 pb-4">
+                        <AnimatePresence mode="wait">
+                          {activeTab === "ingredients" && (
+                            <motion.div
+                              key="ingredients"
+                              initial={{ opacity: 0, y: 4 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: -4 }}
+                              transition={{ duration: 0.18 }}
+                            >
+                              {isStreaming && !displayRecipe?.ingredientes?.length ? (
+                                <div className="space-y-2">
+                                  {[...Array(6)].map((_, i) => (
+                                    <Skeleton key={i} className="h-5 w-full" />
+                                  ))}
+                                </div>
+                              ) : (
+                                <ul className="space-y-1.5">
+                                  {(displayRecipe?.ingredientes ?? []).map((ing, i) => (
+                                    <motion.li
+                                      key={i}
+                                      initial={{ opacity: 0, x: -8 }}
+                                      animate={{ opacity: 1, x: 0 }}
+                                      transition={{ duration: 0.2, delay: i * 0.03 }}
+                                      className="flex items-start gap-2.5 text-sm text-[var(--foreground)] py-1.5 border-b border-[var(--foreground)]/8 last:border-0"
+                                    >
+                                      <span className="w-1.5 h-1.5 rounded-full bg-[var(--primary)] flex-none mt-1.5" />
+                                      <span>
+                                        <span className="font-medium">
+                                          {ing.cantidad}
+                                          {ing.cantidad && ing.unidad ? ` ${ing.unidad}` : ""}
+                                        </span>
+                                        {" "}
+                                        {ing.nombre}
+                                      </span>
+                                    </motion.li>
+                                  ))}
+                                </ul>
+                              )}
+                            </motion.div>
+                          )}
+
+                          {activeTab === "steps" && (
+                            <motion.div
+                              key="steps"
+                              initial={{ opacity: 0, y: 4 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: -4 }}
+                              transition={{ duration: 0.18 }}
+                            >
+                              {isStreaming && !displayRecipe?.instrucciones?.length ? (
+                                <div className="space-y-3">
+                                  {[...Array(4)].map((_, i) => (
+                                    <Skeleton key={i} className="h-14 w-full" />
+                                  ))}
+                                </div>
+                              ) : (
+                                <ol className="space-y-3">
+                                  {(displayRecipe?.instrucciones ?? []).map((step, i) => (
+                                    <motion.li
+                                      key={i}
+                                      initial={{ opacity: 0, x: 8 }}
+                                      animate={{ opacity: 1, x: 0 }}
+                                      transition={{ duration: 0.2, delay: i * 0.04 }}
+                                      className="flex gap-3 text-sm text-[var(--foreground)] leading-relaxed"
+                                    >
+                                      <span className="flex-none w-6 h-6 rounded-full bg-[var(--primary)]/12 text-[var(--primary)] text-xs font-bold flex items-center justify-center mt-0.5">
+                                        {step.paso}
+                                      </span>
+                                      <span className="flex-1">{step.texto}</span>
+                                    </motion.li>
+                                  ))}
+                                </ol>
+                              )}
+                            </motion.div>
+                          )}
+
+                          {activeTab === "macros" && hasMacros && (
+                            <motion.div
+                              key="macros"
+                              initial={{ opacity: 0, y: 4 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: -4 }}
+                              transition={{ duration: 0.18 }}
+                              className="grid grid-cols-2 gap-3"
+                            >
+                              {[
+                                {
+                                  label: t("recipeDetail.macronutrients.calories"),
+                                  value: (recipe as Recipe).macronutrientes!.calorias,
+                                  unit: "kcal",
+                                },
+                                {
+                                  label: t("recipeDetail.macronutrients.protein"),
+                                  value: (recipe as Recipe).macronutrientes!.proteinas_g,
+                                  unit: "g",
+                                },
+                                {
+                                  label: t("recipeDetail.macronutrients.carbs"),
+                                  value: (recipe as Recipe).macronutrientes!.carbohidratos_g,
+                                  unit: "g",
+                                },
+                                {
+                                  label: t("recipeDetail.macronutrients.fats"),
+                                  value: (recipe as Recipe).macronutrientes!.grasas_g,
+                                  unit: "g",
+                                },
+                              ].map(({ label, value, unit }) => (
+                                <div
+                                  key={label}
+                                  className="bg-[var(--primary)]/6 rounded-xl p-3"
+                                >
+                                  <p className="text-xs text-[var(--foreground)]/60 mb-1">{label}</p>
+                                  <p className="text-lg font-bold text-[var(--primary)]">
+                                    {value ?? "—"}{" "}
+                                    <span className="text-sm font-normal text-[var(--foreground)]/60">
+                                      {unit}
+                                    </span>
+                                  </p>
+                                </div>
+                              ))}
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
                     </div>
-                  ) : (
-                    <ol className="list-none space-y-4">
-                      {(displayRecipe?.instrucciones ?? []).map((instruction, index) => (
-                        <motion.li
-                          key={index}
-                          initial={{ opacity: 0, x: 20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ duration: 0.3, delay: index * 0.06 }}
-                          className="text-lg text-[var(--foreground)] leading-relaxed"
-                        >
-                          <span className="font-semibold text-[var(--primary)]">
-                            {t("recipeDetail.sections.instructions.step", {
-                              number: instruction.paso,
-                            })}
-                            :
-                          </span>{" "}
-                          {instruction.texto}
-                        </motion.li>
-                      ))}
-                    </ol>
                   )}
-                </section>
-              </div>
-            )}
-
-            {/* Excluded Ingredients */}
-            {!isErrorRecipe && (recipe as Recipe)?.excluidos?.length > 0 && (
-              <section className="bg-red-50 p-6 rounded-2xl shadow-inner mt-8">
-                <h2 className="text-2xl font-bold text-red-800 mb-4 flex items-center">
-                  <MdOutlineNoFood className="w-8 h-8 mr-3" />
-                  {t("recipeDetail.sections.excluded.title")}
-                </h2>
-                <div className="flex flex-wrap gap-2">
-                  {(recipe as Recipe).excluidos.map((excluded, index) => (
-                    <motion.span
-                      key={index}
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.2, delay: index * 0.03 }}
-                      className="bg-red-200 text-red-900 text-sm font-medium px-3 py-1 rounded-full shadow-sm"
-                    >
-                      {excluded}
-                    </motion.span>
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {/* Cooking Mode button — only after streaming is done */}
-            {streamPhase === "done" && recipe && (recipe as Recipe).instrucciones?.length > 0 && (
-              <motion.button
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                type="button"
-                onClick={() => setShowCookingMode(true)}
-                className="w-full flex items-center justify-center gap-3 py-4 rounded-xl text-xl font-bold text-white bg-[var(--highlight)] hover:bg-[var(--highlight-dark)] shadow-lg hover:shadow-xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-[var(--highlight)]/50"
-              >
-                <ChefHat className="w-6 h-6" />
-                Modo Cocina — paso a paso
-              </motion.button>
-            )}
-
-            {/* Generate Another / Go to Kitchen button */}
-            <motion.button
-              type="button"
-              onClick={handleGenerateAnother}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="w-full text-[var(--text2)] font-bold py-4 rounded-xl text-2xl shadow-lg transition-all duration-300 focus:outline-none focus:ring-4 flex flex-col items-center gap-1 bg-gradient-to-r from-[var(--highlight)] to-[var(--highlight-dark)] hover:shadow-xl focus:ring-[var(--highlight)]"
-              disabled={isStreaming}
-            >
-              <span className="flex items-center gap-2">
-                {recipeIdParam ? (
-                  <>
-                    <ChefHat className="text-2xl" />
-                    {t("recipeDetail.actions.goToKitchen")}
-                  </>
-                ) : (
-                  <>
-                    <IoReloadOutline className="text-2xl" />
-                    {t("recipeDetail.actions.generateAnother")}
-                  </>
-                )}
-              </span>
-              {!recipeIdParam && (
-                <span className="text-sm font-light mt-1 flex items-center gap-1">
-                  <FaCoins className="text-yellow-300" />
-                  {t("recipeDetail.actions.cost", { tokens: 5 })}
-                </span>
+                </>
               )}
-            </motion.button>
+            </div>
           </div>
         </motion.div>
       </div>
 
       {/* Cooking Mode overlay */}
       <AnimatePresence>
-        {showCookingMode && recipe && (recipe as Recipe).instrucciones?.length > 0 && (
+        {showCookingMode && cookingInstructions.length > 0 && (
           <CookingMode
-            instructions={(recipe as Recipe).instrucciones}
-            title={(recipe as Recipe).titulo}
+            instructions={cookingInstructions}
+            title={cookingTitle}
             onClose={() => setShowCookingMode(false)}
           />
         )}

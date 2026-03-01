@@ -45,12 +45,12 @@ export default function MealTimeSelector({
               key={time.value}
               type="button"
               onClick={() => onSelect(time.value)}
-              className={`flex-1 flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl border-2 transition-all text-sm font-medium ${
+              className={`flex-1 flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl border-2 transition-all duration-200 text-sm font-medium ${
                 isSelected
-                  ? "border-[var(--highlight)] bg-[var(--highlight)] text-white shadow-md"
+                  ? "border-[#f97316] bg-gradient-to-br from-[#f97316] to-[#ea580c] text-white shadow-md"
                   : mealTimeError
-                    ? "border-red-300 bg-red-50/30 text-[var(--foreground)] hover:border-[var(--highlight)]"
-                    : "border-[var(--primary)]/20 text-[var(--foreground)] hover:border-[var(--highlight)] hover:bg-[var(--highlight)]/5"
+                    ? "border-red-300 bg-red-50/30 text-[#6B7280] hover:border-[#f97316]"
+                    : "border-[#E5E5E3] text-[#6B7280] hover:border-[#f97316]/40 hover:bg-[#f97316]/5"
               }`}
             >
               <IconComp className="w-5 h-5" />

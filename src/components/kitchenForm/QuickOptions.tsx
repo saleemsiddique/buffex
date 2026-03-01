@@ -58,10 +58,10 @@ export default function QuickOptions({
               key={val}
               type="button"
               onClick={() => setAvailableTime(val)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 ${
                 availableTime === val
-                  ? "bg-[var(--highlight)] text-white shadow-sm"
-                  : "bg-[var(--primary)]/5 text-[var(--foreground)] hover:bg-[var(--highlight)]/10 border border-[var(--primary)]/15"
+                  ? "bg-[#f97316] text-white shadow-sm"
+                  : "bg-[#F5F5F4] text-[#6B7280] hover:bg-[#f97316]/8 border border-[#E5E5E3]"
               }`}
             >
               {val === "no_limit" ? getTimeLabel(val) : `${val} min`}
@@ -83,10 +83,10 @@ export default function QuickOptions({
                 key={value}
                 type="button"
                 onClick={() => setDifficulty(value)}
-                className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg text-xs font-medium transition-all ${
+                className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg text-xs font-medium transition-all duration-200 ${
                   difficulty === value
-                    ? "bg-[var(--highlight)] text-white shadow-sm"
-                    : "bg-[var(--primary)]/5 text-[var(--foreground)] hover:bg-[var(--highlight)]/10 border border-[var(--primary)]/15"
+                    ? "bg-[#f97316] text-white shadow-sm"
+                    : "bg-[#F5F5F4] text-[#6B7280] hover:bg-[#f97316]/8 border border-[#E5E5E3]"
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" />
@@ -113,7 +113,7 @@ export default function QuickOptions({
               type="button"
               onClick={() => isSubscribed && setDiners(Math.max(1, diners - 1))}
               disabled={!isSubscribed || diners <= 1}
-              className="p-1.5 rounded-lg border border-[var(--primary)]/20 hover:bg-[var(--highlight)]/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="p-1.5 rounded-lg border border-[#E5E5E3] hover:bg-[#f97316]/8 disabled:opacity-40 disabled:cursor-not-allowed transition-colors duration-200"
               aria-label="Decrease diners"
             >
               <Minus className="w-3.5 h-3.5" />
@@ -126,7 +126,7 @@ export default function QuickOptions({
                 setDiners(Math.min(MAX_DINERS, diners + 1));
               }}
               disabled={!isSubscribed || diners >= MAX_DINERS}
-              className="p-1.5 rounded-lg border border-[var(--primary)]/20 hover:bg-[var(--highlight)]/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="p-1.5 rounded-lg border border-[#E5E5E3] hover:bg-[#f97316]/8 disabled:opacity-40 disabled:cursor-not-allowed transition-colors duration-200"
               aria-label="Increase diners"
             >
               <Plus className="w-3.5 h-3.5" />

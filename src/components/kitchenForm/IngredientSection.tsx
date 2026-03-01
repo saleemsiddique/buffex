@@ -51,10 +51,10 @@ export default function IngredientSection({
           onFocus={() => setShowSuggestions(currentIngredient.length >= 2)}
           onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
           placeholder={t("culinarium.form.sections.ingredients.placeholder")}
-          className={`w-full px-4 py-3 pr-12 border-2 rounded-xl text-base transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--highlight)]/40 ${
+          className={`w-full px-4 py-3 pr-12 border-2 rounded-xl text-base transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#f97316]/30 ${
             ingredientError
               ? "border-red-400 bg-red-50/50"
-              : "border-[var(--primary)]/30 focus:border-[var(--highlight)]"
+              : "border-[#E5E5E3] focus:border-[#f97316]"
           }`}
           aria-label={t("culinarium.form.sections.ingredients.title")}
           autoComplete="off"
@@ -70,12 +70,12 @@ export default function IngredientSection({
 
         {/* Autocomplete dropdown */}
         {showSuggestions && getSuggestions(currentIngredient, ingredients).length > 0 && (
-          <div className="absolute top-full left-0 right-0 z-10 mt-1 bg-white border border-[var(--primary)]/20 rounded-xl shadow-lg max-h-48 overflow-y-auto">
+          <div className="absolute top-full left-0 right-0 z-10 mt-1 bg-white rounded-xl max-h-48 overflow-y-auto custom-scrollbar" style={{ border: "1px solid #E5E5E3", boxShadow: "0 4px 16px rgba(0,0,0,0.08)" }}>
             {getSuggestions(currentIngredient, ingredients).map((suggestion, index) => (
               <button
                 key={`${suggestion}-${index}`}
                 onClick={() => handleSelectSuggestion(suggestion)}
-                className="w-full text-left px-4 py-2.5 hover:bg-[var(--highlight)]/10 transition-colors first:rounded-t-xl last:rounded-b-xl text-sm"
+                className="w-full text-left px-4 py-2.5 hover:bg-[#f97316]/8 transition-colors duration-150 first:rounded-t-xl last:rounded-b-xl text-sm text-[#111111]"
               >
                 {t(suggestion)}
               </button>
@@ -100,14 +100,22 @@ export default function IngredientSection({
           </p>
           <div className="flex flex-wrap gap-1.5">
             {ingredientHistory
-              .filter((ing) => !ingredients.map((i) => i.toLowerCase()).includes(ing.toLowerCase()))
+              .filter((ing) => {
+                const keyLower = ing.toLowerCase();
+                const translatedLower = t(ing).toLowerCase();
+                return !ingredients.some(
+                  (added) =>
+                    added.toLowerCase() === keyLower ||
+                    added.toLowerCase() === translatedLower
+                );
+              })
               .slice(0, 6)
               .map((ingredient) => (
                 <button
                   key={ingredient}
                   onClick={() => handleSelectSuggestion(ingredient)}
                   type="button"
-                  className="inline-flex items-center gap-1 px-3 py-1 bg-[var(--highlight)]/5 text-[var(--highlight)] text-xs rounded-full hover:bg-[var(--highlight)]/15 transition-colors border border-[var(--highlight)]/20"
+                  className="inline-flex items-center gap-1 px-3 py-1 bg-[#f97316]/5 text-[#f97316] text-xs rounded-full hover:bg-[#f97316]/12 transition-colors duration-150 border border-[#f97316]/20"
                 >
                   <Plus className="w-3 h-3" />
                   {t(ingredient)}

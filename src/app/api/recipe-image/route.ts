@@ -24,22 +24,16 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Token de autenticación inválido' }, { status: 401 });
     }
 
-    // Verificar que el usuario tiene recetas disponibles y determinar tier
+    // Obtener datos del usuario para determinar tier de imagen
     const userDoc = await db.collection('user').doc(uid).get();
     if (!userDoc.exists) {
       return NextResponse.json({ error: 'Usuario no encontrado' }, { status: 404 });
     }
     const userData = userDoc.data();
 
-    const extraRecipes = userData?.extra_recipes || 0;
-    const totalRecipes = (userData?.monthly_recipes || 0) + extraRecipes;
-
-    if (totalRecipes <= 0) {
-      return NextResponse.json({ error: 'Sin recetas disponibles' }, { status: 403 });
-    }
-
     // Determinar tier: premium si tiene suscripción activa o extra recipes
-    const isPremium = userData?.isSubscribed || extraRecipes > 0;
+    // Nota: NO bloqueamos por recetas restantes — la imagen se genera tras deducir el token
+    const isPremium = userData?.isSubscribed || (userData?.extra_recipes || 0) > 0;
 
     const body = await request.json();
     const recipe = body?.recipe;
@@ -61,6 +55,7 @@ export async function POST(request: NextRequest) {
       .slice(0, 12)
       .join(', ');
 
+    // Prompt completo para DALL-E 3 (límite 4000 chars)
     const prompt = `Fotografía gastronómica hiperrealista de "${titulo}". ${descripcion}
 Estilo de cocina: ${estilo ?? 'internacional'}.
 Ingredientes clave visibles: ${ingredientesLista || 'presentación cuidada'}.
@@ -72,6 +67,9 @@ Plato y utensilios cotidianos, mesa o encimera común; sin escenografía elabora
 Textura apetecible pero no retocada digitalmente; luz y color naturales, sin aspecto de anuncio profesional.
 
 Restricciones: sin texto, sin marca de agua, sin manos, sin utensilios tapando el plato.`;
+
+    // Prompt compacto para DALL-E 2 (límite estricto de 1000 chars)
+    const promptDalle2 = `Hyperrealistic food photo of "${titulo.slice(0, 60)}". ${descripcion.slice(0, 200)} ${estilo ? `${estilo} cuisine. ` : ''}${ingredientesLista ? `Key ingredients: ${ingredientesLista.slice(0, 100)}. ` : ''}Natural window light, home-cooked look, soft focus background. No text, no watermark, no hands.`.slice(0, 950);
 
     let b64: string | undefined;
 
@@ -108,7 +106,7 @@ Restricciones: sin texto, sin marca de agua, sin manos, sin utensilios tapando e
       try {
         const result = await openai.images.generate({
           model: 'dall-e-2',
-          prompt,
+          prompt: promptDalle2,
           size: '512x512',
           n: 1,
           response_format: 'b64_json',

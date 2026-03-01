@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import NextLink from 'next/link';
 import { useUser } from '@/context/user-context';
 import { auth } from '@/lib/firebase';
-import { IoFunnel, IoClose, IoSearch } from 'react-icons/io5';
+import { IoFunnel, IoClose, IoSearch, IoRestaurantOutline } from 'react-icons/io5';
 import { useTranslation } from "react-i18next";
 
 // Define the Recipe type based on your provided structure
@@ -246,9 +246,9 @@ const RecipeListPage: React.FC = () => {
               placeholder={t("recipes.searchPlaceholder")}
               value={filters.searchTerm}
               onChange={(e) => setFilters(prev => ({ ...prev, searchTerm: e.target.value }))}
-              className="w-full pl-10 pr-4 py-3 rounded-xl border border-[var(--primary)]/20 
-                         bg-white text-[var(--foreground)] placeholder-[var(--muted)]
-                         focus:outline-none focus:ring-2 focus:ring-[var(--highlight)]"
+              className="w-full pl-10 pr-4 py-3 rounded-xl bg-white text-[#111111] placeholder-[#6B7280]
+                         focus:outline-none focus:ring-2 focus:ring-[#f97316]/30 focus:border-[#f97316] transition-colors duration-200"
+              style={{ border: "1px solid #E5E5E3" }}
             />
           </div>
 
@@ -258,11 +258,12 @@ const RecipeListPage: React.FC = () => {
               onClick={() => setShowFilters(!showFilters)}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className={`flex items-center gap-2 px-6 py-2 rounded-full font-medium transition-all duration-300
-                         ${hasActiveFilters 
-                           ? 'bg-[var(--highlight)] text-white shadow-lg' 
-                           : 'bg-white border border-[var(--primary)]/20 text-[var(--foreground)] hover:bg-[var(--highlight)]/10'
+              className={`flex items-center gap-2 px-6 py-2 rounded-full font-medium transition-all duration-200
+                         ${hasActiveFilters
+                           ? 'bg-[#f97316] text-white shadow-md'
+                           : 'bg-white text-[#111111] hover:border-[#f97316]/40 hover:bg-[#f97316]/5'
                          }`}
+              style={!hasActiveFilters ? { border: "1px solid #E5E5E3" } : undefined}
             >
               <IoFunnel className="w-4 h-4" />
               {t("recipes.filters.button")}
@@ -281,7 +282,8 @@ const RecipeListPage: React.FC = () => {
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
-                className="bg-white rounded-2xl shadow-lg border border-[var(--primary)]/10 overflow-hidden"
+                className="bg-white rounded-2xl overflow-hidden"
+              style={{ border: "1px solid #E5E5E3", boxShadow: "0 4px 16px rgba(0,0,0,0.06)" }}
               >
                 <div className="p-6 space-y-6">
                   {/* Filter Header */}
@@ -306,8 +308,8 @@ const RecipeListPage: React.FC = () => {
                       <select
                         value={filters.mealTime}
                         onChange={(e) => setFilters(prev => ({ ...prev, mealTime: e.target.value }))}
-                        className="w-full p-2 rounded-lg border border-[var(--primary)]/20 bg-white text-[var(--foreground)]
-                                   focus:outline-none focus:ring-2 focus:ring-[var(--highlight)]"
+                        className="w-full p-2 rounded-lg bg-white text-[#111111] focus:outline-none focus:ring-2 focus:ring-[#f97316]/30 focus:border-[#f97316] transition-colors duration-200"
+                        style={{ border: "1px solid #E5E5E3" }}
                       >
                         <option value="">{t("recipes.filters.mealTime.all")}</option>
                         {mealTimes.map(time => (
@@ -324,8 +326,8 @@ const RecipeListPage: React.FC = () => {
                       <select
                         value={filters.timeRange}
                         onChange={(e) => setFilters(prev => ({ ...prev, timeRange: e.target.value }))}
-                        className="w-full p-2 rounded-lg border border-[var(--primary)]/20 bg-white text-[var(--foreground)]
-                                   focus:outline-none focus:ring-2 focus:ring-[var(--highlight)]"
+                        className="w-full p-2 rounded-lg bg-white text-[#111111] focus:outline-none focus:ring-2 focus:ring-[#f97316]/30 focus:border-[#f97316] transition-colors duration-200"
+                        style={{ border: "1px solid #E5E5E3" }}
                       >
                         <option value="">{t("recipes.filters.timeRange.any")}</option>
                         {timeRanges.map(range => (
@@ -342,8 +344,8 @@ const RecipeListPage: React.FC = () => {
                       <select
                         value={filters.portions}
                         onChange={(e) => setFilters(prev => ({ ...prev, portions: e.target.value }))}
-                        className="w-full p-2 rounded-lg border border-[var(--primary)]/20 bg-white text-[var(--foreground)]
-                                   focus:outline-none focus:ring-2 focus:ring-[var(--highlight)]"
+                        className="w-full p-2 rounded-lg bg-white text-[#111111] focus:outline-none focus:ring-2 focus:ring-[#f97316]/30 focus:border-[#f97316] transition-colors duration-200"
+                        style={{ border: "1px solid #E5E5E3" }}
                       >
                         <option value="">{t("recipes.filters.portions.any")}</option>
                         {portionRanges.map(range => (
@@ -360,8 +362,8 @@ const RecipeListPage: React.FC = () => {
                       <select
                         value={filters.style}
                         onChange={(e) => setFilters(prev => ({ ...prev, style: e.target.value }))}
-                        className="w-full p-2 rounded-lg border border-[var(--primary)]/20 bg-white text-[var(--foreground)]
-                                   focus:outline-none focus:ring-2 focus:ring-[var(--highlight)]"
+                        className="w-full p-2 rounded-lg bg-white text-[#111111] focus:outline-none focus:ring-2 focus:ring-[#f97316]/30 focus:border-[#f97316] transition-colors duration-200"
+                        style={{ border: "1px solid #E5E5E3" }}
                       >
                         <option value="">{t("recipes.filters.style.all")}</option>
                         {cuisineStyles.map(style => (
@@ -382,8 +384,8 @@ const RecipeListPage: React.FC = () => {
                             onClick={() => toggleRestriction(restriction.value)}
                             className={`px-3 py-1 rounded-full text-sm font-medium transition-colors duration-200
                                        ${filters.restrictions.includes(restriction.value)
-                                         ? 'bg-[var(--highlight)] text-white'
-                                         : 'bg-[var(--primary)]/10 text-[var(--foreground)] hover:bg-[var(--highlight)]/20'
+                                         ? 'bg-[#f97316] text-white'
+                                         : 'bg-[#F5F5F4] text-[#111111] hover:bg-[#f97316]/10 border border-[#E5E5E3]'
                                        }`}
                           >
                             {restriction.label}
@@ -443,7 +445,8 @@ const RecipeListPage: React.FC = () => {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
-            className="text-center text-[var(--muted)] text-xl mt-16 p-8 bg-white rounded-2xl shadow-lg"
+            className="text-center text-[#6B7280] text-xl mt-16 p-8 bg-white rounded-2xl"
+            style={{ border: "1px solid #E5E5E3", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}
           >
             <p className="mb-4">{t("recipes.noResults.title")}</p>
             <button
@@ -460,7 +463,8 @@ const RecipeListPage: React.FC = () => {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
-            className="text-center text-[var(--muted)] text-xl mt-16 p-8 bg-[var(--background)] rounded-2xl shadow-lg"
+            className="text-center text-[#6B7280] text-xl mt-16 p-8 bg-white rounded-2xl"
+            style={{ border: "1px solid #E5E5E3", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}
           >
             <p className="mb-4">{t("recipes.empty.title")}</p>
             <p className="mb-6">{t("recipes.empty.description")}</p>
@@ -486,8 +490,16 @@ const RecipeListPage: React.FC = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.1 }}
-                className="bg-white rounded-2xl shadow-xl overflow-hidden transform hover:scale-102 transition-transform duration-300
-                           border border-[var(--primary)]"
+                className="bg-white rounded-2xl overflow-hidden group cursor-pointer transition-all duration-200"
+                style={{ border: "1px solid #E5E5E3", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLDivElement).style.boxShadow = "0 4px 16px rgba(0,0,0,0.08)";
+                  (e.currentTarget as HTMLDivElement).style.transform = "translateY(-2px)";
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLDivElement).style.boxShadow = "0 1px 3px rgba(0,0,0,0.06)";
+                  (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)";
+                }}
               >
                 {recipe.img_url && (
                   <div className="relative w-full h-48">
@@ -501,12 +513,15 @@ const RecipeListPage: React.FC = () => {
                   </div>
                 )}
                 {!recipe.img_url && (
-                  <div className="w-full h-48 bg-[var(--highlight)]/20 flex items-center justify-center text-[var(--foreground)] text-xl font-bold rounded-t-2xl">
-                    {recipe.momento_del_dia === 'breakfast' && '🍳 Desayuno'}
-                    {recipe.momento_del_dia === 'lunch' && '🍲 Comida'}
-                    {recipe.momento_del_dia === 'dinner' && '🌙 Cena'}
-                    {recipe.momento_del_dia === 'snack' && '🍎 Snack'}
-                    {!recipe.momento_del_dia && '🍽️ Tu Receta'}
+                  <div className="w-full h-48 flex flex-col items-center justify-center gap-2" style={{ background: "linear-gradient(135deg, #F5F5F4 0%, #E5E5E3 100%)" }}>
+                    <IoRestaurantOutline className="w-10 h-10 text-[#6B7280]" />
+                    <span className="text-xs text-[#6B7280] font-medium">
+                      {recipe.momento_del_dia === 'breakfast' && t("recipes.filters.mealTimeOptions.breakfast")}
+                      {recipe.momento_del_dia === 'lunch' && t("recipes.filters.mealTimeOptions.lunch")}
+                      {recipe.momento_del_dia === 'dinner' && t("recipes.filters.mealTimeOptions.dinner")}
+                      {recipe.momento_del_dia === 'snack' && t("recipes.filters.mealTimeOptions.snack")}
+                      {!recipe.momento_del_dia && t("recipes.recipeCard.viewRecipe")}
+                    </span>
                   </div>
                 )}
 
@@ -517,7 +532,7 @@ const RecipeListPage: React.FC = () => {
                   <p className="text-[var(--muted)] text-sm mb-4 line-clamp-3">
                     {recipe.descripcion}
                   </p>
-                  <div className="flex flex-wrap items-center text-sm text-[var(--primary)] mb-4">
+                  <div className="flex flex-wrap items-center text-sm text-[#6B7280] mb-4">
                     <span className="mr-4 flex items-center">
                       <span className="text-[var(--highlight)] mr-1">⏱️</span> {recipe.tiempo_total_min} {t("recipes.recipeCard.time")}
                     </span>
@@ -537,7 +552,7 @@ const RecipeListPage: React.FC = () => {
                       {recipe.restricciones.map((restriction, idx) => (
                         <span
                           key={idx}
-                          className="bg-[var(--highlight)]/10 text-[var(--highlight)] px-2 py-0.5 rounded-full text-xs font-medium"
+                          className="bg-[#f97316]/10 text-[#f97316] px-2 py-0.5 rounded-full text-xs font-medium"
                         >
                           {dietaryRestrictions.find(d => d.value === restriction)?.label || restriction}
                         </span>
@@ -553,10 +568,10 @@ const RecipeListPage: React.FC = () => {
                     passHref
                   >
                     <motion.button
-                      className="w-full py-2 rounded-lg text-[var(--text2)] font-semibold
-                                 bg-gradient-to-r from-[var(--primary)] to-[var(--foreground)]
-                                 hover:from-[var(--foreground)] hover:to-[var(--primary)] transition-colors duration-300
-                                 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+                      className="w-full py-2 rounded-xl text-white font-semibold
+                                 bg-gradient-to-r from-[#f97316] to-[#ea580c]
+                                 hover:from-[#ea580c] hover:to-[#f97316] transition-all duration-200
+                                 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#f97316]/30"
                       whileHover={{ scale: 1.03 }}
                       whileTap={{ scale: 0.97 }}
                     >

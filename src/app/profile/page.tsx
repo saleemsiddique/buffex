@@ -28,7 +28,7 @@ import {
 } from "lucide-react";
 import { useSubscription } from "@/context/subscription-context";
 import Onboarding from "@/components/onboarding";
-import { PremiumModal } from "@/components/SideMenu/PremiumModal";
+import { TokensModal } from "@/components/SideMenu/TokensModal";
 import { useTranslation } from "react-i18next";
 import i18n from "@/lib/i18n";
 
@@ -299,7 +299,7 @@ function ProfileContent() {
 
   const getSubscriptionStatus = () => {
     if (!user?.isSubscribed)
-      return { text: t("profile.subscription.premium.status.noSubscription"), color: "text-gray-600" };
+      return { text: t("profile.subscription.premium.status.noSubscription"), color: "text-[#6B7280]" };
     if (user?.subscriptionCanceled)
       return { text: t("profile.subscription.premium.status.cancelled"), color: "text-[var(--highlight)]" };
     if (user?.subscriptionStatus === "payment_failed") {
@@ -311,7 +311,7 @@ function ProfileContent() {
   const subscriptionStatus = getSubscriptionStatus();
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-[var(--background)] via-[var(--background)] to-orange-50 py-18 px-4">
+    <div className="min-h-screen w-full py-18 px-4" style={{ background: "#FAFAF9" }}>
       {showOnboarding && <Onboarding onClose={() => setShowOnboarding(false)} />}
 
       <div className="max-w-6xl mx-auto">
@@ -322,10 +322,10 @@ function ProfileContent() {
               <User className="h-12 w-12 text-white" />
             </div>
           </div>
-          <h1 className="text-4xl font-bold text-[var(--foreground)] mb-2">
+          <h1 className="text-4xl font-bold text-[#111111] mb-2">
             {t("profile.greeting", { name: user?.firstName })}<br />
           </h1>
-          <p className="text-[var(--foreground)] opacity-70 text-lg">{t("profile.subtitle")}</p>
+          <p className="text-[#6B7280] text-lg">{t("profile.subtitle")}</p>
         </div>
 
         {/* Grid */}
@@ -333,7 +333,7 @@ function ProfileContent() {
           {/* Left Column */}
           <div className="lg:col-span-1 space-y-6">
             {/* Personal Info */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-orange-100 shadow-xl p-6">
+            <div className="bg-white rounded-2xl p-6" style={{ border: "1px solid #E5E5E3", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}>
               <div className="flex items-center mb-6">
                 <div className="bg-gradient-to-r from-[var(--highlight)] to-[var(--highlight-dark)] rounded-lg p-2 mr-3">
                   <User className="h-5 w-5 text-white" />
@@ -349,7 +349,7 @@ function ProfileContent() {
                   {t("profile.personalInfo.name")}
                 </label>
                 {!isEditingName ? (
-                  <div className="flex items-center justify-between bg-gray-50/80 rounded-xl p-3 border border-gray-100">
+                  <div className="flex items-center justify-between rounded-xl p-3" style={{ background: "#F5F5F4", border: "1px solid #E5E5E3" }}>
                     <span className="text-[var(--foreground)] font-medium">
                       {user?.firstName}
                     </span>
@@ -368,7 +368,8 @@ function ProfileContent() {
                       type="text"
                       value={newName}
                       onChange={(e) => setNewName(e.target.value)}
-                      className="w-full px-4 py-3 rounded-xl border border-orange-200 focus:outline-none focus:ring-2 focus:ring-[var(--highlight)] focus:border-transparent bg-white"
+                      className="w-full px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#f97316]/30 focus:border-[#f97316] transition-colors duration-200 bg-white"
+                      style={{ border: "1px solid #E5E5E3" }}
                       placeholder={t("profile.personalInfo.namePlaceholder")}
                       disabled={isSavingName}
                     />
@@ -414,7 +415,7 @@ function ProfileContent() {
             </div>
 
             {/* Quick Actions */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-orange-100 shadow-xl p-6">
+            <div className="bg-white rounded-2xl p-6" style={{ border: "1px solid #E5E5E3", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}>
               <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4 flex items-center">
                 <Settings className="h-5 w-5 mr-2 text-[var(--highlight)]" />
                 {t("profile.quickActions.title")}
@@ -429,7 +430,7 @@ function ProfileContent() {
               </Button>
 
               {/* Newsletter quick action */}
-              <div className="mt-5 p-4 rounded-xl border border-orange-200/70 bg-orange-50/60">
+              <div className="mt-5 p-4 rounded-xl bg-[#f97316]/5" style={{ border: "1px solid rgba(249,115,22,0.2)" }}>
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-center gap-2">
                     <Mail className="h-5 w-5 text-[var(--highlight)]" />
@@ -607,7 +608,7 @@ function ProfileContent() {
 
             {/* Free Account Upgrade */}
             {!user?.isSubscribed && (
-              <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 rounded-2xl border-2 border-dashed border-[var(--highlight)]/30 p-8 text-center">
+              <div className="bg-white rounded-2xl p-8 text-center" style={{ border: "2px dashed rgba(249,115,22,0.3)" }}>
                 <div className="bg-gradient-to-r from-[var(--highlight)] to-[var(--highlight-dark)] rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
                   <Crown className="h-8 w-8 text-white" />
                 </div>
@@ -634,7 +635,8 @@ function ProfileContent() {
               tabIndex={0}
               onClick={handleCustomerPortal}
               onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && handleCustomerPortal()}
-              className="group bg-white/80 backdrop-blur-sm rounded-2xl border border-orange-100 shadow-xl p-6 mb-3 cursor-pointer hover:bg-white transition"
+              className="group bg-white rounded-2xl p-6 mb-3 cursor-pointer transition-all duration-200 hover:shadow-md"
+              style={{ border: "1px solid #E5E5E3", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}
               aria-label={t("profile.quickActions.billing")}
             >
               <div className="flex items-center justify-between">
@@ -656,7 +658,8 @@ function ProfileContent() {
               tabIndex={0}
               onClick={handlePaymentHistory}
               onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && handlePaymentHistory()}
-              className="group bg-white/80 backdrop-blur-sm rounded-2xl border border-orange-100 shadow-xl p-6 mb-3 cursor-pointer hover:bg-white transition"
+              className="group bg-white rounded-2xl p-6 mb-3 cursor-pointer transition-all duration-200 hover:shadow-md"
+              style={{ border: "1px solid #E5E5E3", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}
               aria-label={t("profile.quickActions.paymentHistory")}
             >
               <div className="flex items-center justify-between">
@@ -674,7 +677,7 @@ function ProfileContent() {
 
 
             {/* Logout Section */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-orange-100 shadow-xl p-6">
+            <div className="bg-white rounded-2xl p-6" style={{ border: "1px solid #E5E5E3", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}>
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-lg font-semibold text-[var(--foreground)] mb-1">
@@ -700,7 +703,7 @@ function ProfileContent() {
       {/* Modals */}
       {showCancelDialog && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl border border-orange-100">
+          <div className="bg-white rounded-3xl p-8 max-w-md w-full" style={{ border: "1px solid #E5E5E3", boxShadow: "0 8px 32px rgba(0,0,0,0.12)" }}>
             <div className="text-center text-[var(--foreground)]">
               <div className="bg-red-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
                 <AlertTriangle className="h-8 w-8 text-red-500" />
@@ -733,7 +736,7 @@ function ProfileContent() {
 
       {showCancelNowDialog && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl border border-orange-100">
+          <div className="bg-white rounded-3xl p-8 max-w-md w-full" style={{ border: "1px solid #E5E5E3", boxShadow: "0 8px 32px rgba(0,0,0,0.12)" }}>
             <div className="text-center text-[var(--foreground)]">
               <div className="bg-red-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
                 <AlertTriangle className="h-8 w-8 text-red-500" />
@@ -766,7 +769,7 @@ function ProfileContent() {
 
       {showReactivateDialog && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl border border-orange-100">
+          <div className="bg-white rounded-3xl p-8 max-w-md w-full" style={{ border: "1px solid #E5E5E3", boxShadow: "0 8px 32px rgba(0,0,0,0.12)" }}>
             <div className="text-center text-[var(--foreground)]">
               <div className="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
                 <Zap className="h-8 w-8 text-green-500" />
@@ -799,7 +802,7 @@ function ProfileContent() {
 
       {messageModal.visible && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl border border-orange-100">
+          <div className="bg-white rounded-3xl p-8 max-w-md w-full" style={{ border: "1px solid #E5E5E3", boxShadow: "0 8px 32px rgba(0,0,0,0.12)" }}>
             <div className="text-center text-[var(--foreground)]">
               <div
                 className={`rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6 ${messageModal.isError ? "bg-red-100" : "bg-green-100"
@@ -825,10 +828,9 @@ function ProfileContent() {
       )}
 
       {showPremium && (
-        <PremiumModal
+        <TokensModal
           user={user as CustomUser | null}
           onClose={() => setShowPremium(false)}
-          onSubscribe={() => setShowPremium(false)}
         />
       )}
     </div>

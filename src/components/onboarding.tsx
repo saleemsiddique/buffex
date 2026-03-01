@@ -119,7 +119,7 @@ export default function Onboarding({ onClose }: { onClose: () => void }) {
                     />
                   </div>
                 ) : (
-                  <div className="flex items-center justify-center py-8 w-full bg-gradient-to-br from-[var(--highlight)]/20 to-[var(--primary)]/10 rounded-2xl">
+                  <div className="flex items-center justify-center py-8 w-full bg-gradient-to-br from-[#f97316]/15 to-[#f97316]/5 rounded-2xl">
                     <StepIcon className="w-16 h-16 text-[var(--highlight)]" aria-hidden="true" />
                   </div>
                 )}

@@ -43,11 +43,11 @@ const CulinariumForm: React.FC = () => {
         className="w-full max-w-6xl mx-auto px-3 sm:px-4 lg:px-6"
       >
         {/* Wide card */}
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+        <div className="bg-white rounded-2xl overflow-hidden" style={{ border: "1px solid #E5E5E3", boxShadow: "0 1px 3px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.04)" }}>
           <form ref={form.formRef} onSubmit={form.handleSubmit}>
 
             {/* Desktop: 2-column layout / Mobile: single column */}
-            <div className="lg:grid lg:grid-cols-2 lg:divide-x lg:divide-[var(--primary)]/10">
+            <div className="lg:grid lg:grid-cols-2 lg:divide-x lg:divide-[#E5E5E3]">
 
               {/* LEFT COLUMN: Ingredients + Meal time + Quick options */}
               <div className="p-5 sm:p-6 space-y-5">
@@ -66,7 +66,7 @@ const CulinariumForm: React.FC = () => {
                   handleInputChange={form.handleInputChange}
                 />
 
-                <div className="border-t border-[var(--primary)]/10" />
+                <div className="border-t border-[#E5E5E3]" />
 
                 {/* 2. Meal time — 4 horizontal buttons */}
                 <MealTimeSelector
@@ -75,7 +75,7 @@ const CulinariumForm: React.FC = () => {
                   onSelect={form.handleSetMealTime}
                 />
 
-                <div className="border-t border-[var(--primary)]/10" />
+                <div className="border-t border-[#E5E5E3]" />
 
                 {/* 3. Quick options: Time + Difficulty + Diners */}
                 <QuickOptions

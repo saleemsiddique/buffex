@@ -92,7 +92,7 @@
       "dataCollected": {
         "title": "3. Data we collect",
         "items": [
-          "<strong>Account and profile data:</strong> email, firstName, lastName, uid, created_at, subscription fields and tokens (monthly_tokens, extra_tokens, subscriptionId, stripeCustomerId, subscriptionStatus, subscriptionCanceled, lastRenewal, tokens_reset_date).",
+          "<strong>Account and profile data:</strong> email, firstName, lastName, uid, created_at, subscription fields and recipes (monthly_recipes, extra_recipes, subscriptionId, stripeCustomerId, subscriptionStatus, subscriptionCanceled, lastRenewal).",
           "<strong>History and usage:</strong> generated recipes (created_recipes), ingredients, instructions, timestamps, momento_del_dia, portions, restrictions, img_url.",
           "<strong>Technical data:</strong> IP (logs), user_agent, device data and usage metrics (only if you give consent).",
           "<strong>Payment data:</strong> we do not store card numbers; Stripe handles payment data. We store Stripe identifiers (stripeCustomerId) and metadata necessary for billing.",
@@ -169,20 +169,20 @@
       },
       "serviceDescription": {
         "title": "2. Service description",
-        "content": "Culinarium allows generating recipes from a form where you specify ingredients, available time, time of day, dietary restrictions and culinary style. Each recipe costs <strong>10 tokens</strong>."
+        "content": "Culinarium allows generating recipes from a form where you specify ingredients, available time, time of day, dietary restrictions and culinary style. Each recipe consumes 1 recipe credit."
       },
       "models": {
         "title": "3. Models and generated content",
         "content": "Recipes are generated using the OpenAI API or other models we may use. Model selection may change over time. Recipes are culinary suggestions and the user is responsible for verifying allergens, food safety and ingredient suitability."
       },
       "tokens": {
-        "title": "4. Tokens and plans",
+        "title": "4. Recipes and plans",
         "items": [
-          "<strong>Free plan:</strong> 50 tokens per month (equivalent to 5 recipes/month).",
-          "<strong>Subscription:</strong> monthly subscription grants 300 tokens + extra features. Subscription tokens <em>expire</em> at the end of each subscription period (they are not permanent).",
-          "<strong>Token packs (1–6):</strong> token packages purchased separately; these extra tokens remain available as long as the service exists.",
-          "<strong>Spending order:</strong> subscription tokens are consumed before tokens purchased in packs.",
-          "<strong>Generation costs:</strong> generating a new recipe costs 10 tokens, regenerating an existing recipe costs 5 tokens."
+          "<strong>Free plan:</strong> 5 recipes/month.",
+          "<strong>Subscription:</strong> monthly subscription grants 99 recipes/month + extra features. Subscription recipes <em>expire</em> at the end of each subscription period (they are not permanent).",
+          "<strong>Additional recipe packs:</strong> recipe packages purchased separately; these extra recipes remain available as long as the service exists.",
+          "<strong>Usage order:</strong> subscription recipes are consumed before additional purchased recipes.",
+          "<strong>Generation costs:</strong> generating a new recipe consumes 1 recipe credit."
         ]
       },
       "payments": {
@@ -191,17 +191,17 @@
       },
       "withdrawal": {
         "title": "6. Right of withdrawal and immediate service commencement",
-        "content": "Because the service is provided immediately (recipe generation and token consumption at the moment), the user must expressly accept, at the time of payment, that the service begins immediately and waives the right of withdrawal when permitted by law."
+        "content": "Because the service is provided immediately (recipe generation and recipe credit usage at the moment), the user must expressly accept, at the time of payment, that the service begins immediately and waives the right of withdrawal when permitted by law."
       },
       "refunds": {
         "title": "7. Refunds",
-        "content": "<strong>We do not offer refunds under any circumstances.</strong> This policy applies to token purchases and subscriptions, unless the law requires otherwise in a specific case."
+        "content": "<strong>We do not offer refunds under any circumstances.</strong> This policy applies to recipe purchases and subscriptions, unless the law requires otherwise in a specific case."
       },
       "cancellation": {
-        "title": "8. Cancellation and token management",
+        "title": "8. Cancellation and recipe management",
         "items": [
-          "If you cancel your subscription, the extra features remain until the end of the already paid period; subscription tokens are not cumulative or permanent.",
-          "Tokens purchased in packs will remain as long as the service is active (until possible service closure)."
+          "If you cancel your subscription, the extra features remain until the end of the already paid period; subscription recipes are not cumulative or permanent.",
+          "Additional recipes purchased in packs will remain as long as the service is active (until possible service closure)."
         ]
       },
       "suspension": {
@@ -529,6 +529,12 @@
       "extra": "extra",
       "monthly": "monthly",
       "close": "Close",
+      "or": "or",
+      "oneTime": "one-time",
+      "recipesPerMonth": "recipes/mo",
+      "perMonth": "/mo",
+      "perYear": "/year",
+      "disclaimer": "Recipes never expire and stack with your current plan.",
       "packages": {
         "150": {
           "label": "15 extra recipes",
@@ -1098,9 +1104,9 @@
     "pro": {
       "calories": "Calories",
       "caloriesLabel": "Target calories",
-      "protein": "Proteins 🥩",
-      "carbs": "Carbs 🍚",
-      "fats": "Fats 🥑",
+      "protein": "Proteins",
+      "carbs": "Carbs",
+      "fats": "Fats",
       "total": "Total",
       "approximate": "Approximate values",
       "grams": "g"

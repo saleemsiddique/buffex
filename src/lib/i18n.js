@@ -12,7 +12,12 @@ void i18n
     supportedLngs: ["en", "es"],
     fallbackLng: "es",
     interpolation: { escapeValue: false },
-    backend: { loadPath: "/locales/{{lng}}/translation.json" }
+    backend: {
+      loadPath: "/locales/{{lng}}/translation.json",
+      requestOptions: process.env.NODE_ENV === "development"
+        ? { cache: "no-cache" }
+        : undefined,
+    }
   });
 
 export default i18n;

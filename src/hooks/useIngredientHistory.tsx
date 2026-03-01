@@ -24,6 +24,15 @@ const COMMON_INGREDIENTS: string[] = [
   'ingredients.olive_oil',
 ];
 
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 interface UseIngredientHistoryReturn {
   ingredientHistory: string[];
   /* addToHistory: (ingredient: string) => void;*/
@@ -31,7 +40,8 @@ interface UseIngredientHistoryReturn {
 }
 
 export const useIngredientHistory = (t: TFunction): UseIngredientHistoryReturn => {
-  const [ingredientHistory, setIngredientHistory] = useState<string[]>(COMMON_INGREDIENTS);
+  // Shuffle on init so chips appear in a different order each session
+  const [ingredientHistory, setIngredientHistory] = useState<string[]>(() => shuffle(COMMON_INGREDIENTS));
 
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -39,7 +49,7 @@ export const useIngredientHistory = (t: TFunction): UseIngredientHistoryReturn =
       try {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed)) {
-          setIngredientHistory(parsed);
+          setIngredientHistory(shuffle(parsed));
         }
       } catch (error) {
         console.warn('Error al cargar historial:', error);
