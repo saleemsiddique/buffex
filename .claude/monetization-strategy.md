@@ -1,4 +1,4 @@
-# Culinarium — Monetization Strategy
+# Buffex — Monetization Strategy
 
 ## Modelo de Precios Aprobado
 

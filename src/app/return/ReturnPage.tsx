@@ -229,7 +229,7 @@ export default function CheckoutReturn() {
             transition={{ delay: 1 }}
             className="mt-6 text-xs font-semibold tracking-widest text-amber-400 uppercase"
           >
-            Culinarium ✦
+            Buffex ✦
           </motion.p>
         </motion.div>
       </div>

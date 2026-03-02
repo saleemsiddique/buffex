@@ -208,7 +208,7 @@ export const TokensModal: React.FC<TokensModalProps> = ({ onClose, user }) => {
                 </div>
                 <div>
                   <h2 className="text-[15px] font-extrabold text-white leading-tight tracking-tight">
-                    {isSubscribed ? t("premium.modal.title") : "Culinarium Premium"}
+                    {isSubscribed ? t("premium.modal.title") : "Buffex Premium"}
                   </h2>
                   <p className="text-[12px] text-white/70 mt-0.5 font-medium">
                     {isSubscribed ? (

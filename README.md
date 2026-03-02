@@ -1,4 +1,4 @@
-# Culinarium
+# Buffex
 
 Generador de recetas con IA. De tus ingredientes a una receta personalizada en 10 segundos.
 

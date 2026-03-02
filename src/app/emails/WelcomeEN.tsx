@@ -114,20 +114,21 @@ export function WelcomeEmailHtmlEN({ name }: WelcomeEmailProps) {
         <body>
           <div class="main-wrapper">
             <div class="header">
-              <h1>Culinarium</h1>
+              <img src="https://buffex.io/Buffex-Logo.png" alt="Buffex" style="width:72px; height:72px; display:block; margin:0 auto 12px auto;" />
+              <h1>Buffex</h1>
             </div>
             <div class="content">
               <h2>Welcome to the community, ${name}!</h2>
               <p>We are excited to have you on board. Get ready for a unique culinary adventure, where artificial intelligence helps you create spectacular dishes. Your kitchen is about to be transformed!</p>
-              <a href="https://www.culinarium.io/kitchen" class="button">Start Cooking</a>
+              <a href="https://www.buffex.io/kitchen" class="button">Start Cooking</a>
             </div>
             <div class="footer">
               <ul class="footer-links" style="display:flex; align-items:center; justify-content:center; text-align-center">
-                <li><a href="https://www.culinarium.io/consent/privacy">Privacy Policy</a></li>
-                <li><a href="https://www.culinarium.io/consent/terms">Terms of Service</a></li>
-                <li><a href="https://www.culinarium.io/consent/cookies">Cookie Policy</a></li>
+                <li><a href="https://www.buffex.io/consent/privacy">Privacy Policy</a></li>
+                <li><a href="https://www.buffex.io/consent/terms">Terms of Service</a></li>
+                <li><a href="https://www.buffex.io/consent/cookies">Cookie Policy</a></li>
               </ul>
-              <p>Culinarium &copy; 2025. All rights reserved.</p>
+              <p>Buffex &copy; 2025. All rights reserved.</p>
             </div>
           </div>
         </body>

@@ -174,7 +174,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
     } catch (error) {
       console.error("Error al refrescar datos del usuario:", error);
     }
-  }, [firebaseUser?.email]);
+  }, [firebaseUser?.email, firebaseUser?.uid]);
 
   useEffect(() => {
     const handleTokenUpdate = () => {
@@ -220,7 +220,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
   const linkAnonymousConsent = async (fbUser: FirebaseUser) => {
     try {
-      const stored = localStorage.getItem("culinarium_cookie_consent");
+      const stored = localStorage.getItem("buffex_cookie_consent");
       const anonymousId = stored ? JSON.parse(stored)?.user_id : null;
       if (anonymousId && anonymousId !== fbUser.uid) {
         const idToken = await fbUser.getIdToken();

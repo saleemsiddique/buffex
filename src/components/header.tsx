@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useUser, CustomUser } from '@/context/user-context';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, BookOpen, Menu, X, User, Sparkles, ChefHat } from 'lucide-react';
+import { Plus, BookOpen, Menu, X, User, Sparkles } from 'lucide-react';
+import Image from 'next/image';
 import { TokensModal } from "./SideMenu/TokensModal";
 import { useTranslation } from "react-i18next";
 
@@ -132,14 +133,12 @@ export default function Header() {
                   {/* Contenido del drawer */}
                   <div className="flex justify-between items-center p-4">
                     <Link href={isLoggedIn ? '/kitchen' : '/'}>
-                      <motion.h1
-                        className="font-display text-2xl md:text-3xl font-extrabold tracking-tight text-white cursor-pointer flex items-center gap-2"
-                        whileHover={{ scale: 1.05, color: '#f97316' }}
+                      <motion.div
+                        whileHover={{ scale: 1.05 }}
                         transition={{ duration: 0.2 }}
                       >
-                        <ChefHat className="w-6 h-6 text-[#f97316]" aria-hidden="true" />
-                        Culinarium
-                      </motion.h1>
+                        <Image src="/Buffex-Banner-noback.png" alt="Buffex" height={32} width={120} priority />
+                      </motion.div>
                     </Link>
                     <button
                       className="text-white/40 hover:text-white transition "
@@ -222,14 +221,12 @@ export default function Header() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
               <Link href={isLoggedIn ? '/kitchen' : '/'}>
-                <motion.h1
-                  className="font-display text-2xl md:text-3xl font-extrabold tracking-tight text-white cursor-pointer flex items-center gap-2"
-                  whileHover={{ scale: 1.05, color: '#f97316' }}
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <ChefHat className="w-6 h-6 text-[#f97316]" aria-hidden="true" />
-                  Culinarium
-                </motion.h1>
+                  <Image src="/Buffex-Banner-noback.png" alt="Buffex" height={32} width={120} priority />
+                </motion.div>
               </Link>
 
               <nav className="flex items-center gap-6">

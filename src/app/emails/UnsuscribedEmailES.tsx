@@ -110,7 +110,8 @@ export function UnsubscribeEmailHtmlES({ name, endDate }: UnsubscribeEmailProps)
       <body>
         <div class="main-wrapper">
           <div class="header">
-            <h1>Culinarium</h1>
+            <img src="https://buffex.io/Buffex-Logo.png" alt="Buffex" style="width:72px; height:72px; display:block; margin:0 auto 12px auto;" />
+            <h1>Buffex</h1>
           </div>
           <div class="content">
             <h2>¡Te extrañaremos, ${name}!</h2>
@@ -120,15 +121,15 @@ export function UnsubscribeEmailHtmlES({ name, endDate }: UnsubscribeEmailProps)
             <p>
               Si cambias de opinión, solo tienes que volver a iniciar sesión y desde Mi Perfil podras reactivar tu suscripcion antes de que se acabe.
             </p>
-            <a href="https://www.culinarium.io/kitchen" class="button">Regresar a Culinarium</a>
+            <a href="https://www.buffex.io/kitchen" class="button">Regresar a Buffex</a>
           </div>
           <div class="footer">
             <ul class="footer-links" style="display:flex; align-items:center; justify-content:center; text-align:center">
-              <li><a href="https://www.culinarium.io/consent/privacy">Política de Privacidad</a></li>
-              <li><a href="https://www.culinarium.io/consent/terms">Términos de Servicio</a></li>
-              <li><a href="https://www.culinarium.io/consent/cookies">Política de Cookies</a></li>
+              <li><a href="https://www.buffex.io/consent/privacy">Política de Privacidad</a></li>
+              <li><a href="https://www.buffex.io/consent/terms">Términos de Servicio</a></li>
+              <li><a href="https://www.buffex.io/consent/cookies">Política de Cookies</a></li>
             </ul>
-            <p>Culinarium &copy; 2025. Todos los derechos reservados.</p>
+            <p>Buffex &copy; 2025. Todos los derechos reservados.</p>
           </div>
         </div>
       </body>

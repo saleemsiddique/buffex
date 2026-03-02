@@ -18,7 +18,7 @@ import AdvancedOptionsPanel from "@/components/kitchenForm/AdvancedOptionsPanel"
 import GenerateButton from "@/components/kitchenForm/GenerateButton";
 import LoadingOverlay from "@/components/kitchenForm/LoadingOverlay";
 
-const CulinariumForm: React.FC = () => {
+const BuffexForm: React.FC = () => {
   const { t } = useTranslation();
   const { user } = useUser();
   const form = useRecipeForm();
@@ -167,4 +167,4 @@ const CulinariumForm: React.FC = () => {
   );
 };
 
-export default CulinariumForm;
+export default BuffexForm;

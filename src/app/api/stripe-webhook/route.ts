@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
       price_1RwHJCRpBiBhmezm4D1fPQt5: {
         type: "subscription",
         recipes: 30,
-        name: "Culinarium Premium Legacy",
+        name: "Buffex Premium Legacy",
         isSubscription: true,
         price: 7.99,
       },
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
       PRICE_TO_RECIPES[process.env.STRIPE_PRICE_PREMIUM] = {
         type: "subscription",
         recipes: 99,
-        name: "Culinarium Premium",
+        name: "Buffex Premium",
         isSubscription: true,
         price: 9.99,
       };
@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
       PRICE_TO_RECIPES[process.env.STRIPE_PRICE_PREMIUM_ANNUAL] = {
         type: "subscription",
         recipes: 99,
-        name: "Culinarium Premium Anual",
+        name: "Buffex Premium Anual",
         isSubscription: true,
         price: 79.99,
       };

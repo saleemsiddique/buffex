@@ -7,6 +7,6 @@ export function emitConsentUpdated(analytics: boolean | null = null, extraDetail
     const detail = { ...extraDetail };
     if (typeof analytics === "boolean") detail.analytics = analytics;
     window.dispatchEvent(new CustomEvent("consent:updated", { detail }));
-    localStorage.setItem("culinarium_cookie_consent_last_update", String(Date.now()));
+    localStorage.setItem("buffex_cookie_consent_last_update", String(Date.now()));
   } catch {}
 }

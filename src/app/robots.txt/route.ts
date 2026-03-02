@@ -10,7 +10,7 @@ Disallow: /consent
 Disallow: /_next
 Disallow: /api
 
-Sitemap: https://culinarium.io/sitemap.xml
+Sitemap: https://buffex.io/sitemap.xml
 `;
 
   return new NextResponse(content, {

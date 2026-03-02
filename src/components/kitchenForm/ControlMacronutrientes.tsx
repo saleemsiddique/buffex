@@ -128,7 +128,7 @@ export default function ControlMacronutrientes({
         onChange?.({ mode, basicGoal, calories, percents });
       }
     }
-  }, [mode, basicGoal, calories, percents, onChange]);
+  }, [mode, basicGoal, calories, percents, onChange, isSubscribed]);
 
   // Proportional redistribution when a slider changes
   const setMacroSafe = (changed: keyof MacroPercents, valueRaw: number) => {

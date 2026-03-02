@@ -35,7 +35,7 @@ export async function POST(req: Request) {
     switch (body.type) {
       case "welcome": {
         const name = body.data.firstName;
-        subject = lang === "en" ? "Welcome to Culinarium" : "Bienvenido a Culinarium";
+        subject = lang === "en" ? "Welcome to Buffex" : "Bienvenido a Buffex";
         html = lang === "en"
           ? WelcomeEmailHtmlEN({ name })
           : WelcomeEmailHtmlES({ name });
@@ -62,7 +62,7 @@ export async function POST(req: Request) {
     }
 
     const { data, error } = await resend.emails.send({
-      from: "Culinarium <noreply@culinarium.io>",
+      from: "Buffex <noreply@buffex.io>",
       to: body.to,
       subject,
       html,

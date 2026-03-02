@@ -72,7 +72,7 @@
     "copyright": "Todos los derechos reservados.",
     "contact": {
       "title": "Contáctanos",
-      "email": "culinariumofficial@gmail.com"
+      "email": "Buffexofficial@gmail.com"
     },
     "manageConsent": "Ajustes de cookies y privacidad"
   },
@@ -83,11 +83,11 @@
     "sections": {
       "responsible": {
         "title": "1. Responsable y datos de contacto",
-        "content": "Responsable: <strong>Equipo Culinarium</strong> — desarrolladores: Saleem Siddique, Hakeem Siddique y Wassim Atiki.<br />Dirección de contacto: <strong>03502, España</strong>.<br />Email de contacto (privacidad): <strong>culinariumofficial@gmail.com</strong>.<br />No disponemos de Delegado de Protección de Datos (DPO)."
+        "content": "Responsable: <strong>Equipo Buffex</strong> — desarrolladores: Saleem Siddique, Hakeem Siddique y Wassim Atiki.<br />Dirección de contacto: <strong>03502, España</strong>.<br />Email de contacto (privacidad): <strong>Buffexofficial@gmail.com</strong>.<br />No disponemos de Delegado de Protección de Datos (DPO)."
       },
       "introduction": {
         "title": "2. Introducción",
-        "content": "Culinarium es una aplicación SaaS que genera recetas a partir de los ingredientes y preferencias que los usuarios introducen. Esta política explica qué datos recogemos, con qué finalidad, quién los procesa, dónde se almacenan y cómo puedes ejercer tus derechos."
+        "content": "Buffex es una aplicación SaaS que genera recetas a partir de los ingredientes y preferencias que los usuarios introducen. Esta política explica qué datos recogemos, con qué finalidad, quién los procesa, dónde se almacenan y cómo puedes ejercer tus derechos."
       },
       "dataCollected": {
         "title": "3. Datos que recogemos",
@@ -110,7 +110,7 @@
       },
       "processors": {
         "title": "5. Encargados del tratamiento / terceros",
-        "content": "Los siguientes terceros procesan datos en nombre de Culinarium:",
+        "content": "Los siguientes terceros procesan datos en nombre de Buffex:",
         "items": [
           "<strong>OpenAI</strong> — generación de recetas vía API.",
           "<strong>Stripe</strong> — pagos y suscripciones.",
@@ -135,7 +135,7 @@
       },
       "rights": {
         "title": "8. Derechos del interesado",
-        "content": "Tienes derecho a acceder, rectificar, suprimir, limitar el tratamiento, oponerte y solicitar portabilidad. Para ejercerlos contacta a <strong>culinariumofficial@gmail.com</strong> indicando tu nombre, email y UID (si procede). Responderemos en el plazo legal (normalmente 1 mes; puede ampliarse en casos complejos)."
+        "content": "Tienes derecho a acceder, rectificar, suprimir, limitar el tratamiento, oponerte y solicitar portabilidad. Para ejercerlos contacta a <strong>Buffexofficial@gmail.com</strong> indicando tu nombre, email y UID (si procede). Responderemos en el plazo legal (normalmente 1 mes; puede ampliarse en casos complejos)."
       },
       "minors": {
         "title": "9. Menores",
@@ -155,7 +155,7 @@
       }
     },
     "footer": {
-      "content": "Contacto: culinariumofficial@gmail.com — Dirección: 03502, España."
+      "content": "Contacto: Buffexofficial@gmail.com — Dirección: 03502, España."
     }
   },
   "terms": {
@@ -165,11 +165,11 @@
     "sections": {
       "parties": {
         "title": "1. Partes",
-        "content": "Contrato entre el usuario (tú) y el <strong>Equipo Culinarium</strong> (Saleem Siddique, Hakeem Siddique y Wassim Atiki. Al crear una cuenta y usar el servicio aceptas estos términos."
+        "content": "Contrato entre el usuario (tú) y el <strong>Equipo Buffex</strong> (Saleem Siddique, Hakeem Siddique y Wassim Atiki. Al crear una cuenta y usar el servicio aceptas estos términos."
       },
       "serviceDescription": {
         "title": "2. Descripción del servicio",
-        "content": "Culinarium permite generar recetas a partir de un formulario donde indicas ingredientes, tiempo disponible, momento del día, restricciones dietéticas y estilo culinario. Cada receta consume 1 crédito de receta."
+        "content": "Buffex permite generar recetas a partir de un formulario donde indicas ingredientes, tiempo disponible, momento del día, restricciones dietéticas y estilo culinario. Cada receta consume 1 crédito de receta."
       },
       "models": {
         "title": "3. Modelos y contenido generado",
@@ -206,15 +206,15 @@
       },
       "suspension": {
         "title": "9. Suspensión y terminación",
-        "content": "Culinarium se reserva el derecho a suspender o terminar cuentas por fraude, actividad ilícita o violación de estos términos. En caso de terminación razonada intentaremos notificar al usuario."
+        "content": "Buffex se reserva el derecho a suspender o terminar cuentas por fraude, actividad ilícita o violación de estos términos. En caso de terminación razonada intentaremos notificar al usuario."
       },
       "liability": {
         "title": "10. Limitación de responsabilidad",
-        "content": "Las recetas son sugerencias; no garantizamos resultados concretos. Equipo Culinarium no será responsable por daños derivados de seguir una receta (intoxicaciones, alergias, etc.)."
+        "content": "Las recetas son sugerencias; no garantizamos resultados concretos. Equipo Buffex no será responsable por daños derivados de seguir una receta (intoxicaciones, alergias, etc.)."
       },
       "healthNotice": {
         "title": "11. Aviso sobre salud y nutrición",
-        "content": "No somos médicos, dietistas ni nutricionistas titulados. El contenido y las recetas que genera Culinarium son únicamente sugerencias culinarias con fines informativos y recreativos. No constituyen asesoramiento médico, nutricional ni profesional. El usuario es responsable de comprobar la idoneidad de los ingredientes en función de sus alergias, intolerancias, restricciones médicas o necesidades personales. Ante cualquier duda relacionada con tu salud o alimentación, consulta siempre con un profesional sanitario cualificado."
+        "content": "No somos médicos, dietistas ni nutricionistas titulados. El contenido y las recetas que genera Buffex son únicamente sugerencias culinarias con fines informativos y recreativos. No constituyen asesoramiento médico, nutricional ni profesional. El usuario es responsable de comprobar la idoneidad de los ingredientes en función de sus alergias, intolerancias, restricciones médicas o necesidades personales. Ante cualquier duda relacionada con tu salud o alimentación, consulta siempre con un profesional sanitario cualificado."
       },
       "acceptableUse": {
         "title": "12. Uso aceptable",
@@ -230,11 +230,11 @@
       },
       "minimumAge": {
         "title": "15. Edad mínima de uso",
-        "content": "Para usar Culinarium debes tener al menos <strong>18 años</strong>. Al registrarte declaras que cumples con este requisito."
+        "content": "Para usar Buffex debes tener al menos <strong>18 años</strong>. Al registrarte declaras que cumples con este requisito."
       },
       "intellectualProperty": {
         "title": "16. Propiedad intelectual",
-        "content": "Los usuarios conservan derechos sobre el contenido que suban. Al enviar ingredientes y preferencias otorgas a Culinarium una licencia no exclusiva para procesar, almacenar y generar recetas. El uso de las recetas generadas para fines comerciales u otros usos debe consultarse si hay restricciones."
+        "content": "Los usuarios conservan derechos sobre el contenido que suban. Al enviar ingredientes y preferencias otorgas a Buffex una licencia no exclusiva para procesar, almacenar y generar recetas. El uso de las recetas generadas para fines comerciales u otros usos debe consultarse si hay restricciones."
       },
       "dataProtection": {
         "title": "17. Protección de datos",
@@ -254,7 +254,7 @@
       }
     },
     "footer": {
-      "content": "Contacto: culinariumofficial@gmail.com — Dirección: 03502, España."
+      "content": "Contacto: Buffexofficial@gmail.com — Dirección: 03502, España."
     }
   },
   "cookies": {
@@ -281,11 +281,11 @@
       },
       "contact": {
         "title": "Contacto",
-        "content": "Para cualquier duda sobre cookies o privacidad, contacta con nosotros en: <strong>culinariumofficial@gmail.com</strong>"
+        "content": "Para cualquier duda sobre cookies o privacidad, contacta con nosotros en: <strong>Buffexofficial@gmail.com</strong>"
       }
     },
     "footer": {
-      "content": "Dirección: 03502, España — Equipo Culinarium"
+      "content": "Dirección: 03502, España — Equipo Buffex"
     }
   },
   "consentManagement": {
@@ -324,7 +324,7 @@
     }
   },
   "header": {
-    "brandName": "Culinarium",
+    "brandName": "Buffex",
     "menu": {
       "open": "Abrir menú",
       "close": "Cerrar menú",
@@ -378,7 +378,7 @@
   },
   "recipes": {
     "title": "Mis Recetas",
-    "description": "Tus recetas generadas y guardadas en Culinarium.",
+    "description": "Tus recetas generadas y guardadas en Buffex.",
     "searchPlaceholder": "Buscar recetas, ingredientes...",
     "filters": {
       "button": "Filtros",
@@ -467,7 +467,7 @@
   "recipeDetail": {
     "of": "de",
     "loadingRecipe": "Cargando receta...",
-    "description": "Receta para {{title}} generada por Culinarium.",
+    "description": "Receta para {{title}} generada por Buffex.",
     "backButton": {
       "toRecipes": "Volver a Mis Recetas",
       "toForm": "Volver al Formulario"
@@ -555,7 +555,7 @@
   },
   "premium": {
     "modal": {
-      "title": "Culinarium Premium",
+      "title": "Buffex Premium",
       "close": "Cerrar modal",
       "subscribed": {
         "title": "¡Ya eres un suscriptor Premium!",
@@ -714,7 +714,7 @@
   "onboarding": {
     "steps": [
       {
-        "title": "Bienvenido a Culinarium",
+        "title": "Bienvenido a Buffex",
         "text": "Genera recetas personalizadas con IA a partir de los ingredientes que tienes en casa. En 10 segundos, tienes tu receta lista con imagen incluida.",
         "image": "/onboarding/step1.jpg"
       },
@@ -889,7 +889,7 @@
       }
     }
   },
-  "culinarium": {
+  "Buffex": {
     "form": {
       "commonIngredients": {
         "chicken": "Chicken",
@@ -913,8 +913,8 @@
         "regenerate": "regenerar una receta",
         "generate": "generar una receta"
       },
-      "title": "Culinarium - Encuentra tu Receta",
-      "description": "Encuentra tu receta ideal con el formulario interactivo de Culinarium.",
+      "title": "Buffex - Encuentra tu Receta",
+      "description": "Encuentra tu receta ideal con el formulario interactivo de Buffex.",
       "sections": {
         "ingredients": {
           "title": "¿Qué tienes a mano?",
@@ -1147,7 +1147,7 @@
   },
   "consent": {
     "modal": {
-      "title": "Culinarium y tu privacidad",
+      "title": "Buffex y tu privacidad",
       "message": "Usamos cookies y procesamos datos para ofrecerte el servicio. Puedes aceptar todo o solo lo necesario.",
       "terms": "Términos y Condiciones",
       "privacy": "Política de Privacidad",
@@ -1166,7 +1166,7 @@
         },
         "newsletter": {
           "title": "Newsletter (opcional)",
-          "description": "Recibir recetas semanales y novedades de Culinarium por email."
+          "description": "Recibir recetas semanales y novedades de Buffex por email."
         }
       },
       "links": {
@@ -1186,7 +1186,7 @@
     "badge": "Cocina Inteligente",
     "title": "Revoluciona tu forma de",
     "cooking": "cocinar",
-    "description": "Culinarium utiliza inteligencia artificial para transformar ingredientes simples en recetas extraordinarias, adaptadas perfectamente a tus gustos y necesidades.",
+    "description": "Buffex utiliza inteligencia artificial para transformar ingredientes simples en recetas extraordinarias, adaptadas perfectamente a tus gustos y necesidades.",
     "features": {
       "recipeGeneration": {
         "name": "Generación de recetas con IA",
@@ -1286,7 +1286,7 @@
   "faq": {
     "section": {
       "title": "Preguntas frecuentes",
-      "subtitle": "Todo lo que necesitas saber sobre Culinarium",
+      "subtitle": "Todo lo que necesitas saber sobre Buffex",
       "description": "Resolvemos las dudas más comunes sobre nuestra plataforma y servicios."
     },
     "questions": [
@@ -1296,11 +1296,11 @@
       },
       {
         "question": "¿Hay opciones para dietas especiales?",
-        "answer": "Absolutamente. Culinarium soporta múltiples tipos de dietas, incluyendo vegetariana, vegana, keto, sin gluten y más."
+        "answer": "Absolutamente. Buffex soporta múltiples tipos de dietas, incluyendo vegetariana, vegana, keto, sin gluten y más."
       },
       {
         "question": "¿Funciona en español?",
-        "answer": "Sí, Culinarium funciona completamente en español. Puedes generar recetas en español o en inglés según el idioma de tu navegador."
+        "answer": "Sí, Buffex funciona completamente en español. Puedes generar recetas en español o en inglés según el idioma de tu navegador."
       },
       {
         "question": "¿Puedo cancelar la suscripción en cualquier momento?",
@@ -1336,11 +1336,11 @@
       },
       {
         "question": "¿Ofrecen soporte técnico?",
-        "answer": "Sí, puedes contactarnos por email enviandonos un mensaje a culinariumofficial@gmail.com."
+        "answer": "Sí, puedes contactarnos por email enviandonos un mensaje a Buffexofficial@gmail.com."
       },
       {
         "question": "¿Puedo sugerir nuevas funcionalidades o mejoras?",
-        "answer": "Sí, nos encanta recibir sugerencias. Puedes enviarlas a través de nuestro correo culinariumofficial@gmail.com."
+        "answer": "Sí, nos encanta recibir sugerencias. Puedes enviarlas a través de nuestro correo Buffexofficial@gmail.com."
       }
     ],
     "buttons": {
@@ -1375,7 +1375,7 @@
   },
   "firstRecipeModal": {
     "title": "¡Primera receta lista!",
-    "subtitle": "Acabas de generar tu primera receta con Culinarium. Nos alegra que estés aquí.",
+    "subtitle": "Acabas de generar tu primera receta con Buffex. Nos alegra que estés aquí.",
     "close": "Cerrar",
     "remaining": "Te quedan",
     "remainingLabel": "recetas gratuitas este mes",

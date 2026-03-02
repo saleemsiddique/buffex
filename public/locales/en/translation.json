@@ -72,7 +72,7 @@
     "copyright": "All rights reserved.",
     "contact": {
       "title": "Contact us",
-      "email": "culinariumofficial@gmail.com"
+      "email": "Buffexofficial@gmail.com"
     },
     "manageConsent": "Cookie and privacy settings"
   },
@@ -83,11 +83,11 @@
     "sections": {
       "responsible": {
         "title": "1. Responsible party and contact details",
-        "content": "Responsible: <strong>Culinarium Team</strong> — developers: Saleem Siddique, Hakeem Siddique and Wassim Atiki.<br />Contact address: <strong>03502, Spain</strong>.<br />Contact email (privacy): <strong>culinariumofficial@gmail.com</strong>.<br />We do not have a Data Protection Officer (DPO)."
+        "content": "Responsible: <strong>Buffex Team</strong> — developers: Saleem Siddique, Hakeem Siddique and Wassim Atiki.<br />Contact address: <strong>03502, Spain</strong>.<br />Contact email (privacy): <strong>Buffexofficial@gmail.com</strong>.<br />We do not have a Data Protection Officer (DPO)."
       },
       "introduction": {
         "title": "2. Introduction",
-        "content": "Culinarium is a SaaS application that generates recipes from the ingredients and preferences that users enter. This policy explains what data we collect, for what purpose, who processes it, where it is stored and how you can exercise your rights."
+        "content": "Buffex is a SaaS application that generates recipes from the ingredients and preferences that users enter. This policy explains what data we collect, for what purpose, who processes it, where it is stored and how you can exercise your rights."
       },
       "dataCollected": {
         "title": "3. Data we collect",
@@ -110,7 +110,7 @@
       },
       "processors": {
         "title": "5. Data processors / third parties",
-        "content": "The following third parties process data on behalf of Culinarium:",
+        "content": "The following third parties process data on behalf of Buffex:",
         "items": [
           "<strong>OpenAI</strong> — recipe generation via API.",
           "<strong>Stripe</strong> — payments and subscriptions.",
@@ -135,7 +135,7 @@
       },
       "rights": {
         "title": "8. Data subject rights",
-        "content": "You have the right to access, rectify, delete, restrict processing, object and request portability. To exercise them contact <strong>culinariumofficial@gmail.com</strong> indicating your name, email and UID (if applicable). We will respond within the legal period (normally 1 month; may be extended in complex cases)."
+        "content": "You have the right to access, rectify, delete, restrict processing, object and request portability. To exercise them contact <strong>Buffexofficial@gmail.com</strong> indicating your name, email and UID (if applicable). We will respond within the legal period (normally 1 month; may be extended in complex cases)."
       },
       "minors": {
         "title": "9. Minors",
@@ -155,7 +155,7 @@
       }
     },
     "footer": {
-      "content": "Contact: culinariumofficial@gmail.com — Address: 03502, Spain."
+      "content": "Contact: Buffexofficial@gmail.com — Address: 03502, Spain."
     }
   },
   "terms": {
@@ -165,11 +165,11 @@
     "sections": {
       "parties": {
         "title": "1. Parties",
-        "content": "Agreement between the user (you) and the <strong>Culinarium Team</strong> (Saleem Siddique, Hakeem Siddique and Wassim Atiki. By creating an account and using the service you accept these terms."
+        "content": "Agreement between the user (you) and the <strong>Buffex Team</strong> (Saleem Siddique, Hakeem Siddique and Wassim Atiki. By creating an account and using the service you accept these terms."
       },
       "serviceDescription": {
         "title": "2. Service description",
-        "content": "Culinarium allows generating recipes from a form where you specify ingredients, available time, time of day, dietary restrictions and culinary style. Each recipe consumes 1 recipe credit."
+        "content": "Buffex allows generating recipes from a form where you specify ingredients, available time, time of day, dietary restrictions and culinary style. Each recipe consumes 1 recipe credit."
       },
       "models": {
         "title": "3. Models and generated content",
@@ -206,15 +206,15 @@
       },
       "suspension": {
         "title": "9. Suspension and termination",
-        "content": "Culinarium reserves the right to suspend or terminate accounts for fraud, illegal activity or violation of these terms. In case of reasonable termination we will try to notify the user."
+        "content": "Buffex reserves the right to suspend or terminate accounts for fraud, illegal activity or violation of these terms. In case of reasonable termination we will try to notify the user."
       },
       "liability": {
         "title": "10. Limitation of liability",
-        "content": "Recipes are suggestions; we do not guarantee specific results. Culinarium Team will not be responsible for damages resulting from following a recipe (poisoning, allergies, etc.)."
+        "content": "Recipes are suggestions; we do not guarantee specific results. Buffex Team will not be responsible for damages resulting from following a recipe (poisoning, allergies, etc.)."
       },
       "healthNotice": {
         "title": "11. Health and nutrition notice",
-        "content": "We are not doctors, dietitians or licensed nutritionists. The content and recipes generated by Culinarium are solely culinary suggestions for informational and recreational purposes. They do not constitute medical, nutritional or professional advice. The user is responsible for checking the suitability of ingredients based on their allergies, intolerances, medical restrictions or personal needs. If you have any questions related to your health or diet, always consult with a qualified healthcare professional."
+        "content": "We are not doctors, dietitians or licensed nutritionists. The content and recipes generated by Buffex are solely culinary suggestions for informational and recreational purposes. They do not constitute medical, nutritional or professional advice. The user is responsible for checking the suitability of ingredients based on their allergies, intolerances, medical restrictions or personal needs. If you have any questions related to your health or diet, always consult with a qualified healthcare professional."
       },
       "acceptableUse": {
         "title": "12. Acceptable use",
@@ -230,11 +230,11 @@
       },
       "minimumAge": {
         "title": "15. Minimum age of use",
-        "content": "To use Culinarium you must be at least <strong>18 years old</strong>. By registering you declare that you meet this requirement."
+        "content": "To use Buffex you must be at least <strong>18 years old</strong>. By registering you declare that you meet this requirement."
       },
       "intellectualProperty": {
         "title": "16. Intellectual property",
-        "content": "Users retain rights over the content they upload. By submitting ingredients and preferences you grant Culinarium a non-exclusive license to process, store and generate recipes. The use of generated recipes for commercial purposes or other uses should be consulted if there are restrictions."
+        "content": "Users retain rights over the content they upload. By submitting ingredients and preferences you grant Buffex a non-exclusive license to process, store and generate recipes. The use of generated recipes for commercial purposes or other uses should be consulted if there are restrictions."
       },
       "dataProtection": {
         "title": "17. Data protection",
@@ -254,7 +254,7 @@
       }
     },
     "footer": {
-      "content": "Contact: culinariumofficial@gmail.com — Address: 03502, Spain."
+      "content": "Contact: Buffexofficial@gmail.com — Address: 03502, Spain."
     }
   },
   "cookies": {
@@ -281,11 +281,11 @@
       },
       "contact": {
         "title": "Contact",
-        "content": "For any questions about cookies or privacy, contact us at: <strong>culinariumofficial@gmail.com</strong>"
+        "content": "For any questions about cookies or privacy, contact us at: <strong>Buffexofficial@gmail.com</strong>"
       }
     },
     "footer": {
-      "content": "Address: 03502, Spain — Culinarium Team"
+      "content": "Address: 03502, Spain — Buffex Team"
     }
   },
   "consentManagement": {
@@ -324,7 +324,7 @@
     }
   },
   "header": {
-    "brandName": "Culinarium",
+    "brandName": "Buffex",
     "menu": {
       "open": "Open menu",
       "close": "Close menu",
@@ -376,7 +376,7 @@
   },
   "recipes": {
     "title": "My Recipes",
-    "description": "Your generated and saved recipes in Culinarium.",
+    "description": "Your generated and saved recipes in Buffex.",
     "searchPlaceholder": "Search recipes, ingredients...",
     "filters": {
       "button": "Filters",
@@ -465,7 +465,7 @@
   "recipeDetail": {
     "of": "of",
     "loadingRecipe": "Loading recipe...",
-    "description": "Recipe for {{title}} generated by Culinarium.",
+    "description": "Recipe for {{title}} generated by Buffex.",
     "backButton": {
       "toRecipes": "Back to My Recipes",
       "toForm": "Back to Form"
@@ -553,7 +553,7 @@
   },
   "premium": {
     "modal": {
-      "title": "Culinarium Premium",
+      "title": "Buffex Premium",
       "close": "Close modal",
       "subscribed": {
         "title": "You're already a Premium subscriber!",
@@ -887,7 +887,7 @@
       }
     }
   },
-  "culinarium": {
+  "Buffex": {
     "form": {
       "commonIngredients": {
         "chicken": "Pollo",
@@ -911,8 +911,8 @@
         "regenerate": "regenerate a recipe",
         "generate": "generate a recipe"
       },
-      "title": "Culinarium - Find Your Recipe",
-      "description": "Find your ideal recipe with Culinarium's interactive form.",
+      "title": "Buffex - Find Your Recipe",
+      "description": "Find your ideal recipe with Buffex's interactive form.",
       "sections": {
         "ingredients": {
           "title": "What do you have on hand?",
@@ -1145,7 +1145,7 @@
   },
   "consent": {
     "modal": {
-      "title": "Culinarium & your privacy",
+      "title": "Buffex & your privacy",
       "message": "We use cookies and process data to provide the service. You can accept all or only what's necessary.",
       "terms": "Terms and Conditions",
       "privacy": "Privacy Policy",
@@ -1164,7 +1164,7 @@
         },
         "newsletter": {
           "title": "Newsletter (optional)",
-          "description": "Receive weekly recipes and Culinarium news by email."
+          "description": "Receive weekly recipes and Buffex news by email."
         }
       },
       "links": {
@@ -1184,7 +1184,7 @@
     "badge": "Smart Cooking",
     "title": "Revolutionize your way of",
     "cooking": "cooking",
-    "description": "Culinarium uses artificial intelligence to transform simple ingredients into extraordinary recipes, perfectly adapted to your tastes and needs.",
+    "description": "Buffex uses artificial intelligence to transform simple ingredients into extraordinary recipes, perfectly adapted to your tastes and needs.",
     "features": {
       "recipeGeneration": {
         "name": "AI Recipe Generation",
@@ -1284,7 +1284,7 @@
   "faq": {
     "section": {
       "title": "Frequently Asked Questions",
-      "subtitle": "Everything you need to know about Culinarium",
+      "subtitle": "Everything you need to know about Buffex",
       "description": "We resolve the most common questions about our platform and services."
     },
     "questions": [
@@ -1294,7 +1294,7 @@
       },
       {
         "question": "Are there options for special diets?",
-        "answer": "Absolutely. Culinarium supports multiple diet types, including vegetarian, vegan, keto, gluten-free and more."
+        "answer": "Absolutely. Buffex supports multiple diet types, including vegetarian, vegan, keto, gluten-free and more."
       },
       {
         "question": "Are there recipes in multiple languages?",
@@ -1322,11 +1322,11 @@
       },
       {
         "question": "Do you offer technical support?",
-        "answer": "Yes, you can contact us by email by sending us a message to culinariumofficial@gmail.com."
+        "answer": "Yes, you can contact us by email by sending us a message to Buffexofficial@gmail.com."
       },
       {
         "question": "Can I suggest new features or improvements?",
-        "answer": "Yes, we love receiving suggestions. You can send them through our email culinariumofficial@gmail.com."
+        "answer": "Yes, we love receiving suggestions. You can send them through our email Buffexofficial@gmail.com."
       }
     ],
     "buttons": {
@@ -1361,7 +1361,7 @@
   },
   "firstRecipeModal": {
     "title": "First recipe ready!",
-    "subtitle": "You just generated your first recipe with Culinarium. We are glad you are here.",
+    "subtitle": "You just generated your first recipe with Buffex. We are glad you are here.",
     "close": "Close",
     "remaining": "You have",
     "remainingLabel": "free recipes left this month",

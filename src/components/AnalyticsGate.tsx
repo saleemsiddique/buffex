@@ -14,7 +14,7 @@ const DynamicAnalytics = dynamic(
 );
 
 const LOCAL_KEY_VERSIONS = "consent_versions";
-const LOCAL_KEY_FULL = "culinarium_cookie_consent";
+const LOCAL_KEY_FULL = "buffex_cookie_consent";
 
 function hasAnalyticsConsentFromLocal(): boolean {
   try {

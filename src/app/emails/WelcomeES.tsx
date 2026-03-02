@@ -114,20 +114,21 @@ export function WelcomeEmailHtmlES({ name }: WelcomeEmailProps) {
       <body>
         <div class="main-wrapper">
           <div class="header">
-            <h1>Culinarium</h1>
+            <img src="https://buffex.io/Buffex-Logo.png" alt="Buffex" style="width:72px; height:72px; display:block; margin:0 auto 12px auto;" />
+            <h1>Buffex</h1>
           </div>
           <div class="content">
             <h2>¡Bienvenido a la comunidad, ${name}!</h2>
             <p>Estamos encantados de tenerte a bordo. Prepárate para una aventura culinaria única, donde la inteligencia artificial te ayuda a crear platos espectaculares. ¡Tu cocina está a punto de transformarse!</p>
-            <a href="https://www.culinarium.io/kitchen" class="button">Empieza a cocinar</a>
+            <a href="https://www.buffex.io/kitchen" class="button">Empieza a cocinar</a>
           </div>
           <div class="footer">
             <ul class="footer-links" style="display:flex; align-items:center; justify-content:center; text-align-center">
-              <li><a href="https://www.culinarium.io/consent/privacy">Política de Privacidad</a></li>
-              <li><a href="https://www.culinarium.io/consent/terms">Términos de Servicio</a></li>
-              <li><a href="https://www.culinarium.io/consent/cookies">Política de Cookies</a></li>
+              <li><a href="https://www.buffex.io/consent/privacy">Política de Privacidad</a></li>
+              <li><a href="https://www.buffex.io/consent/terms">Términos de Servicio</a></li>
+              <li><a href="https://www.buffex.io/consent/cookies">Política de Cookies</a></li>
             </ul>
-            <p>Culinarium &copy; 2025. Todos los derechos reservados.</p>
+            <p>Buffex &copy; 2025. Todos los derechos reservados.</p>
           </div>
         </div>
       </body>

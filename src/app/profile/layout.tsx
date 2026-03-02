@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Mi perfil | Culinarium",
-  description: "Gestiona tu cuenta, suscripción y métodos de pago en Culinarium.",
+  title: "Mi perfil | Buffex",
+  description: "Gestiona tu cuenta, suscripción y métodos de pago en Buffex.",
   robots: { index: false, follow: false },
 };
 

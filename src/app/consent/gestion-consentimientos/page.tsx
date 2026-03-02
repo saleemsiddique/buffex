@@ -44,9 +44,9 @@ export default function GestionConsentimientosPage() {
   const [error, setError] = useState<string | null>(null);
 
   // LOCAL KEYS (solo se usan para usuarios autenticados)
-  const LOCAL_KEY_FULL = "culinarium_cookie_consent";
+  const LOCAL_KEY_FULL = "buffex_cookie_consent";
   const LOCAL_KEY_VERSIONS = "consent_versions";
-  const LAST_UPDATE_KEY = "culinarium_cookie_consent_last_update";
+  const LAST_UPDATE_KEY = "buffex_cookie_consent_last_update";
   const LEGACY_KEY = "consent_version";
 
   // ---- Helpers para usuarios autenticados ----

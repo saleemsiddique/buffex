@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import Link from "next/link";
 import {
   FaYoutube,
@@ -40,9 +41,7 @@ export default function Footer() {
             {/* Socials and Brand */}
             <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
               {/* Brand and Slogan */}
-              <div className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-orange-400 to-amber-500 text-transparent bg-clip-text">
-                Culinarium
-              </div>
+              <Image src="/Buffex-Banner-noback.png" alt="Buffex" height={36} width={135} />
               <p className="mt-2 text-sm text-gray-400 italic">
                 {t("footer.brand.slogan")}
               </p>
@@ -50,10 +49,10 @@ export default function Footer() {
               {/* Social Icons */}
               <div className="flex items-center gap-4 mt-6">
                 <a
-                  href="https://tiktok.com/@culinariumofficial"
+                  href="https://tiktok.com/@buffexofficial"
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="TikTok Culinarium"
+                  aria-label="TikTok Buffex"
                   className="p-3 rounded-lg bg-gray-800 hover:bg-orange-600 transition-colors duration-300"
                 >
                   <FaTiktok size={20} />
@@ -62,7 +61,7 @@ export default function Footer() {
                   href="https://youtube.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="YouTube Culinarium"
+                  aria-label="YouTube Buffex"
                   className="p-3 rounded-lg bg-gray-800 hover:bg-orange-600 transition-colors duration-300"
                 >
                   <FaYoutube size={20} />
@@ -71,7 +70,7 @@ export default function Footer() {
                   href="https://instagram.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="Instagram Culinarium"
+                  aria-label="Instagram Buffex"
                   className="p-3 rounded-lg bg-gray-800 hover:bg-orange-600 transition-colors duration-300"
                 >
                   <FaInstagram size={20} />
@@ -110,7 +109,7 @@ export default function Footer() {
                 </Link>
               </div>
               <p className="mt-8 text-sm text-gray-500">
-                © Culinarium {year}. {t("footer.copyright")}
+                © Buffex {year}. {t("footer.copyright")}
               </p>
             </div>
 
@@ -118,7 +117,7 @@ export default function Footer() {
             <div className="flex flex-col items-center lg:items-end text-center lg:text-right mt-6 lg:mt-0">
               <p className="text-sm font-semibold text-gray-400">{t("footer.contact.title")}</p>
               <p className="mt-2 text-sm text-gray-500">
-                culinariumofficial@gmail.com
+                contact@buffex.io
               </p>
 
               <div className="mt-8">

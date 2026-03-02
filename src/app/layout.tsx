@@ -6,7 +6,7 @@ import { SubscriptionProvider } from "@/context/subscription-context";
 import { TokenPurchasesProvider } from "@/context/tokenpurchases-context";
 import { StripeProvider } from "@/context/stripe-context";
 import ConsentModal from "@/components/ConsentModal";
-import AnalyticsGate from "@/components/AnalyticsGate"; // eslint-disable-line @typescript-eslint/no-unused-vars
+import AnalyticsGate from "@/components/AnalyticsGate";
 import I18nProvider from "@/context/i18n-context";
 import AppReadyProvider from "@/context/appready-context";
 import InAppBrowserGuard from "@/components/InAppBrowserGuard";
@@ -26,11 +26,11 @@ const plusJakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata = {
-  title: "Culinarium – Generador de recetas con IA",
+  title: "Buffex – Generador de recetas con IA",
   description:
-    "Culinarium te ayuda a crear recetas personalizadas según tus ingredientes, preferencias dietéticas y estilo de cocina.",
+    "Buffex te ayuda a crear recetas personalizadas según tus ingredientes, preferencias dietéticas y estilo de cocina.",
   keywords: [
-    "Culinarium",
+    "Buffex",
     "recetas",
     "inteligencia artificial",
     "IA",
@@ -40,29 +40,29 @@ export const metadata = {
     "dietas",
     "comida",
   ],
-  authors: [{ name: "Culinarium", url: "https://culinarium.io" }],
-  creator: "Culinarium",
-  publisher: "Culinarium",
-  metadataBase: new URL("https://culinarium.io"),
+  authors: [{ name: "Buffex", url: "https://buffex.io" }],
+  creator: "Buffex",
+  publisher: "Buffex",
+  metadataBase: new URL("https://buffex.io"),
   alternates: {
     canonical: "/",
     languages: {
-      "es": "https://culinarium.io",
-      "en": "https://culinarium.io",
+      "es": "https://buffex.io",
+      "en": "https://buffex.io",
     },
   },
   openGraph: {
-    title: "Culinarium – Generador de recetas con IA",
+    title: "Buffex – Generador de recetas con IA",
     description:
-      "Culinarium te ayuda a crear recetas personalizadas según tus ingredientes, preferencias dietéticas y estilo de cocina.",
-    url: "https://culinarium.io",
-    siteName: "Culinarium",
+      "Buffex te ayuda a crear recetas personalizadas según tus ingredientes, preferencias dietéticas y estilo de cocina.",
+    url: "https://buffex.io",
+    siteName: "Buffex",
     images: [
       {
-        url: "https://culinarium.io/og-image.png",
+        url: "https://buffex.io/Buffex-Banner.png",
         width: 1200,
         height: 630,
-        alt: "Culinarium - Generador de recetas con IA",
+        alt: "Buffex - Generador de recetas con IA",
       },
     ],
     locale: "es_ES",
@@ -70,14 +70,15 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Culinarium – Generador de recetas con IA",
+    title: "Buffex – Generador de recetas con IA",
     description:
-      "Culinarium te ayuda a crear recetas personalizadas según tus ingredientes, preferencias dietéticas y estilo de cocina.",
-    images: ["https://culinarium.io/og-image.png"],
-    creator: "@CulinariumOfficial",
+      "Buffex te ayuda a crear recetas personalizadas según tus ingredientes, preferencias dietéticas y estilo de cocina.",
+    images: ["https://buffex.io/Buffex-Banner.png"],
+    creator: "@BuffexOfficial",
   },
   icons: {
-    icon: "/Logo-Culinarium.png", // Debe estar en /public
+    icon: "/Buffex-Logo.png",
+    apple: "/Buffex-Logo.png",
   },
 };
 
@@ -86,20 +87,20 @@ const jsonLd = {
   "@graph": [
     {
       "@type": "Organization",
-      "@id": "https://culinarium.io/#organization",
-      "name": "Culinarium",
-      "url": "https://culinarium.io",
+      "@id": "https://buffex.io/#organization",
+      "name": "Buffex",
+      "url": "https://buffex.io",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://culinarium.io/Logo-Culinarium.png"
+        "url": "https://buffex.io/Buffex-Logo.png"
       },
-      "sameAs": ["https://twitter.com/CulinariumOfficial"]
+      "sameAs": ["https://twitter.com/BuffexOfficial"]
     },
     {
       "@type": "WebApplication",
-      "@id": "https://culinarium.io/#webapp",
-      "name": "Culinarium – Generador de recetas con IA",
-      "url": "https://culinarium.io",
+      "@id": "https://buffex.io/#webapp",
+      "name": "Buffex – Generador de recetas con IA",
+      "url": "https://buffex.io",
       "applicationCategory": "LifestyleApplication",
       "operatingSystem": "Web",
       "description": "Genera recetas personalizadas con IA según tus ingredientes, utensilios disponibles, restricciones dietéticas y estilo de cocina.",
@@ -113,7 +114,7 @@ const jsonLd = {
         },
         {
           "@type": "Offer",
-          "name": "Culinarium Premium",
+          "name": "Buffex Premium",
           "price": "9.99",
           "priceCurrency": "EUR",
           "description": "Recetas ilimitadas con todas las funciones avanzadas",
@@ -135,7 +136,6 @@ export default function RootLayout({
   return (
     <html lang="es" className={`${fraunces.variable} ${plusJakarta.variable}`}>
       <head>
-        <link rel="stylesheet" href="global.css" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

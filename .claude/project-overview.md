@@ -1,4 +1,4 @@
-# Culinarium — Project Overview
+# Buffex — Project Overview
 
 > Actualizado: 2026-02-26
 

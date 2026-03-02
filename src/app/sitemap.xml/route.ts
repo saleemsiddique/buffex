@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  const baseUrl = "https://culinarium.io";
+  const baseUrl = "https://buffex.io";
 
   const routes = [
     { path: "", priority: "1.0", changefreq: "weekly" },

@@ -222,8 +222,8 @@ const RecipeListPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-[var(--background)] py-24 px-4 sm:px-6 lg:px-8 font-sans">
       <Head>
-        <title>{t("recipes.title")} - Culinarium</title>
-        <meta name="description" content="Tus recetas generadas y guardadas en Culinarium." />
+        <title>{t("recipes.title")} - Buffex</title>
+        <meta name="description" content="Tus recetas generadas y guardadas en Buffex." />
       </Head>
 
       <motion.div

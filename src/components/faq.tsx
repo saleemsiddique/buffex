@@ -134,7 +134,7 @@ export default function FAQ() {
           <p className="text-[var(--foreground)]/50 text-sm">
             {t("faq.contact.message")}{" "}
             <a
-              href="mailto:culinariumofficial@gmail.com"
+              href="mailto:contact@buffex.io"
               className="inline-flex items-center gap-1 text-[var(--highlight)] hover:text-[var(--highlight-dark)] font-medium transition-colors"
             >
               <Mail className="w-3.5 h-3.5" aria-hidden="true" />

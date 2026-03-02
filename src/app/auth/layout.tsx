@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Accede a Culinarium | Culinarium",
-  description: "Inicia sesión o crea tu cuenta gratuita en Culinarium para empezar a generar recetas con IA.",
+  title: "Accede a Buffex | Buffex",
+  description: "Inicia sesión o crea tu cuenta gratuita en Buffex para empezar a generar recetas con IA.",
   robots: { index: false, follow: false },
 };
 

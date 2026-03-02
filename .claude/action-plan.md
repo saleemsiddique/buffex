@@ -1,4 +1,4 @@
-# Culinarium — Master Action Plan
+# Buffex — Master Action Plan
 
 > Actualizado: 2026-02-27
 
@@ -43,7 +43,7 @@
 
 ### Base de datos — Migración tokens → recetas ✅ COMPLETADA
 - **Script:** `scripts/migrate-tokens-to-recipes.ts` (`npm run migrate:tokens`)
-- **Ejecutada 2026-02-27** sobre proyecto `culinarium-cd1f5`: 32 docs actualizados
+- **Ejecutada 2026-02-27** sobre proyecto `Buffex-cd1f5`: 32 docs actualizados
   - 30 docs `/user`: `monthly_tokens/extra_tokens` → `monthly_recipes/extra_recipes`, `tokens_reset_date` eliminado
   - 1 doc `/subscripcion`: `tokensIncluded:300` → `recipesIncluded:30`
   - 1 doc `/token_purchases`: `tokensAmount:30` → `recipesAmount:3`

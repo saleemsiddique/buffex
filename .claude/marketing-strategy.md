@@ -1,4 +1,4 @@
-# Culinarium — Marketing Strategy
+# Buffex — Marketing Strategy
 
 ## Propuesta de Valor Única (UVP)
 
@@ -21,7 +21,7 @@
 
 | App | Free tier | Imagen | Español nativo | Utensilios | Precio |
 |-----|-----------|--------|----------------|------------|--------|
-| **Culinarium** | 5 recetas/mes | ✓ DALL-E | ✓ | ✓ | €9.99/mes |
+| **Buffex** | 5 recetas/mes | ✓ DALL-E | ✓ | ✓ | €9.99/mes |
 | ChefGPT | ✗ | ✗ | Parcial | ✗ | $9.99/mes |
 | ChatGPT directo | Limitado | ✗ | ✓ | ✗ | $20/mes |
 | RecipeLand AI | ✗ | ✗ | ✗ | ✗ | $7.99/mes |

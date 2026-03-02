@@ -45,8 +45,8 @@ export default function ConsentModal() {
 
   const LOCAL_KEY = "consent_versions";
   const LEGACY_KEY = "consent_version";
-  const FULL_KEY = "culinarium_cookie_consent";
-  const LAST_UPDATE_KEY = "culinarium_cookie_consent_last_update";
+  const FULL_KEY = "buffex_cookie_consent";
+  const LAST_UPDATE_KEY = "buffex_cookie_consent_last_update";
 
   const toMillis = (d?: string) => {
     if (!d) return 0;

@@ -20,7 +20,7 @@ import {
 import { MdOutlineFastfood, MdOutlineNoFood } from "react-icons/md";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
-import { Check, ChefHat, RefreshCw } from "lucide-react";
+import { ChefHat, RefreshCw } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { auth } from "@/lib/firebase";
 import { compressDataUrlToJpeg } from "@/utils/image-compression";
@@ -442,6 +442,7 @@ const RecipesContent: React.FC = () => {
     }, 2000);
 
     return () => clearInterval(interval);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recipe?.titulo, imageSrc]); // depend on titulo (stable ID) not the whole recipe object
 
   // ─── Fetch by ID ──────────────────────────────────────────────────────────

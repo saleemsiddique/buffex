@@ -310,7 +310,7 @@ export function useRecipeForm() {
       (user.monthly_recipes || 0) === 5 &&
       (user.extra_recipes || 0) === 0 &&
       typeof window !== "undefined" &&
-      !localStorage.getItem("culinarium_first_recipe_shown");
+      !localStorage.getItem("buffex_first_recipe_shown");
 
     const selectedUtensils = Object.keys(utensils).filter((k) => utensils[k]);
 
@@ -328,7 +328,7 @@ export function useRecipeForm() {
     // Mark first recipe so RecipesContent can detect it
     if (isFirstRecipe) {
       if (typeof window !== "undefined") {
-        localStorage.setItem("culinarium_first_recipe_shown", "true");
+        localStorage.setItem("buffex_first_recipe_shown", "true");
         sessionStorage.setItem("isFirstRecipe", "true");
       }
     }
