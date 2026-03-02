@@ -32,8 +32,8 @@ const BuffexForm: React.FC = () => {
       {form.showOnboarding && <Onboarding onClose={form.handleFinishOnboarding} />}
 
       <Head>
-        <title>{t("culinarium.form.title")}</title>
-        <meta name="description" content={t("culinarium.form.description")} />
+        <title>{t("Buffex.form.title")}</title>
+        <meta name="description" content={t("Buffex.form.description")} />
       </Head>
 
       <motion.div

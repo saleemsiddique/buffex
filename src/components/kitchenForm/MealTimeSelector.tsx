@@ -25,16 +25,16 @@ export default function MealTimeSelector({
   const { t } = useTranslation();
 
   const mealTimes = [
-    { label: t("culinarium.form.sections.mealTime.options.breakfast.label"), value: "breakfast" },
-    { label: t("culinarium.form.sections.mealTime.options.lunch.label"), value: "lunch" },
-    { label: t("culinarium.form.sections.mealTime.options.dinner.label"), value: "dinner" },
-    { label: t("culinarium.form.sections.mealTime.options.snack.label"), value: "snack" },
+    { label: t("Buffex.form.sections.mealTime.options.breakfast.label"), value: "breakfast" },
+    { label: t("Buffex.form.sections.mealTime.options.lunch.label"), value: "lunch" },
+    { label: t("Buffex.form.sections.mealTime.options.dinner.label"), value: "dinner" },
+    { label: t("Buffex.form.sections.mealTime.options.snack.label"), value: "snack" },
   ];
 
   return (
     <section>
       <h2 className="text-lg font-bold text-[var(--foreground)] mb-3">
-        {t("culinarium.form.sections.mealTime.title")}
+        {t("Buffex.form.sections.mealTime.title")}
       </h2>
       <div className="flex gap-2">
         {mealTimes.map((time) => {
@@ -61,7 +61,7 @@ export default function MealTimeSelector({
       </div>
       {mealTimeError && (
         <p className="text-red-500 text-xs mt-1.5">
-          {t("culinarium.form.sections.mealTime.error")}
+          {t("Buffex.form.sections.mealTime.error")}
         </p>
       )}
     </section>

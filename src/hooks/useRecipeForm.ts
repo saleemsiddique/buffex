@@ -91,16 +91,16 @@ export function useRecipeForm() {
 
   // Utensils
   const utensilsList: UtensilDef[] = [
-    { key: "horno", label: t("culinarium.form.sections.utensils.list.oven"), icon: mdiStove },
-    { key: "microondas", label: t("culinarium.form.sections.utensils.list.microwave"), icon: mdiMicrowave },
-    { key: "airfryer", label: t("culinarium.form.sections.utensils.list.airfryer"), icon: mdiPan },
-    { key: "sarten", label: t("culinarium.form.sections.utensils.list.pan"), icon: mdiPan },
-    { key: "olla", label: t("culinarium.form.sections.utensils.list.pot"), icon: mdiPot },
-    { key: "batidora", label: t("culinarium.form.sections.utensils.list.blender"), icon: mdiBlender },
-    { key: "licuadora", label: t("culinarium.form.sections.utensils.list.mixer"), icon: mdiBlender },
-    { key: "grill", label: t("culinarium.form.sections.utensils.list.grill"), icon: mdiGrill },
-    { key: "tabla", label: t("culinarium.form.sections.utensils.list.board"), icon: mdiSilverwareForkKnife },
-    { key: "pelador", label: t("culinarium.form.sections.utensils.list.peeler"), icon: mdiKnife },
+    { key: "horno", label: t("Buffex.form.sections.utensils.list.oven"), icon: mdiStove },
+    { key: "microondas", label: t("Buffex.form.sections.utensils.list.microwave"), icon: mdiMicrowave },
+    { key: "airfryer", label: t("Buffex.form.sections.utensils.list.airfryer"), icon: mdiPan },
+    { key: "sarten", label: t("Buffex.form.sections.utensils.list.pan"), icon: mdiPan },
+    { key: "olla", label: t("Buffex.form.sections.utensils.list.pot"), icon: mdiPot },
+    { key: "batidora", label: t("Buffex.form.sections.utensils.list.blender"), icon: mdiBlender },
+    { key: "licuadora", label: t("Buffex.form.sections.utensils.list.mixer"), icon: mdiBlender },
+    { key: "grill", label: t("Buffex.form.sections.utensils.list.grill"), icon: mdiGrill },
+    { key: "tabla", label: t("Buffex.form.sections.utensils.list.board"), icon: mdiSilverwareForkKnife },
+    { key: "pelador", label: t("Buffex.form.sections.utensils.list.peeler"), icon: mdiKnife },
   ];
 
   const [utensils, setUtensils] = useState<Record<string, boolean>>(
@@ -187,7 +187,7 @@ export function useRecipeForm() {
     const isDuplicate = ingredients.some((ing) => ing.toLowerCase() === normalizedValue);
 
     if (isDuplicate) {
-      setToastMessage(t("culinarium.form.messages.duplicateIngredient"));
+      setToastMessage(t("Buffex.form.messages.duplicateIngredient"));
     } else {
       setIngredients((prev) => [...prev, value]);
       setIngredientError(false);
@@ -224,7 +224,7 @@ export function useRecipeForm() {
         return;
       }
       if (excludedIngredients.includes(value)) {
-        setToastMessage(t("culinarium.form.messages.duplicateExcluded"));
+        setToastMessage(t("Buffex.form.messages.duplicateExcluded"));
       } else {
         setExcludedIngredients((prev) => [...prev, value]);
       }
@@ -287,17 +287,17 @@ export function useRecipeForm() {
     }
 
     if (firebaseUser.isAnonymous) {
-      setToastMessage(t("culinarium.form.messages.authError"));
+      setToastMessage(t("Buffex.form.messages.authError"));
       return;
     }
 
     const RECIPES_PER_GENERATION = calculateTokenCost();
-    const recipeType = t("culinarium.form.actions.generate");
+    const recipeType = t("Buffex.form.actions.generate");
 
     if (!hasEnoughTokens(RECIPES_PER_GENERATION)) {
       const currentRecipes = (user.monthly_recipes || 0) + (user.extra_recipes || 0);
       setToastMessage(
-        t("culinarium.form.messages.tokenError", {
+        t("Buffex.form.messages.tokenError", {
           tokens: RECIPES_PER_GENERATION, action: recipeType, current: currentRecipes,
         })
       );

@@ -12,7 +12,7 @@ export default function LoadingOverlay({ visible }: LoadingOverlayProps) {
   const { t } = useTranslation();
   const [tipIndex, setTipIndex] = useState(0);
 
-  const tips = t("culinarium.form.loading.tips", { returnObjects: true }) as string[];
+  const tips = t("Buffex.form.loading.tips", { returnObjects: true }) as string[];
 
   useEffect(() => {
     if (!visible) return;
@@ -50,7 +50,7 @@ export default function LoadingOverlay({ visible }: LoadingOverlayProps) {
             </div>
 
             <p className="text-lg font-semibold text-[var(--foreground)] text-center">
-              {t("culinarium.form.loading.title")}
+              {t("Buffex.form.loading.title")}
             </p>
 
             {/* Rotating tips */}

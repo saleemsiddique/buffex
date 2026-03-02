@@ -33,7 +33,7 @@ export default function GenerateButton({
         className="w-full py-4 rounded-xl text-base font-bold bg-gradient-to-r from-[var(--highlight)] to-orange-500 text-white shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2"
       >
         <ShoppingCart className="w-5 h-5" />
-        {t("culinarium.form.getMoreRecipes")}
+        {t("Buffex.form.getMoreRecipes")}
       </button>
     );
   }
@@ -60,24 +60,24 @@ export default function GenerateButton({
           <>
             <span className="flex items-center gap-2">
               <UserCheck className="w-5 h-5" />
-              {t("culinarium.form.buttons.generate.loadingUser")}
+              {t("Buffex.form.buttons.generate.loadingUser")}
             </span>
           </>
         ) : status === "loading" ? (
           <>
             <span className="flex items-center gap-2">
               <Loader2 className="w-5 h-5 animate-spin" />
-              {t("culinarium.form.buttons.generate.generating")}
+              {t("Buffex.form.buttons.generate.generating")}
             </span>
           </>
         ) : (
           <>
             <span className="flex items-center gap-2">
               <Sparkles className="w-5 h-5" />
-              {t("culinarium.form.buttons.generate.ready")}
+              {t("Buffex.form.buttons.generate.ready")}
             </span>
             <span className="text-xs font-normal opacity-80">
-              {t("culinarium.form.buttons.generate.cost", { cost: tokenCost })}
+              {t("Buffex.form.buttons.generate.cost", { cost: tokenCost })}
             </span>
           </>
         )}

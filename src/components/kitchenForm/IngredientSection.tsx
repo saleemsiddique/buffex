@@ -38,7 +38,7 @@ export default function IngredientSection({
   return (
     <section>
       <h2 className="text-lg font-bold text-[var(--foreground)] mb-3">
-        {t("culinarium.form.sections.ingredients.title")}
+        {t("Buffex.form.sections.ingredients.title")}
       </h2>
 
       {/* Input with inline add button */}
@@ -50,20 +50,20 @@ export default function IngredientSection({
           onKeyDown={handleAddIngredient}
           onFocus={() => setShowSuggestions(currentIngredient.length >= 2)}
           onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-          placeholder={t("culinarium.form.sections.ingredients.placeholder")}
+          placeholder={t("Buffex.form.sections.ingredients.placeholder")}
           className={`w-full px-4 py-3 pr-12 border-2 rounded-xl text-base transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#f97316]/30 ${
             ingredientError
               ? "border-red-400 bg-red-50/50"
               : "border-[#E5E5E3] focus:border-[#f97316]"
           }`}
-          aria-label={t("culinarium.form.sections.ingredients.title")}
+          aria-label={t("Buffex.form.sections.ingredients.title")}
           autoComplete="off"
         />
         <button
           type="button"
           onClick={handleAddIngredient}
           className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-[var(--highlight)] hover:bg-[var(--highlight)]/10 rounded-lg transition-colors"
-          aria-label={t("culinarium.form.sections.ingredients.addButton")}
+          aria-label={t("Buffex.form.sections.ingredients.addButton")}
         >
           <Plus className="w-5 h-5" />
         </button>
@@ -88,7 +88,7 @@ export default function IngredientSection({
       {ingredientError && (
         <p className="text-red-500 text-sm mt-2 flex items-center gap-1.5">
           <AlertCircle className="w-4 h-4" />
-          {t("culinarium.form.sections.ingredients.error")}
+          {t("Buffex.form.sections.ingredients.error")}
         </p>
       )}
 
@@ -96,7 +96,7 @@ export default function IngredientSection({
       {currentIngredient === "" && (
         <div className="mt-3">
           <p className="text-xs text-[var(--muted)] mb-2">
-            {t("culinarium.form.sections.ingredients.suggestions")}
+            {t("Buffex.form.sections.ingredients.suggestions")}
           </p>
           <div className="flex flex-wrap gap-1.5">
             {ingredientHistory
@@ -140,7 +140,7 @@ export default function IngredientSection({
 
       {ingredients.length === 0 && !ingredientError && (
         <p className="text-[var(--muted)] text-xs mt-2">
-          {t("culinarium.form.sections.ingredients.empty")}
+          {t("Buffex.form.sections.ingredients.empty")}
         </p>
       )}
     </section>

@@ -1,4 +1,4 @@
-# Culinarium — MCP Plugins Recommendations
+# Buffex — MCP Plugins Recommendations
 
 ## Project-Scoped (`.mcp.json` en raíz del proyecto)
 

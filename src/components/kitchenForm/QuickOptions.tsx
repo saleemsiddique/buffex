@@ -32,14 +32,14 @@ export default function QuickOptions({
   const MAX_DINERS = 8;
 
   const difficultyOptions: { value: Difficulty; labelKey: string; Icon: typeof Star }[] = [
-    { value: "Principiante", labelKey: "culinarium.form.sections.difficulty.levels.beginner", Icon: Star },
-    { value: "Intermedio", labelKey: "culinarium.form.sections.difficulty.levels.intermediate", Icon: Zap },
-    { value: "Chef", labelKey: "culinarium.form.sections.difficulty.levels.chef", Icon: ChefHat },
+    { value: "Principiante", labelKey: "Buffex.form.sections.difficulty.levels.beginner", Icon: Star },
+    { value: "Intermedio", labelKey: "Buffex.form.sections.difficulty.levels.intermediate", Icon: Zap },
+    { value: "Chef", labelKey: "Buffex.form.sections.difficulty.levels.chef", Icon: ChefHat },
   ];
 
   const getTimeLabel = (val: string) => {
-    if (val === "no_limit") return t("culinarium.form.sections.time.noLimit");
-    return t(`culinarium.form.sections.time.options.${val}`);
+    if (val === "no_limit") return t("Buffex.form.sections.time.noLimit");
+    return t(`Buffex.form.sections.time.options.${val}`);
   };
 
   return (
@@ -49,7 +49,7 @@ export default function QuickOptions({
         <div className="flex items-center gap-2 mb-2">
           <Clock className="w-4 h-4 text-[var(--muted)]" />
           <span className="text-sm font-semibold text-[var(--foreground)]">
-            {t("culinarium.form.sections.time.title")}
+            {t("Buffex.form.sections.time.title")}
           </span>
         </div>
         <div className="flex flex-wrap gap-1.5">
@@ -75,7 +75,7 @@ export default function QuickOptions({
         {/* Difficulty chips */}
         <div className="flex-1">
           <span className="text-sm font-semibold text-[var(--foreground)] mb-2 block">
-            {t("culinarium.form.sections.difficulty.title")}
+            {t("Buffex.form.sections.difficulty.title")}
           </span>
           <div className="flex gap-1.5">
             {difficultyOptions.map(({ value, labelKey, Icon }) => (
@@ -101,7 +101,7 @@ export default function QuickOptions({
         <div>
           <div className="flex items-center gap-1.5 mb-2">
             <span className="text-sm font-semibold text-[var(--foreground)]">
-              {t("culinarium.form.sections.diners.title")}
+              {t("Buffex.form.sections.diners.title")}
             </span>
             {!isSubscribed && (
               <Lock className="w-3.5 h-3.5 text-[var(--highlight)]" />

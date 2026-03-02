@@ -10,7 +10,7 @@ import { useTranslation } from "react-i18next";
 
 // (opcional) si usas App Router metadata y quieres no indexar
 // export const metadata = {
-//   title: "Unsubscribe | Culinarium",
+//   title: "Unsubscribe | Buffex",
 //   robots: { index: false, follow: false },
 // };
 

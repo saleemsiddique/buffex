@@ -41,21 +41,21 @@ interface AdvancedOptionsPanelProps {
 }
 
 const CUISINE_STYLES = [
-  { value: "japanese", labelKey: "culinarium.form.sections.cuisine.styles.japanese.label" },
-  { value: "mexican", labelKey: "culinarium.form.sections.cuisine.styles.mexican.label" },
-  { value: "italian", labelKey: "culinarium.form.sections.cuisine.styles.italian.label" },
-  { value: "american", labelKey: "culinarium.form.sections.cuisine.styles.american.label" },
-  { value: "spanish", labelKey: "culinarium.form.sections.cuisine.styles.spanish.label" },
-  { value: "jamaican", labelKey: "culinarium.form.sections.cuisine.styles.jamaican.label" },
-  { value: "indian", labelKey: "culinarium.form.sections.cuisine.styles.indian.label" },
+  { value: "japanese", labelKey: "Buffex.form.sections.cuisine.styles.japanese.label" },
+  { value: "mexican", labelKey: "Buffex.form.sections.cuisine.styles.mexican.label" },
+  { value: "italian", labelKey: "Buffex.form.sections.cuisine.styles.italian.label" },
+  { value: "american", labelKey: "Buffex.form.sections.cuisine.styles.american.label" },
+  { value: "spanish", labelKey: "Buffex.form.sections.cuisine.styles.spanish.label" },
+  { value: "jamaican", labelKey: "Buffex.form.sections.cuisine.styles.jamaican.label" },
+  { value: "indian", labelKey: "Buffex.form.sections.cuisine.styles.indian.label" },
 ];
 
 const DIETARY_OPTIONS = [
-  { value: "vegetarian", labelKey: "culinarium.form.sections.restrictions.options.vegetarian" },
-  { value: "vegan", labelKey: "culinarium.form.sections.restrictions.options.vegan" },
-  { value: "gluten-free", labelKey: "culinarium.form.sections.restrictions.options.glutenFree" },
-  { value: "lactose-free", labelKey: "culinarium.form.sections.restrictions.options.lactoseFree" },
-  { value: "keto", labelKey: "culinarium.form.sections.restrictions.options.keto" },
+  { value: "vegetarian", labelKey: "Buffex.form.sections.restrictions.options.vegetarian" },
+  { value: "vegan", labelKey: "Buffex.form.sections.restrictions.options.vegan" },
+  { value: "gluten-free", labelKey: "Buffex.form.sections.restrictions.options.glutenFree" },
+  { value: "lactose-free", labelKey: "Buffex.form.sections.restrictions.options.lactoseFree" },
+  { value: "keto", labelKey: "Buffex.form.sections.restrictions.options.keto" },
 ];
 
 export default function AdvancedOptionsPanel({
@@ -80,10 +80,10 @@ export default function AdvancedOptionsPanel({
   const [activeTab, setActiveTab] = useState<TabKey>("restrictions");
 
   const tabs: { key: TabKey; label: string; premium: boolean }[] = [
-    { key: "restrictions", label: t("culinarium.form.advancedTabs.restrictions"), premium: true },
-    { key: "cuisine", label: t("culinarium.form.advancedTabs.cuisine"), premium: true },
-    { key: "macros", label: t("culinarium.form.advancedTabs.macros"), premium: false },
-    { key: "utensils", label: t("culinarium.form.advancedTabs.utensils"), premium: false },
+    { key: "restrictions", label: t("Buffex.form.advancedTabs.restrictions"), premium: true },
+    { key: "cuisine", label: t("Buffex.form.advancedTabs.cuisine"), premium: true },
+    { key: "macros", label: t("Buffex.form.advancedTabs.macros"), premium: false },
+    { key: "utensils", label: t("Buffex.form.advancedTabs.utensils"), premium: false },
   ];
 
   return (
@@ -130,8 +130,8 @@ export default function AdvancedOptionsPanel({
             >
               <p className="text-xs text-[var(--muted)] mb-3">
                 {isSubscribed
-                  ? t("culinarium.form.sections.restrictions.description")
-                  : t("culinarium.form.sections.restrictions.premiumDescription")}
+                  ? t("Buffex.form.sections.restrictions.description")
+                  : t("Buffex.form.sections.restrictions.premiumDescription")}
               </p>
               <div className="flex flex-wrap gap-1.5 mb-4">
                 {DIETARY_OPTIONS.map((opt) => (
@@ -155,7 +155,7 @@ export default function AdvancedOptionsPanel({
 
               <div>
                 <span className="text-xs font-semibold text-[var(--foreground)] mb-2 block">
-                  {t("culinarium.form.sections.restrictions.avoidTitle")}
+                  {t("Buffex.form.sections.restrictions.avoidTitle")}
                 </span>
                 <input
                   type="text"
@@ -164,8 +164,8 @@ export default function AdvancedOptionsPanel({
                   onKeyDown={isSubscribed ? handleAddExcluded : undefined}
                   placeholder={
                     isSubscribed
-                      ? t("culinarium.form.sections.restrictions.avoidPlaceholder")
-                      : t("culinarium.form.sections.restrictions.premiumAvoid")
+                      ? t("Buffex.form.sections.restrictions.avoidPlaceholder")
+                      : t("Buffex.form.sections.restrictions.premiumAvoid")
                   }
                   disabled={!isSubscribed}
                   className={`w-full px-3 py-2 border rounded-lg text-sm transition-colors duration-200 focus:outline-none ${
@@ -195,7 +195,7 @@ export default function AdvancedOptionsPanel({
             >
               {!isSubscribed && (
                 <p className="text-xs text-[var(--muted)] mb-3">
-                  {t("culinarium.form.sections.cuisine.premiumDescription")}
+                  {t("Buffex.form.sections.cuisine.premiumDescription")}
                 </p>
               )}
               <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
@@ -253,7 +253,7 @@ export default function AdvancedOptionsPanel({
               transition={{ duration: 0.15 }}
             >
               <p className="text-xs text-[var(--muted)] mb-3">
-                {t("culinarium.form.sections.utensils.description")}
+                {t("Buffex.form.sections.utensils.description")}
               </p>
               <div className="grid grid-cols-5 gap-2">
                 {utensilsList.map((u) => {
