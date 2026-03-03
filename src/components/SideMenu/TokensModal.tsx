@@ -340,7 +340,7 @@ export const TokensModal: React.FC<TokensModalProps> = ({ onClose, user }) => {
                       style={{ background: "rgba(249,115,22,0.15)", color: "#fb923c" }}
                     >
                       <ChefHat style={{ width: 12, height: 12 }} />
-                      99 {t("tokens.modal.recipesPerMonth")}
+                      150 {t("tokens.modal.recipesPerMonth")}
                     </div>
 
                     {/* Features list */}
@@ -432,7 +432,7 @@ export const TokensModal: React.FC<TokensModalProps> = ({ onClose, user }) => {
                           {t("tokens.modal.packages.150.label")}
                         </p>
                         <p className="text-[11px] mt-0.5" style={{ color: "rgba(255,255,255,0.35)" }}>
-                          €0.33 {t("tokens.modal.promoTypes.perToken")} · {t("tokens.modal.oneTime")}
+                          €0.17 {t("tokens.modal.promoTypes.perToken")} · {t("tokens.modal.oneTime")}
                         </p>
                       </div>
                     </div>

@@ -125,6 +125,7 @@ const BuffexForm: React.FC = () => {
                     hasRecipes={hasRecipes}
                     tokenCost={form.calculateTokenCost()}
                     onGetMoreRecipes={() => form.setShowTokens(true)}
+                    isLoggedIn={!!user}
                   />
 
                   {form.status === "error" && form.error && (

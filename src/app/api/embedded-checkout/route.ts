@@ -51,13 +51,27 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: "Usuario no encontrado en Firebase" }, { status: 404 });
     }
 
+    // Detectar país del usuario via Vercel geolocation
+    const country = request.headers.get("x-vercel-ip-country") || "ES";
+    const isUS = country === "US";
+
+    // Mapping EUR → USD price IDs
+    const EUR_TO_USD: Record<string, string | undefined> = {
+      [process.env.STRIPE_PRICE_PREMIUM ?? ""]:        process.env.STRIPE_PRICE_PREMIUM_USD,
+      [process.env.STRIPE_PRICE_PREMIUM_ANNUAL ?? ""]: process.env.STRIPE_PRICE_PREMIUM_ANNUAL_USD,
+      [process.env.STRIPE_PRICE_PAYG ?? ""]:           process.env.STRIPE_PRICE_PAYG_USD,
+    };
+    const effectivePriceId = (isUS && EUR_TO_USD[body.priceId]) ? EUR_TO_USD[body.priceId]! : body.priceId;
+
     // Determinar si es suscripción o compra única
     const subscriptionPriceIds = [
       "price_1RwHJCRpBiBhmezm4D1fPQt5",       // legacy Premium €7.99
       process.env.STRIPE_PRICE_PREMIUM,         // Premium €9.99/mes
       process.env.STRIPE_PRICE_PREMIUM_ANNUAL,  // Premium €79.99/año
+      process.env.STRIPE_PRICE_PREMIUM_USD,     // Premium $10.99/mes
+      process.env.STRIPE_PRICE_PREMIUM_ANNUAL_USD, // Premium $87.99/año
     ].filter(Boolean);
-    const isSubscription = subscriptionPriceIds.includes(body.priceId);
+    const isSubscription = subscriptionPriceIds.includes(effectivePriceId);
 
     const session = await stripe.checkout.sessions.create({
       ui_mode: "hosted",
@@ -65,9 +79,11 @@ export async function POST(request: Request) {
         ? ["card", "amazon_pay", "revolut_pay"]
         : ["card", "amazon_pay", "revolut_pay", "paypal"],
       customer: customerId,
-      line_items: [{ quantity: 1, price: body.priceId }],
+      line_items: [{ quantity: 1, price: effectivePriceId }],
       ...(isSubscription ? {} : { invoice_creation: { enabled: true } }),
       mode: isSubscription ? "subscription" : "payment",
+      automatic_tax: { enabled: true },
+      customer_update: { address: "auto" },
       success_url: `${request.headers.get("origin")}/return?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${request.headers.get("origin")}/kitchen`,
       metadata: { userId },

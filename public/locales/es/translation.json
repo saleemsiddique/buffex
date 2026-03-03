@@ -179,7 +179,7 @@
         "title": "4. Recetas y planes",
         "items": [
           "<strong>Plan gratuito:</strong> 5 recetas/mes.",
-          "<strong>Suscripción:</strong> por suscripción mensual se otorgan 99 recetas/mes + funcionalidades extra. Las recetas de suscripción <em>expiran</em> al finalizar cada periodo de suscripción (no son permanentes).",
+          "<strong>Suscripción:</strong> por suscripción mensual se otorgan 150 recetas/mes + funcionalidades extra. Las recetas de suscripción <em>expiran</em> al finalizar cada periodo de suscripción (no son permanentes).",
           "<strong>Packs de recetas adicionales:</strong> paquetes de recetas que se compran por separado; esas recetas extra permanecen disponibles mientras el servicio exista.",
           "<strong>Orden de uso:</strong> las recetas de suscripción se consumen antes que las recetas adicionales compradas.",
           "<strong>Costos de generación:</strong> generar una nueva receta consume 1 crédito de receta."
@@ -540,7 +540,7 @@
       "disclaimer": "Las recetas no caducan y se acumulan con tu plan actual.",
       "packages": {
         "150": {
-          "label": "15 recetas extra",
+          "label": "30 recetas extra",
           "promo": "Más Popular"
         }
       },
@@ -725,7 +725,7 @@
       },
       {
         "title": "Tienes 5 recetas gratis",
-        "text": "Tu plan gratuito incluye 5 recetas al mes. Si quieres más, puedes comprar un pack de 15 recetas por €4.99 o suscribirte a Premium por €9.99/mes para recetas ilimitadas.",
+        "text": "Tu plan gratuito incluye 5 recetas al mes. Si quieres más, puedes comprar un pack de 30 recetas por €4.99 o suscribirte a Premium por €9.99/mes para 150 recetas al mes.",
         "image": "/onboarding/step3.jpg"
       },
       {
@@ -1241,7 +1241,7 @@
         "price": "4,99€",
         "priceNote": "pago único",
         "features": [
-          "+15 recetas de una vez",
+          "+30 recetas de una vez",
           "Las recetas no caducan",
           "Sin suscripción mensual",
           "Mismas funciones de tu plan actual",
@@ -1379,7 +1379,7 @@
     "close": "Cerrar",
     "remaining": "Te quedan",
     "remainingLabel": "recetas gratuitas este mes",
-    "cta": "¿Quieres generar 15 recetas más? Consigue el Pack de recetas y cocina sin límites.",
+    "cta": "¿Quieres generar 30 recetas más? Consigue el Pack de recetas y cocina sin límites.",
     "buyMore": "Conseguir más recetas",
     "viewRecipe": "Ver mi receta"
   }

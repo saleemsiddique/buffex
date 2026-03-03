@@ -179,7 +179,7 @@
         "title": "4. Recipes and plans",
         "items": [
           "<strong>Free plan:</strong> 5 recipes/month.",
-          "<strong>Subscription:</strong> monthly subscription grants 99 recipes/month + extra features. Subscription recipes <em>expire</em> at the end of each subscription period (they are not permanent).",
+          "<strong>Subscription:</strong> monthly subscription grants 150 recipes/month + extra features. Subscription recipes <em>expire</em> at the end of each subscription period (they are not permanent).",
           "<strong>Additional recipe packs:</strong> recipe packages purchased separately; these extra recipes remain available as long as the service exists.",
           "<strong>Usage order:</strong> subscription recipes are consumed before additional purchased recipes.",
           "<strong>Generation costs:</strong> generating a new recipe consumes 1 recipe credit."
@@ -538,7 +538,7 @@
       "disclaimer": "Recipes never expire and stack with your current plan.",
       "packages": {
         "150": {
-          "label": "15 extra recipes",
+          "label": "30 extra recipes",
           "promo": "Most Popular"
         }
       },
@@ -1229,7 +1229,7 @@
         "price": "€4.99",
         "priceNote": "one-time",
         "features": [
-          "+15 recipes at once",
+          "+30 recipes at once",
           "Recipes never expire",
           "No monthly subscription",
           "Same features as your current plan",
@@ -1365,7 +1365,7 @@
     "close": "Close",
     "remaining": "You have",
     "remainingLabel": "free recipes left this month",
-    "cta": "Want to generate 15 more recipes? Get the Recipe Pack and cook without limits.",
+    "cta": "Want to generate 30 more recipes? Get the Recipe Pack and cook without limits.",
     "buyMore": "Get more recipes",
     "viewRecipe": "View my recipe"
   }

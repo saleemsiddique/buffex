@@ -4,6 +4,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Sparkles, Loader2, UserCheck, ShoppingCart } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useRouter } from "next/navigation";
 import type { FormStatus } from "@/types/kitchen";
 
 interface GenerateButtonProps {
@@ -12,6 +13,7 @@ interface GenerateButtonProps {
   hasRecipes: boolean;
   tokenCost: number;
   onGetMoreRecipes: () => void;
+  isLoggedIn: boolean;
 }
 
 export default function GenerateButton({
@@ -20,11 +22,27 @@ export default function GenerateButton({
   hasRecipes,
   tokenCost,
   onGetMoreRecipes,
+  isLoggedIn,
 }: GenerateButtonProps) {
   const { t } = useTranslation();
+  const router = useRouter();
   const isDisabled = loadingUser || status === "loading";
 
-  // User has no recipes — show "get more" CTA
+  // Not logged in — show "generate recipe" CTA that redirects to login
+  if (!isLoggedIn && !loadingUser) {
+    return (
+      <button
+        type="button"
+        onClick={() => router.push("/auth/login")}
+        className="w-full py-4 rounded-xl text-base font-bold bg-gradient-to-r from-[var(--highlight)] to-orange-500 text-white shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2"
+      >
+        <Sparkles className="w-5 h-5" />
+        {t("Buffex.form.generateRecipe", { defaultValue: "Generar receta" })}
+      </button>
+    );
+  }
+
+  // Logged in but no recipes — show "get more" CTA
   if (!hasRecipes && !loadingUser) {
     return (
       <button
