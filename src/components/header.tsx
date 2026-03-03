@@ -9,6 +9,7 @@ import { Plus, BookOpen, Menu, X, User, Sparkles } from 'lucide-react';
 import Image from 'next/image';
 import { TokensModal } from "./SideMenu/TokensModal";
 import { useTranslation } from "react-i18next";
+import { useAuthModal } from "@/context/auth-modal-context";
 
 // Definición de las props para los iconos de Lucide-React
 interface LucideIconProps extends React.SVGProps<SVGSVGElement> {
@@ -54,6 +55,7 @@ export default function Header() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   // Estados para los modales a pantalla completa
   const [showTokens, setShowTokens] = useState(false);
+  const { openAuthModal } = useAuthModal();
   // Estado para el popup de tokens en escritorio
   const [showTokensPopup, setShowTokensPopup] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -79,9 +81,7 @@ export default function Header() {
 
   // Calcular el total de recetas disponibles
   const totalRecipes = (user?.monthly_recipes || 0) + (user?.extra_recipes || 0);
-  const isActiveSubscriber = user?.isSubscribed &&
-    (user?.subscriptionStatus === 'active' || user?.subscriptionStatus === 'cancel_at_period_end');
-  const isLowRecipes = !isActiveSubscriber && totalRecipes <= 2;
+  const isLowRecipes = totalRecipes <= 2;
 
   // Clases mejoradas para el botón especial (Empezar)
   const specialButtonClasses =
@@ -173,9 +173,7 @@ export default function Header() {
                         </div>
                         <p className="text-sm italic mb-4">
                           {t("header.tokens.popup.total")}: <span className="font-bold text-[var(--highlight)] text-xl">
-                            {isActiveSubscriber
-                              ? t("header.tokens.unlimited")
-                              : `${totalRecipes} ${t("header.tokens.recipes", { count: totalRecipes })}`}
+                            {`${totalRecipes} ${t("header.tokens.recipes", { count: totalRecipes })}`}
                           </span>
                         </p>
                         <button onClick={() => { setDrawerOpen(false); setShowTokens(true); }} className="w-full">
@@ -262,15 +260,14 @@ export default function Header() {
                 </ul>
 
                 {!isLoggedIn && (
-                  <Link href="/auth/register" passHref>
-                    <motion.button
-                      className={specialButtonClasses}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      {t("header.auth.getStarted")}
-                    </motion.button>
-                  </Link>
+                  <motion.button
+                    onClick={openAuthModal}
+                    className={specialButtonClasses}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    {t("header.auth.getStarted")}
+                  </motion.button>
                 )}
 
                 {isLoggedIn && (
@@ -283,9 +280,7 @@ export default function Header() {
                     onMouseLeave={() => setShowTokensPopup(false)}
                   >
                     <span className="text-white font-semibold text-sm md:text-base mr-2">
-                      {isActiveSubscriber
-                        ? t("header.tokens.unlimited")
-                        : t("header.tokens.recipes", { count: totalRecipes })}
+                      {t("header.tokens.recipes", { count: totalRecipes })}
                     </span>
                     <Sparkles className="w-5 h-5 text-[var(--highlight)]" aria-label="Recetas disponibles" />
 
@@ -313,9 +308,7 @@ export default function Header() {
                         <p className="flex justify-between items-center text-base font-semibold">
                           <span>{t("header.tokens.popup.total")}</span>
                           <span className="text-[var(--highlight)] font-bold">
-                            {isActiveSubscriber
-                              ? t("header.tokens.unlimited")
-                              : `${t("header.tokens.recipes", { count: totalRecipes })}`}
+                            {t("header.tokens.recipes", { count: totalRecipes })}
                           </span>
                         </p>
                         <motion.button

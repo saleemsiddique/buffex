@@ -10,6 +10,7 @@ import AnalyticsGate from "@/components/AnalyticsGate";
 import I18nProvider from "@/context/i18n-context";
 import AppReadyProvider from "@/context/appready-context";
 import InAppBrowserGuard from "@/components/InAppBrowserGuard";
+import { AuthModalProvider } from "@/context/auth-modal-context";
 import { Fraunces, Plus_Jakarta_Sans } from 'next/font/google';
 export const dynamic = 'force-dynamic';
 
@@ -146,6 +147,7 @@ export default function RootLayout({
           <SubscriptionProvider>
             <TokenPurchasesProvider>
               <StripeProvider>
+                <AuthModalProvider>
                 <I18nProvider>
                   <AppReadyProvider>
                     <InAppBrowserGuard/>
@@ -161,6 +163,7 @@ export default function RootLayout({
                     <Footer />
                   </AppReadyProvider>
                 </I18nProvider>
+                </AuthModalProvider>
               </StripeProvider>
             </TokenPurchasesProvider>
           </SubscriptionProvider>

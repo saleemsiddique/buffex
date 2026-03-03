@@ -9,7 +9,12 @@
       "forgotPassword": "Forgot your password?",
       "button": "Sign In",
       "loading": "Signing in...",
-      "noAccount": "Don't have an account? Register"
+      "noAccount": "Don't have an account?",
+      "registerLink": "Sign up for free",
+      "heroTitle": "Unique recipes, generated with AI",
+      "heroSubtitle": "Sign in and keep cooking personalised recipes based on your ingredients and preferences.",
+      "googleButton": "Continue with Google",
+      "error": "Incorrect credentials. Please try again."
     },
     "register": {
       "title": "Create your account",
@@ -25,7 +30,16 @@
       "loading": "Registering...",
       "and": " and ",
       "socialDivider": "Or sign up with:",
-      "alreadyAccount": "Already have an account?"
+      "alreadyAccount": "Already have an account?",
+      "loginLink": "Sign in",
+      "subtitle": "No credit card · 5 free recipes per month",
+      "heroTitle": "Start cooking better today",
+      "perks": [
+        "5 free recipes per month",
+        "Filters by ingredients and diet",
+        "Save your favourite recipes",
+        "Access to cuisines from around the world"
+      ]
     },
     "errors": {
       "acceptTerms": "You must accept the terms and conditions, privacy policy, and cookies policy.",
@@ -33,13 +47,21 @@
     },
     "forgotPassword": {
       "title": "Forgot your password?",
-      "subtitle": "Don't worry, we'll send you a message to help reset it.",
-      "submitted": "If there is an account for {{email}}, you will receive a link to reset your password shortly.",
+      "subtitle": "No worries, we'll send you a link to reset it.",
+      "heroTitle": "Recover your Buffex access",
+      "heroSubtitle": "We'll send you a link so you can create a new password.",
+      "submittedTitle": "Check your inbox",
+      "submitted": "If an account exists for {{email}}, you will receive a password reset link shortly.",
       "emailLabel": "Email address",
-      "emailPlaceholder": "Enter your email address",
-      "submitButton": "Send Reset Link",
-      "error": "Could not send reset link. Please check your email address.",
-      "backToLogin": "Back to Login"
+      "emailPlaceholder": "you@email.com",
+      "submitButton": "Send link",
+      "error": "Could not send the link. Please check your email address.",
+      "backToLogin": "Back to sign in"
+    },
+    "modal": {
+      "title": "Welcome back",
+      "subtitle": "Sign in to continue",
+      "registerLink": "Sign up →"
     },
     "resetPassword": {
       "title": "Set a new password",
@@ -59,6 +81,12 @@
         "default": "Could not change password. The link may have expired or already been used."
       }
     }
+  },
+  "cta": {
+    "title": "Ready to start cooking better?",
+    "description": "Join cooks who already generate unique recipes every day with artificial intelligence.",
+    "button": "Create my free account",
+    "subtext": "No credit card · 5 free recipes per month"
   },
   "footer": {
     "brand": {

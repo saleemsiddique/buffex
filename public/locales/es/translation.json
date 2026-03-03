@@ -9,7 +9,12 @@
       "forgotPassword": "¿Olvidaste tu contraseña?",
       "button": "Iniciar Sesión",
       "loading": "Iniciando sesión...",
-      "noAccount": "¿No tienes una cuenta? Regístrate"
+      "noAccount": "¿No tienes una cuenta?",
+      "registerLink": "Regístrate gratis",
+      "heroTitle": "Recetas únicas, generadas con IA",
+      "heroSubtitle": "Inicia sesión y sigue cocinando recetas personalizadas según tus ingredientes y preferencias.",
+      "googleButton": "Continuar con Google",
+      "error": "Credenciales incorrectas. Inténtalo de nuevo."
     },
     "register": {
       "title": "Crea tu cuenta",
@@ -25,7 +30,16 @@
       "loading": "Registrando...",
       "and": " y ",
       "socialDivider": "O regístrate con:",
-      "alreadyAccount": "¿Ya tienes una cuenta?"
+      "alreadyAccount": "¿Ya tienes una cuenta?",
+      "loginLink": "Inicia sesión",
+      "subtitle": "Sin tarjeta de crédito · 5 recetas al mes gratis",
+      "heroTitle": "Empieza a cocinar mejor hoy",
+      "perks": [
+        "5 recetas gratis al mes",
+        "Filtros por ingredientes y dieta",
+        "Guarda tus recetas favoritas",
+        "Acceso a todas las cocinas del mundo"
+      ]
     },
     "errors": {
       "acceptTerms": "Debes aceptar los términos y condiciones, política de privacidad y de cookies.",
@@ -33,13 +47,21 @@
     },
     "forgotPassword": {
       "title": "¿Olvidaste tu contraseña?",
-      "subtitle": "No te preocupes, te enviaremos un mensaje para ayudarte a restablecerla.",
+      "subtitle": "No te preocupes, te enviaremos un enlace para ayudarte a restablecerla.",
+      "heroTitle": "Recupera tu acceso a Buffex",
+      "heroSubtitle": "Te enviamos un enlace para que puedas crear una nueva contraseña.",
+      "submittedTitle": "Revisa tu correo",
       "submitted": "Si existe una cuenta para {{email}}, recibirás un enlace para restablecer la contraseña en breve.",
-      "emailLabel": "Dirección de correo electrónico",
-      "emailPlaceholder": "Introduce tu correo electrónico",
-      "submitButton": "Enviar Enlace de Restablecimiento",
-      "error": "No se pudo enviar el enlace de restablecimiento. Por favor, revisa tu dirección de correo.",
-      "backToLogin": "Volver a Iniciar Sesión"
+      "emailLabel": "Correo electrónico",
+      "emailPlaceholder": "tu@email.com",
+      "submitButton": "Enviar enlace",
+      "error": "No se pudo enviar el enlace. Por favor, revisa tu dirección de correo.",
+      "backToLogin": "Volver al inicio de sesión"
+    },
+    "modal": {
+      "title": "Bienvenido de nuevo",
+      "subtitle": "Inicia sesión para continuar",
+      "registerLink": "Regístrate →"
     },
     "resetPassword": {
       "title": "Establece una nueva contraseña",
@@ -59,6 +81,12 @@
         "default": "No se pudo cambiar la contraseña. El enlace puede haber expirado o ya fue usado."
       }
     }
+  },
+  "cta": {
+    "title": "¿Listo para empezar a cocinar mejor?",
+    "description": "Únete a cocineros que ya generan recetas únicas cada día con inteligencia artificial.",
+    "button": "Crear mi cuenta gratis",
+    "subtext": "Sin tarjeta de crédito · 5 recetas gratis al mes"
   },
   "footer": {
     "brand": {

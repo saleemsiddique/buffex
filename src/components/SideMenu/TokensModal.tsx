@@ -211,17 +211,10 @@ export const TokensModal: React.FC<TokensModalProps> = ({ onClose, user }) => {
                     {isSubscribed ? t("premium.modal.title") : "Buffex Premium"}
                   </h2>
                   <p className="text-[12px] text-white/70 mt-0.5 font-medium">
-                    {isSubscribed ? (
-                      <span className="flex items-center gap-1">
-                        <Sparkles style={{ width: 11, height: 11 }} />
-                        {t("header.tokens.unlimited")}
-                      </span>
-                    ) : (
-                      <>
-                        {t("tokens.modal.currentTokens")}{" "}
-                        <span className="font-bold text-white">{totalRecipes}</span>
-                      </>
-                    )}
+                    <>
+                      {t("tokens.modal.currentTokens")}{" "}
+                      <span className="font-bold text-white">{totalRecipes}</span>
+                    </>
                   </p>
                 </div>
               </div>

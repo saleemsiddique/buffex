@@ -6,6 +6,7 @@ import { useUser } from '@/context/user-context';
 import { motion } from 'framer-motion';
 import { ChefHat, ArrowRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useAuthModal } from '@/context/auth-modal-context';
 
 import InfoBox from "@/components/infoBox";
 import FAQ from "@/components/faq";
@@ -17,6 +18,7 @@ export default function Home() {
   const { user, loading } = useUser();
   const router = useRouter();
   const { t } = useTranslation();
+  const { openAuthModal } = useAuthModal();
 
   useEffect(() => {
     if (!loading && user) {
@@ -26,8 +28,8 @@ export default function Home() {
 
   if (loading || user) {
     return (
-      <div className="flex items-center justify-center min-h-screen w-full">
-        <Loader2 className="h-12 w-12 text-gray-400 animate-spin" />
+      <div className="flex-1 flex items-center justify-center">
+        <Loader2 className="h-10 w-10 text-gray-400 animate-spin" />
       </div>
     );
   }
@@ -82,27 +84,28 @@ export default function Home() {
             </motion.div>
 
             <h2 className="font-display text-4xl md:text-5xl font-bold text-white leading-tight mb-5">
-              {t("cta.title", { defaultValue: "\u00BFListo para empezar a cocinar mejor?" })}
+              {t("cta.title")}
             </h2>
 
             <p className="text-lg text-white/80 leading-relaxed mb-10 max-w-lg mx-auto">
-              {t("cta.description", { defaultValue: "\u00DAnete a cocineros que ya generan recetas \u00FAnicas cada d\u00EDa con inteligencia artificial." })}
+              {t("cta.description")}
             </p>
 
-            <motion.a
-              href="/auth/register"
+            <motion.button
+              type="button"
+              onClick={openAuthModal}
               className="group inline-flex items-center gap-3 px-10 py-4 rounded-full font-bold text-lg
                          bg-white text-[var(--highlight-dark)] shadow-xl
                          hover:bg-orange-50 transition-all duration-300"
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
             >
-              {t("cta.button", { defaultValue: "Crear mi cuenta gratis" })}
+              {t("cta.button")}
               <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
-            </motion.a>
+            </motion.button>
 
             <p className="mt-6 text-sm text-white/50">
-              {t("cta.subtext", { defaultValue: "Sin tarjeta de cr\u00E9dito \u00B7 5 recetas gratis al mes" })}
+              {t("cta.subtext")}
             </p>
           </motion.div>
         </div>

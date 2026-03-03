@@ -4,8 +4,8 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Sparkles, Loader2, UserCheck, ShoppingCart } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useRouter } from "next/navigation";
 import type { FormStatus } from "@/types/kitchen";
+import { useAuthModal } from "@/context/auth-modal-context";
 
 interface GenerateButtonProps {
   status: FormStatus;
@@ -25,7 +25,7 @@ export default function GenerateButton({
   isLoggedIn,
 }: GenerateButtonProps) {
   const { t } = useTranslation();
-  const router = useRouter();
+  const { openAuthModal } = useAuthModal();
   const isDisabled = loadingUser || status === "loading";
 
   // Not logged in — show "generate recipe" CTA that redirects to login
@@ -33,7 +33,7 @@ export default function GenerateButton({
     return (
       <button
         type="button"
-        onClick={() => router.push("/auth/login")}
+        onClick={openAuthModal}
         className="w-full py-4 rounded-xl text-base font-bold bg-gradient-to-r from-[var(--highlight)] to-orange-500 text-white shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2"
       >
         <Sparkles className="w-5 h-5" />

@@ -3,9 +3,11 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Check, Shield, Crown } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useAuthModal } from "@/context/auth-modal-context";
 
 export default function Pricing() {
   const { t } = useTranslation();
+  const { openAuthModal } = useAuthModal();
   const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">("monthly");
 
   const premiumPrice = billingCycle === "annual"
@@ -199,8 +201,9 @@ export default function Pricing() {
                   ))}
                 </ul>
 
-                <a
-                  href={plan.ctaHref}
+                <button
+                  type="button"
+                  onClick={openAuthModal}
                   className={`block w-full rounded-full py-3.5 px-6 text-center font-semibold transition-all duration-300 ${
                     plan.isHighlighted
                       ? "bg-white text-[var(--highlight-dark)] hover:bg-orange-50 shadow-lg"
@@ -208,7 +211,7 @@ export default function Pricing() {
                   }`}
                 >
                   {plan.ctaLabel}
-                </a>
+                </button>
               </motion.div>
             </motion.div>
           ))}
