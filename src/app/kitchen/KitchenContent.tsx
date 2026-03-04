@@ -28,7 +28,7 @@ const BuffexForm: React.FC = () => {
     : false;
 
   return (
-    <div className="min-h-screen bg-[var(--background)] pt-24 pb-6 lg:pt-20 lg:pb-4 flex items-start justify-center font-sans">
+    <div className="min-h-screen bg-[var(--background)] pt-24 pb-6 lg:pt-26 lg:pb-4 flex items-start justify-center font-sans">
       {form.showOnboarding && <Onboarding onClose={form.handleFinishOnboarding} />}
 
       <Head>
