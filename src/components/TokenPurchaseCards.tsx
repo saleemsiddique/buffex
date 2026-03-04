@@ -4,6 +4,7 @@ import React from "react";
 import { Zap, TrendingUp, Crown, Star } from "lucide-react";
 import { CustomUser } from "@/context/user-context";
 import { useTranslation } from "react-i18next";
+import { auth } from "@/lib/firebase";
 
 interface TokenPurchaseCardsProps {
   user: CustomUser | null;
@@ -28,9 +29,10 @@ export default function TokenPurchaseCards({
 
   const handlePurchase = async () => {
     try {
+      const idToken = await auth.currentUser?.getIdToken();
       const res = await fetch("/api/embedded-checkout", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${idToken}` },
         body: JSON.stringify({ priceId, userId }),
       });
 

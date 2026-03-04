@@ -9,6 +9,7 @@ export async function POST(request: Request) {
     // Verificar autenticación
     const authHeader = request.headers.get("Authorization");
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      console.error("[embedded-checkout] 401 - Header Authorization ausente o malformado:", authHeader ?? "(vacío)");
       return NextResponse.json({ error: "Token de autenticación requerido" }, { status: 401 });
     }
     const idToken = authHeader.split("Bearer ")[1];
@@ -16,7 +17,8 @@ export async function POST(request: Request) {
     try {
       const decodedToken = await auth.verifyIdToken(idToken);
       decodedUid = decodedToken.uid;
-    } catch {
+    } catch (tokenError: any) {
+      console.error("[embedded-checkout] Token inválido:", tokenError?.message ?? tokenError);
       return NextResponse.json({ error: "Token de autenticación inválido" }, { status: 401 });
     }
 
@@ -91,7 +93,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ url: session.url });
   } catch (error: any) {
-    console.error(error);
+    console.error("[embedded-checkout] Error inesperado:", error?.message ?? error);
     return NextResponse.json({ message: error.message }, { status: 500 });
   }
 }

@@ -2,6 +2,7 @@
 import { useCallback } from "react";
 import { CustomUser } from "@/context/user-context";
 import { useTranslation } from "react-i18next";
+import { auth } from "@/lib/firebase";
 
 export default function RedirectCheckoutButton({ priceId, user }: { priceId: string, user: CustomUser | null }) {
   const userId = user?.uid;
@@ -10,11 +11,13 @@ export default function RedirectCheckoutButton({ priceId, user }: { priceId: str
 
   const handleCheckoutClick = useCallback(async () => {
     try {
+      const idToken = await auth.currentUser?.getIdToken();
       // Llama a tu endpoint de API para crear la sesión de Checkout.
       const res = await fetch("/api/embedded-checkout", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${idToken}`,
         },
         body: JSON.stringify({ priceId: priceId, userId: userId }),
       });

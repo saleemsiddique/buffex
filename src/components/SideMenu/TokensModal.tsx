@@ -10,6 +10,7 @@ import { CustomUser } from "@/context/user-context";
 import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 import { useTranslation } from "react-i18next";
 import Link from "next/link";
+import { auth } from "@/lib/firebase";
 
 interface TokensModalProps {
   onClose: () => void;
@@ -23,9 +24,10 @@ function useCheckout(userId?: string | null) {
     if (!priceId) return;
     setLoading(priceId);
     try {
+      const idToken = await auth.currentUser?.getIdToken();
       const res = await fetch("/api/embedded-checkout", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${idToken}` },
         body: JSON.stringify({ priceId, userId }),
       });
       if (!res.ok) throw new Error();
