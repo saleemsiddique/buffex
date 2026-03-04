@@ -5,7 +5,7 @@ import { Clock, Star, Zap, ChefHat, Users, Minus, Plus, Lock } from "lucide-reac
 import { useTranslation } from "react-i18next";
 import type { Difficulty } from "@/types/kitchen";
 
-const TIME_OPTIONS = ["15", "30", "45", "60", "90", "120", "no_limit"];
+const TIME_OPTIONS = ["15", "30", "60", "90", "120", "no_limit"];
 
 interface QuickOptionsProps {
   availableTime: string;
