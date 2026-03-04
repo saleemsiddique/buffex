@@ -407,9 +407,9 @@ function ProfileContent() {
                 <label className="text-sm font-medium text-[var(--foreground)] opacity-70 block mb-2">
                   {t("profile.personalInfo.email")}
                 </label>
-                <div className="flex items-center bg-gray-50/80 rounded-xl p-3 border border-gray-100">
+                <div className="flex items-center bg-gray-50/80 rounded-xl p-3 border border-gray-100 min-w-0">
                   <Mail className="h-4 w-4 text-[var(--highlight)] mr-2" />
-                  <span className="text-[var(--foreground)]">{user?.email}</span>
+                  <span className="text-[var(--foreground)] truncate">{user?.email}</span>
                 </div>
               </div>
             </div>
