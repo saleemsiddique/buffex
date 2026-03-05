@@ -702,7 +702,7 @@ const RecipesContent: React.FC = () => {
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold bg-[var(--highlight)] text-white hover:bg-[var(--highlight-dark)] transition-colors"
                 >
                   <ChefHat className="w-4 h-4 flex-none" />
-                  <span className="hidden sm:inline">Modo Cocina</span>
+                  <span className="hidden sm:inline">{t("cookingMode.buttonLabel")}</span>
                 </button>
               )}
               <button

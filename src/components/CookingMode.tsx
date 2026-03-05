@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronLeft, ChevronRight, ChefHat } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 type Instruction = { paso: number; texto: string };
 
@@ -13,6 +14,7 @@ interface CookingModeProps {
 }
 
 export default function CookingMode({ instructions, title, onClose }: CookingModeProps) {
+  const { t } = useTranslation();
   const [currentStep, setCurrentStep] = useState(0);
   const touchStartX = useRef<number | null>(null);
 
@@ -70,7 +72,7 @@ export default function CookingMode({ instructions, title, onClose }: CookingMod
       onTouchEnd={handleTouchEnd}
       role="dialog"
       aria-modal="true"
-      aria-label="Modo Cocina"
+      aria-label={t("cookingMode.ariaLabel")}
     >
       {/* Top bar */}
       <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
@@ -83,7 +85,7 @@ export default function CookingMode({ instructions, title, onClose }: CookingMod
         <button
           onClick={onClose}
           className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition text-white"
-          aria-label="Cerrar modo cocina"
+          aria-label={t("cookingMode.closeAriaLabel")}
         >
           <X className="w-5 h-5" />
         </button>
@@ -100,7 +102,7 @@ export default function CookingMode({ instructions, title, onClose }: CookingMod
 
       {/* Step counter */}
       <p className="text-center text-white/40 text-sm mt-4">
-        Paso {currentStep + 1} de {totalSteps}
+        {t("cookingMode.stepCounter", { current: currentStep + 1, total: totalSteps })}
       </p>
 
       {/* Step content */}
@@ -129,18 +131,18 @@ export default function CookingMode({ instructions, title, onClose }: CookingMod
               ? "bg-white/5 text-white/25 cursor-not-allowed"
               : "bg-white/10 text-white hover:bg-white/20"
             }`}
-          aria-label="Paso anterior"
+          aria-label={t("cookingMode.prevAriaLabel")}
         >
           <ChevronLeft className="w-5 h-5" />
-          Anterior
+          {t("cookingMode.prev")}
         </button>
 
         <button
           onClick={goNext}
           className="flex items-center gap-2 px-8 py-3 rounded-full font-semibold text-base bg-[var(--highlight)] text-white hover:bg-[var(--highlight-dark)] transition-all shadow-lg"
-          aria-label={currentStep === totalSteps - 1 ? "Terminar" : "Siguiente paso"}
+          aria-label={currentStep === totalSteps - 1 ? t("cookingMode.finishAriaLabel") : t("cookingMode.nextAriaLabel")}
         >
-          {currentStep === totalSteps - 1 ? "Terminar" : "Siguiente"}
+          {currentStep === totalSteps - 1 ? t("cookingMode.finish") : t("cookingMode.next")}
           {currentStep < totalSteps - 1 && <ChevronRight className="w-5 h-5" />}
         </button>
       </div>

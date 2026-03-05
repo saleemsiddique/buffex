@@ -1401,6 +1401,18 @@
       "tryAgain": "Reintentar"
     }
   },
+  "cookingMode": {
+    "ariaLabel": "Modo Cocina",
+    "closeAriaLabel": "Cerrar modo cocina",
+    "stepCounter": "Paso {{current}} de {{total}}",
+    "prevAriaLabel": "Paso anterior",
+    "prev": "Anterior",
+    "nextAriaLabel": "Siguiente paso",
+    "next": "Siguiente",
+    "finishAriaLabel": "Terminar",
+    "finish": "Terminar",
+    "buttonLabel": "Modo Cocina"
+  },
   "firstRecipeModal": {
     "title": "¡Primera receta lista!",
     "subtitle": "Acabas de generar tu primera receta con Buffex. Nos alegra que estés aquí.",
