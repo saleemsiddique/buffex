@@ -223,6 +223,7 @@ const RecipesContent: React.FC = () => {
     }
 
     sessionStorage.setItem("generatedRecipe", JSON.stringify(fullRecipe));
+    sessionStorage.setItem("previousGenerationJson", accumulated);
 
     try {
       const saveRes = await fetch("/api/recipes", {
@@ -481,7 +482,15 @@ const RecipesContent: React.FC = () => {
   };
 
   const handleGenerateAnother = () => {
-    if (typeof window !== "undefined") sessionStorage.removeItem("generatedRecipe");
+    if (typeof window !== "undefined") {
+      sessionStorage.removeItem("generatedRecipe");
+      if (!recipeIdParam) {
+        sessionStorage.setItem("isRegeneration", "1");
+      } else {
+        sessionStorage.removeItem("isRegeneration");
+        sessionStorage.removeItem("previousGenerationJson");
+      }
+    }
     if (recipeIdParam) router.push("/kitchen");
     else router.push("/kitchen?auto=1&regenerate=1");
   };

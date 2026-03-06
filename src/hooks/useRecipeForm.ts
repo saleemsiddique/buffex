@@ -314,13 +314,25 @@ export function useRecipeForm() {
 
     const selectedUtensils = Object.keys(utensils).filter((k) => utensils[k]);
 
-    const formData = {
+    const formData: Record<string, any> = {
       ingredients, mealTime, diners, dietaryRestrictions,
       excludedIngredients, cuisineStyle, availableTime,
       macronutrients: macros, utensils: selectedUtensils, difficulty,
     };
 
     if (typeof window !== "undefined") {
+      const urlHasRegen = searchParams.get("regenerate") === "1";
+      const isRegen = urlHasRegen && sessionStorage.getItem("isRegeneration") === "1";
+      const prevJson = sessionStorage.getItem("previousGenerationJson");
+      if (isRegen && prevJson) {
+        formData.isRegeneration = true;
+        formData.previousGenerationJson = prevJson;
+        sessionStorage.removeItem("isRegeneration");
+        sessionStorage.removeItem("previousGenerationJson");
+      } else {
+        // Limpiar flags huérfanos si el usuario llegó por otra ruta
+        sessionStorage.removeItem("isRegeneration");
+      }
       try { sessionStorage.setItem("lastFormData", JSON.stringify(formData)); } catch { /* noop */ }
       try { sessionStorage.setItem("pendingGenerationData", JSON.stringify(formData)); } catch { /* noop */ }
     }

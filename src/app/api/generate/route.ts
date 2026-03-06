@@ -100,25 +100,42 @@ export async function POST(request: NextRequest) {
         // Build prompt and stream from Anthropic (with prompt caching on static block)
         const model = process.env.ANTHROPIC_MODEL ?? 'claude-sonnet-4-6';
 
+        const { isRegeneration, previousGenerationJson, ...inputData } = body;
+
+        const messages: any[] = isRegeneration && previousGenerationJson
+          ? [
+              {
+                role: 'user',
+                content: [
+                  { type: 'text', text: buildStaticInstructions(languageCode), cache_control: { type: 'ephemeral' } },
+                  { type: 'text', text: buildDynamicInput(inputData), cache_control: { type: 'ephemeral' } },
+                ],
+              },
+              {
+                role: 'assistant',
+                content: previousGenerationJson as string,
+              },
+              {
+                role: 'user',
+                content: 'Genera otra receta completamente diferente. Usa los mismos ingredientes y parámetros pero crea un plato distinto en nombre, preparación y presentación.',
+              },
+            ]
+          : [
+              {
+                role: 'user',
+                content: [
+                  { type: 'text', text: buildStaticInstructions(languageCode), cache_control: { type: 'ephemeral' } },
+                  { type: 'text', text: buildDynamicInput(body) },
+                ],
+              },
+            ];
+
         const sdkStream = anthropic.messages.stream({
           model,
           max_tokens: 4096,
           system:
             'Eres un ayudante de recetas experto, preciso y que sigue instrucciones al pie de la letra. Responde ÚNICAMENTE con JSON válido, sin texto adicional ni markdown.',
-          messages: [{
-            role: 'user',
-            content: [
-              {
-                type: 'text',
-                text: buildStaticInstructions(languageCode),
-                cache_control: { type: 'ephemeral' },
-              },
-              {
-                type: 'text',
-                text: buildDynamicInput(body),
-              },
-            ],
-          }],
+          messages,
         }, {
           headers: { 'anthropic-beta': 'prompt-caching-2024-07-31' },
         });
