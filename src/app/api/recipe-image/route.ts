@@ -56,18 +56,6 @@ export async function POST(request: NextRequest) {
       .join(', ');
 
     // Prompt completo para DALL-E 3 (límite 4000 chars)
-    const prompt = `Fotografía gastronómica hiperrealista de "${titulo}". ${descripcion}
-Estilo de cocina: ${estilo ?? 'internacional'}.
-Ingredientes clave visibles: ${ingredientesLista || 'presentación cuidada'}.
-
-Características: iluminación natural suave proveniente de una ventana, profundidad de campo moderada, enfoque nítido en el plato principal.
-Composición sencilla y sin estilismo excesivo; apariencia casera y alcanzable, como la de una comida preparada por un cocinero principiante o estudiante universitario.
-Incluye imperfecciones realistas como porciones irregulares, manchas pequeñas o disposición no perfectamente simétrica.
-Plato y utensilios cotidianos, mesa o encimera común; sin escenografía elaborada ni fondos de estudio, ambiente doméstico o de residencia estudiantil.
-Textura apetecible pero no retocada digitalmente; luz y color naturales, sin aspecto de anuncio profesional.
-
-Restricciones: sin texto, sin marca de agua, sin manos, sin utensilios tapando el plato.`;
-
     // Prompt compacto para DALL-E 2 (límite estricto de 1000 chars)
     const promptDalle2 = `Hyperrealistic food photo of "${titulo.slice(0, 60)}". ${descripcion.slice(0, 200)} ${estilo ? `${estilo} cuisine. ` : ''}${ingredientesLista ? `Key ingredients: ${ingredientesLista.slice(0, 100)}. ` : ''}Natural window light, home-cooked look, soft focus background. No text, no watermark, no hands.`.slice(0, 950);
 
