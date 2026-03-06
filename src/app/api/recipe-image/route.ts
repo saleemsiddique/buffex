@@ -74,32 +74,18 @@ Restricciones: sin texto, sin marca de agua, sin manos, sin utensilios tapando e
     let b64: string | undefined;
 
     if (isPremium) {
-      // PREMIUM: DALL-E 3 1024×1024 con fallback a gpt-image-1
+      // PREMIUM: DALL-E 2 512×512
       try {
         const result = await openai.images.generate({
-          model: 'dall-e-3',
-          prompt,
-          size: '1024x1024',
-          quality: 'standard',
+          model: 'dall-e-2',
+          prompt: promptDalle2,
+          size: '512x512',
           n: 1,
           response_format: 'b64_json',
         } as any);
         b64 = (result as any)?.data?.[0]?.b64_json;
       } catch (err) {
-        console.error('[API /api/recipe-image] dall-e-3 falló (premium), probando gpt-image-1', err);
-        try {
-          const fallback = await openai.images.generate({
-            model: 'gpt-image-1',
-            prompt,
-            size: '512x512',
-            quality: 'high',
-            n: 1,
-            response_format: 'b64_json',
-          } as any);
-          b64 = (fallback as any)?.data?.[0]?.b64_json;
-        } catch (err2) {
-          console.error('[API /api/recipe-image] gpt-image-1 también falló (premium)', err2);
-        }
+        console.error('[API /api/recipe-image] dall-e-2 falló (premium)', err);
       }
     } else {
       // FREE: DALL-E 2 512×512, sin fallback caro
