@@ -5,7 +5,8 @@
       "Bash(tail:*)",
       "Bash(npm run:*)",
       "Bash(node:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "mcp__stripe__create_price"
     ]
   },
   "enableAllProjectMcpServers": true,

@@ -59,16 +59,22 @@ export async function POST(request: NextRequest) {
       price_1RwHLrRpBiBhmezmFamEW9Ct: { type: "recipes", recipes: 25, name: "Pack 25 Recetas", isSubscription: false, price: 6.49 },
       price_1RwHMCRpBiBhmezmRzyb4DAm: { type: "recipes", recipes: 60, name: "Pack 60 Recetas", isSubscription: false, price: 13.99 },
       price_1RwHMbRpBiBhmezmgyMbGrJq: { type: "recipes", recipes: 120, name: "Pack 120 Recetas", isSubscription: false, price: 24.99 },
+      // Legacy subscription price IDs (EUR) — suscriptores anteriores al 2026-03-07
+      price_1T3Px2RpBiBhmezmuzwSwoki: { type: "subscription", recipes: 150, name: "Buffex Premium (legacy)", isSubscription: true, price: 9.99 },
+      price_1T3Px8RpBiBhmezmwz57sixq: { type: "subscription", recipes: 150, name: "Buffex Premium Anual (legacy)", isSubscription: true, price: 79.99 },
+      // Legacy subscription price IDs (USD)
+      price_1T6xXtRpBiBhmezmw41NJToq: { type: "subscription", recipes: 150, name: "Buffex Premium (legacy USD)", isSubscription: true, price: 10.99 },
+      price_1T6xXuRpBiBhmezmbF2B1a5J: { type: "subscription", recipes: 150, name: "Buffex Premium Anual (legacy USD)", isSubscription: true, price: 87.99 },
     };
 
     // Añadir nuevos precios desde variables de entorno si están definidos
     if (process.env.STRIPE_PRICE_PREMIUM) {
       PRICE_TO_RECIPES[process.env.STRIPE_PRICE_PREMIUM] = {
         type: "subscription",
-        recipes: 150,
+        recipes: 90,
         name: "Buffex Premium",
         isSubscription: true,
-        price: 9.99,
+        price: 8.99,
       };
     }
     if (process.env.STRIPE_PRICE_PAYG) {
@@ -77,31 +83,31 @@ export async function POST(request: NextRequest) {
         recipes: 30,
         name: "Pack 30 Recetas",
         isSubscription: false,
-        price: 4.99,
+        price: 3.99,
       };
     }
     if (process.env.STRIPE_PRICE_PREMIUM_ANNUAL) {
       PRICE_TO_RECIPES[process.env.STRIPE_PRICE_PREMIUM_ANNUAL] = {
         type: "subscription",
-        recipes: 150,
+        recipes: 90,
         name: "Buffex Premium Anual",
         isSubscription: true,
-        price: 79.99,
+        price: 74.99,
       };
     }
     if (process.env.STRIPE_PRICE_PREMIUM_USD) {
       PRICE_TO_RECIPES[process.env.STRIPE_PRICE_PREMIUM_USD] = {
-        type: "subscription", recipes: 150, name: "Buffex Premium", isSubscription: true, price: 10.99,
+        type: "subscription", recipes: 90, name: "Buffex Premium", isSubscription: true, price: 9.99,
       };
     }
     if (process.env.STRIPE_PRICE_PREMIUM_ANNUAL_USD) {
       PRICE_TO_RECIPES[process.env.STRIPE_PRICE_PREMIUM_ANNUAL_USD] = {
-        type: "subscription", recipes: 150, name: "Buffex Premium Anual", isSubscription: true, price: 87.99,
+        type: "subscription", recipes: 90, name: "Buffex Premium Anual", isSubscription: true, price: 82.99,
       };
     }
     if (process.env.STRIPE_PRICE_PAYG_USD) {
       PRICE_TO_RECIPES[process.env.STRIPE_PRICE_PAYG_USD] = {
-        type: "recipes", recipes: 30, name: "Pack 30 Recetas", isSubscription: false, price: 4.99,
+        type: "recipes", recipes: 30, name: "Pack 30 Recetas", isSubscription: false, price: 4.49,
       };
     }
 

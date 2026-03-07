@@ -144,7 +144,7 @@ export const TokensModal: React.FC<TokensModalProps> = ({ onClose, user }) => {
   }, [onClose]);
 
   // Pricing display
-  const subPrice    = billing === "annual" ? "€79.99" : "€9.99";
+  const subPrice    = billing === "annual" ? "€74.99" : "€8.99";
   const subPeriod   = billing === "annual" ? t("tokens.modal.perYear") : t("tokens.modal.perMonth");
   const subPerMonth = billing === "annual"
     ? `${t("premium.modal.notSubscribed.priceAnnualPerMonth")} · ${t("premium.modal.notSubscribed.annualSave")}`
@@ -335,7 +335,7 @@ export const TokensModal: React.FC<TokensModalProps> = ({ onClose, user }) => {
                       style={{ background: "rgba(249,115,22,0.15)", color: "#fb923c" }}
                     >
                       <ChefHat style={{ width: 12, height: 12 }} />
-                      150 {t("tokens.modal.recipesPerMonth")}
+                      90 {t("tokens.modal.recipesPerMonth")}
                     </div>
 
                     {/* Features list */}

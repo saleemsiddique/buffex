@@ -207,7 +207,7 @@
         "title": "4. Recipes and plans",
         "items": [
           "<strong>Free plan:</strong> 5 recipes/month.",
-          "<strong>Subscription:</strong> monthly subscription grants 150 recipes/month + extra features. Subscription recipes <em>expire</em> at the end of each subscription period (they are not permanent).",
+          "<strong>Subscription:</strong> monthly subscription grants 90 recipes/month + extra features. Subscription recipes <em>expire</em> at the end of each subscription period (they are not permanent).",
           "<strong>Additional recipe packs:</strong> recipe packages purchased separately; these extra recipes remain available as long as the service exists.",
           "<strong>Usage order:</strong> subscription recipes are consumed before additional purchased recipes.",
           "<strong>Generation costs:</strong> generating a new recipe consumes 1 recipe credit."
@@ -594,15 +594,16 @@
       "notSubscribed": {
         "greeting": "Hello {{name}}, unlock all advanced features.",
         "greetingFallback": "Hello there, unlock all advanced features.",
-        "price": "€9.99/month",
-        "priceAnnual": "€79.99/year",
-        "priceAnnualPerMonth": "€6.67/mo",
+        "price": "€8.99/month",
+        "priceAnnual": "€74.99/year",
+        "priceAnnualPerMonth": "€6.25/mo",
         "billingMonthly": "Monthly",
         "billingAnnual": "Annual",
         "annualSave": "Save 33%",
         "cancel": "Cancel",
         "features": [
-          "Unlimited recipes per month",
+          "90 recipes per month",
+          "High-quality images with DALL-E 3",
           "Custom dietary restrictions",
           "Cooking styles (Japanese, Spanish...)",
           "Advanced macronutrient control",
@@ -1230,6 +1231,12 @@
         "name": "Macros and Calories Calculation",
         "description": "Check the nutritional breakdown of each recipe and adjust portions to automatically recalculate calories and macros."
       }
+    },
+    "statLabels": {
+      "generation": "per recipe",
+      "cuisines": "cooking styles",
+      "ai": "Claude + DALL-E 3",
+      "macros": "macro levels"
     }
   },
   "pricing": {
@@ -1254,7 +1261,7 @@
       "payg": {
         "title": "Pay-as-you-go",
         "description": "When you need more recipes, no commitment.",
-        "price": "€4.99",
+        "price": "€3.99",
         "priceNote": "one-time",
         "features": [
           "+30 recipes at once",
@@ -1267,9 +1274,9 @@
       "premium": {
         "title": "Premium",
         "description": "Unlock your culinary potential without limits!",
-        "price": "€9.99",
+        "price": "€8.99",
         "features": [
-          "Unlimited recipes per month",
+          "90 recipes per month",
           "Everything in the free plan",
           "Custom dietary restrictions",
           "Cooking styles (Japanese, Spanish...)",
@@ -1284,9 +1291,9 @@
       "save": "Save 33%",
       "twoMonthsFree": "2 months free",
       "perYear": "/year",
-      "perMonthEquiv": "€6.67/mo",
-      "priceAnnual": "€79.99",
-      "priceMonthly": "€9.99"
+      "perMonthEquiv": "€6.25/mo",
+      "priceAnnual": "€74.99",
+      "priceMonthly": "€8.99"
     },
     "common": {
       "perMonth": "/month",

@@ -104,6 +104,12 @@ export function buildStaticInstructions(languageCode: string): string {
         }
         \`\`\`
         En este caso, todas las demás claves deben seguir los valores por defecto o vacíos como se muestra.
+    * **Interpretación Contextual:** Cuando varios ingredientes se combinan de forma habitual en un plato concreto, interprétalos según su forma de uso culinario real, no literalmente:
+      - "atún" en un plato de pasta → atún de lata desmenuzado, no pescado entero
+      - "tomate" en un plato cocinado → salsa de tomate o tomate cocinado, no tomate crudo cortado
+      - "huevo" en un plato caliente → huevo cocinado en la forma más lógica para ese plato
+      - En general: infiere la forma de preparación más común cuando el contexto de los demás ingredientes lo indica claramente.
+      Esta interpretación debe reflejarse en las instrucciones y en la descripción del plato.
     * **Límite de Ingredientes:** Si la lista de ingredientes válidos excede los **15**, selecciona los 15 más relevantes para una receta coherente.
     * **Ingredientes Excluidos:** De la lista 'excludedIngredients', ignora cualquier término que no sea un ingrediente real o una palabra sin sentido. Solo aplica las exclusiones para ingredientes válidos y reconocibles. Los ingredientes excluidos válidos no deben aparecer en la lista final de 'ingredientes' de la receta.
 

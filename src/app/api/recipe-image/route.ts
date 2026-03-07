@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
 
     // Determinar tier: premium si tiene suscripción activa o extra recipes
     // Nota: NO bloqueamos por recetas restantes — la imagen se genera tras deducir el token
-    const isPremium = userData?.isSubscribed || (userData?.extra_recipes || 0) > 0;
+    const isPremium = userData?.isSubscribed === true;
 
     const body = await request.json();
     const recipe = body?.recipe;
@@ -62,18 +62,19 @@ export async function POST(request: NextRequest) {
     let b64: string | undefined;
 
     if (isPremium) {
-      // PREMIUM: DALL-E 2 512×512
+      // PREMIUM: DALL-E 3 1024×1024
+      const promptDalle3 = `Professional food photography of "${titulo}". ${descripcion}${estilo ? ` ${estilo} cuisine style.` : ''} The dish is shown as a finished, plated meal — ingredients fully cooked and combined as they would appear when served. Natural soft window light, shallow depth of field, home-cooked aesthetic with realistic imperfections. No raw ingredients shown separately, no whole unprocessed items. No text, no watermark, no hands.`;
       try {
         const result = await openai.images.generate({
-          model: 'dall-e-2',
-          prompt: promptDalle2,
-          size: '512x512',
+          model: 'dall-e-3',
+          prompt: promptDalle3,
+          size: '1024x1024',
           n: 1,
           response_format: 'b64_json',
         } as any);
         b64 = (result as any)?.data?.[0]?.b64_json;
       } catch (err) {
-        console.error('[API /api/recipe-image] dall-e-2 falló (premium)', err);
+        console.error('[API /api/recipe-image] dall-e-3 falló (premium)', err);
       }
     } else {
       // FREE: DALL-E 2 512×512, sin fallback caro

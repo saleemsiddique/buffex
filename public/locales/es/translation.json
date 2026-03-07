@@ -207,7 +207,7 @@
         "title": "4. Recetas y planes",
         "items": [
           "<strong>Plan gratuito:</strong> 5 recetas/mes.",
-          "<strong>Suscripción:</strong> por suscripción mensual se otorgan 150 recetas/mes + funcionalidades extra. Las recetas de suscripción <em>expiran</em> al finalizar cada periodo de suscripción (no son permanentes).",
+          "<strong>Suscripción:</strong> por suscripción mensual se otorgan 90 recetas/mes + funcionalidades extra. Las recetas de suscripción <em>expiran</em> al finalizar cada periodo de suscripción (no son permanentes).",
           "<strong>Packs de recetas adicionales:</strong> paquetes de recetas que se compran por separado; esas recetas extra permanecen disponibles mientras el servicio exista.",
           "<strong>Orden de uso:</strong> las recetas de suscripción se consumen antes que las recetas adicionales compradas.",
           "<strong>Costos de generación:</strong> generar una nueva receta consume 1 crédito de receta."
@@ -596,15 +596,16 @@
       "notSubscribed": {
         "greeting": "Hola {{name}}, desbloquea todas las funciones avanzadas.",
         "greetingFallback": "Hola, desbloquea todas las funciones avanzadas.",
-        "price": "€9,99/mes",
-        "priceAnnual": "€79,99/año",
-        "priceAnnualPerMonth": "€6,67/mes",
+        "price": "€8,99/mes",
+        "priceAnnual": "€74,99/año",
+        "priceAnnualPerMonth": "€6,25/mes",
         "billingMonthly": "Mensual",
         "billingAnnual": "Anual",
         "annualSave": "Ahorra 33%",
         "cancel": "Cancelar",
         "features": [
-          "Recetas ilimitadas al mes",
+          "90 recetas al mes",
+          "Imágenes en alta calidad con DALL-E 3",
           "Restricciones dietéticas personalizadas",
           "Estilos de cocina (japonesa, española...)",
           "Control de macronutrientes avanzado",
@@ -753,7 +754,7 @@
       },
       {
         "title": "Tienes 5 recetas gratis",
-        "text": "Tu plan gratuito incluye 5 recetas al mes. Si quieres más, puedes comprar un pack de 30 recetas por €4.99 o suscribirte a Premium por €9.99/mes para 150 recetas al mes.",
+        "text": "Tu plan gratuito incluye 5 recetas al mes. Si quieres más, puedes comprar un pack de 30 recetas por €3.99 o suscribirte a Premium por €8.99/mes para 90 recetas al mes.",
         "image": "/onboarding/step3.jpg"
       },
       {
@@ -1232,6 +1233,12 @@
         "name": "Cálculo de macros y calorías",
         "description": "Consulta el desglose nutricional de cada receta y ajusta las porciones para recalcular automáticamente calorías y macros."
       }
+    },
+    "statLabels": {
+      "generation": "por receta",
+      "cuisines": "estilos culinarios",
+      "ai": "Claude + DALL-E 3",
+      "macros": "niveles de macros"
     }
   },
   "pricing": {
@@ -1246,9 +1253,9 @@
       "save": "Ahorra 33%",
       "twoMonthsFree": "2 meses gratis",
       "perYear": "/año",
-      "perMonthEquiv": "€6,67/mes",
-      "priceAnnual": "79,99€",
-      "priceMonthly": "9,99€"
+      "perMonthEquiv": "€6,25/mes",
+      "priceAnnual": "74,99€",
+      "priceMonthly": "8,99€"
     },
     "plans": {
       "free": {
@@ -1266,7 +1273,7 @@
       "payg": {
         "title": "Pay-as-you-go",
         "description": "Cuando necesitas más recetas, sin compromiso.",
-        "price": "4,99€",
+        "price": "3,99€",
         "priceNote": "pago único",
         "features": [
           "+30 recetas de una vez",
@@ -1279,9 +1286,9 @@
       "premium": {
         "title": "Premium",
         "description": "¡Desbloquea tu potencial culinario sin límites!",
-        "price": "9,99€",
+        "price": "8,99€",
         "features": [
-          "Recetas ilimitadas al mes",
+          "90 recetas al mes",
           "Todo lo del plan gratuito",
           "Restricciones dietéticas personalizadas",
           "Estilos de cocina (japonesa, española...)",
