@@ -144,36 +144,14 @@ const SideMenu: React.FC<SideMenuProps> = ({ className = '' }) => {
                 {t("header.tokens.total")} <span className="font-bold text-[var(--highlight)] text-xl">{totalTokens}</span>
               </p>
 
-              {/* Botón para abrir el modal de tokens */}
               <motion.button
-                onClick={() => {
-                  onOpenTokens();
-                  setDrawerOpen(false); // Cierra el cajón al abrir el modal
-                }}
-                className="w-full py-3 rounded-full text-lg font-bold shadow-lg transition-all duration-300
-                          bg-gradient-to-r from-[var(--highlight)] to-[var(--highlight-dark)] text-[var(--text2)]
-                          hover:from-[var(--highlight-dark)] hover:to-[var(--highlight)] focus:outline-none focus:ring-4 focus:ring-[var(--highlight)] text-center"
+                onClick={() => { onOpenTokens(); setDrawerOpen(false); }}
+                className="w-full py-3 rounded-full text-lg font-bold shadow-lg transition-all duration-300 text-white focus:outline-none focus:ring-4 focus:ring-[var(--highlight)]"
+                style={{ background: "linear-gradient(135deg,#f97316,#ea580c)" }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                role="button"
               >
-                {t("header.tokens.buy")}
-              </motion.button>
-
-              {/* Botón para el modal de Premium */}
-              <motion.button
-                onClick={() => {
-                  onOpenTokens();
-                  setDrawerOpen(false); // Cierra el cajón al abrir el modal
-                }}
-                className="w-full py-3 mt-4 rounded-full text-lg font-bold shadow-lg transition-all duration-300
-                          bg-gradient-to-r from-yellow-400 to-yellow-600 text-white
-                          hover:from-[var(--foreground)] hover:to-[var(--primary)] focus:outline-none focus:ring-4 focus:ring-[var(--foreground)] text-center"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                role="button"
-              >
-                {user?.isSubscribed ? t("header.tokens.premium.current") : t("header.tokens.premium.subscribeButton")}
+                {user?.isSubscribed ? t("header.tokens.premium.current") : t("header.tokens.buy")}
               </motion.button>
             </motion.div>
           )}
@@ -204,54 +182,35 @@ const SideMenu: React.FC<SideMenuProps> = ({ className = '' }) => {
           {user ? (
             <div className="flex flex-col items-center gap-3">
 
-              {/* Botón de Tokens */}
+              {/* Botón unificado Tokens + Premium */}
               <motion.button
                 onClick={onOpenTokens}
-                className="relative w-16 h-16 rounded-xl overflow-hidden shadow-lg transition-all duration-300 hover:scale-105 group"
+                className="relative w-16 rounded-xl overflow-hidden shadow-lg group"
+                style={{
+                  background: user?.isSubscribed
+                    ? "linear-gradient(135deg,#f97316,#ea580c)"
+                    : "linear-gradient(135deg,#f97316,#ea580c)",
+                  border: user?.isSubscribed ? "none" : "2px dashed rgba(249,115,22,0.5)",
+                  padding: "10px 0",
+                }}
                 title={t("sideMenu.tokens.button")}
                 aria-label={t("sideMenu.tokens.button")}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                {/* Fondo animado */}
-                <div className="absolute inset-0 bg-gradient-to-br from-[var(--highlight)] to-[var(--highlight-dark)]" />
-                
-                {/* Contenido del botón */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center text-[var(--text2)] transition-opacity duration-300 group-hover:opacity-0 z-10">
-                  <Zap className="w-6 h-6" />
-                  <span className="mt-1 text-xs font-semibold">{remainingTokens}</span>
-                </div>
-                
-                {/* Tooltip en hover */}
-                <span className="absolute inset-0 flex items-center justify-center text-[var(--text2)] text-xs font-semibold opacity-0 transition-opacity duration-300 group-hover:opacity-100 z-10">
-                  {t("sideMenu.tokens.buy")}
-                </span>
-                
-                {/* Indicador de tokens bajos */}
-                {remainingTokens <= 5 && (
-                  <div className="absolute top-1 right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse z-20" />
-                )}
-              </motion.button>
-              
-              {/* Botón de Premium */}
-              <motion.button
-                onClick={onOpenTokens}
-                className={`relative w-16 h-16 rounded-xl border-2 transition-all duration-300 hover:scale-105 group ${
-                  user?.isSubscribed
-                    ? "border-[#ea580c] bg-gradient-to-br from-[#f97316]/30 to-[#ea580c]/30"
-                    : "border-dashed border-[#f97316]/60"
-                }`}
-                title={t("sideMenu.premium.button")}
-                aria-label={t("sideMenu.premium.button")}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <div className="relative flex flex-col items-center justify-center text-[#f97316]">
-                  <Crown className="w-6 h-6" />
-                  <span className="mt-1 text-xs font-semibold">
-                    {user?.isSubscribed ? t("sideMenu.premium.active") : t("sideMenu.premium.inactive")}
+                <div className="flex flex-col items-center justify-center text-white gap-1">
+                  {user?.isSubscribed
+                    ? <Crown className="w-5 h-5" />
+                    : <Zap className="w-5 h-5" />
+                  }
+                  <span className="text-xs font-bold">{remainingTokens}</span>
+                  <span className="text-[10px] font-medium opacity-80 leading-none">
+                    {user?.isSubscribed ? t("sideMenu.premium.active") : t("sideMenu.tokens.buy")}
                   </span>
                 </div>
+                {remainingTokens <= 5 && !user?.isSubscribed && (
+                  <div className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse" />
+                )}
               </motion.button>
 
             </div>
