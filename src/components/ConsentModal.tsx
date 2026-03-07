@@ -10,7 +10,7 @@ import { usePathname } from "next/navigation";
 import { useBodyScrollLock } from "@/hooks/useBodyScrollLock";
 import { useTranslation } from "react-i18next";
 
-const POLICY_VERSION = process.env.NEXT_PUBLIC_POLICY_VERSION || "1.0.5";
+const POLICY_VERSION = process.env.NEXT_PUBLIC_POLICY_VERSION || "1.1.0";
 const url_base = ""; // '/mi_base' si aplica
 
 type ConsentType = "terms_of_service" | "privacy_policy" | "cookies_policy";
@@ -342,6 +342,13 @@ export default function ConsentModal() {
         } catch {
           window.dispatchEvent(new CustomEvent("consent:updated", { detail: { analytics: false } }));
           try { localStorage.setItem(LAST_UPDATE_KEY, String(Date.now())); } catch {}
+        }
+        if (user && (user as any).newsletterConsent === true) {
+          try {
+            await setNewsletterConsent(false);
+          } catch {
+            // non-critical
+          }
         }
       }
       setShow(false);

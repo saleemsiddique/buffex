@@ -11,7 +11,7 @@ import { emitConsentUpdated } from "@/lib/consent-events";
 import { useTranslation } from "react-i18next";
 
 const CONSENT_TYPES = ["terms_of_service", "privacy_policy", "cookies_policy"] as const;
-const POLICY_VERSION = process.env.NEXT_PUBLIC_POLICY_VERSION || "1.0.5";
+const POLICY_VERSION = process.env.NEXT_PUBLIC_POLICY_VERSION || "1.1.0";
 
 type ConsentState = Record<typeof CONSENT_TYPES[number], boolean>;
 

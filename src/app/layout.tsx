@@ -127,6 +127,92 @@ const jsonLd = {
           }
         }
       ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://buffex.io/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "¿Cómo funciona la generación de recetas con IA?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Nuestra plataforma utiliza inteligencia artificial de última generación, impulsada por la tecnología de OpenAI, para analizar tus ingredientes y generar recetas personalizadas adaptadas a tus gustos y necesidades."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Hay opciones para dietas especiales?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Absolutamente. Buffex soporta múltiples tipos de dietas, incluyendo vegetariana, vegana, keto, sin gluten y más."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Funciona en español?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sí, Buffex funciona completamente en español. Puedes generar recetas en español o en inglés según el idioma de tu navegador."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Puedo cancelar la suscripción en cualquier momento?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sí, puedes cancelar en cualquier momento desde tu perfil. Seguirás teniendo acceso a Premium hasta el final del período ya pagado, sin cargos adicionales."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Caducan los packs Pay-as-you-go?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No, las recetas que obtienes con los packs de pago único no caducan nunca. Se acumulan con las recetas de tu plan actual y puedes usarlas cuando quieras."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Qué pasa si se me acaban las recetas?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Podrás comprar paquetes adicionales desde tu cuenta en cualquier momento para seguir generando recetas. O también puedes esperar a que se renueven las recetas de tu plan actual, aunque sea el gratuito."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Tienen una versión gratuita?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sí, ofrecemos un plan gratuito que incluye 5 recetas al mes para que puedas probar nuestro servicio."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Las recetas de la suscripción son permanentes?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No, las recetas que recibes con tu suscripción no son acumulables de un periodo a otro. Al finalizar el periodo de la suscripción, el saldo se restablece y recibes la cantidad correspondiente al nuevo periodo. Ten en cuenta que las recetas no utilizadas no se reembolsan."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Ofrecen reembolsos?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No ofrecemos reembolsos. Una vez compras recetas, se quedan en tu cuenta para su uso."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Ofrecen soporte técnico?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sí, puedes contactarnos por email enviándonos un mensaje a contact@buffex.io."
+          }
+        }
+      ]
     }
   ]
 };

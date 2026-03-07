@@ -48,6 +48,8 @@ export async function POST(request: NextRequest) {
     const estilo: string | null = recipe.estilo ?? null;
     const ingredientes: Array<{ nombre: string; cantidad?: string; unidad?: string | null }>
       = Array.isArray(recipe.ingredientes) ? recipe.ingredientes : [];
+    const instrucciones: Array<{ paso: number; texto: string }>
+      = Array.isArray(recipe.instrucciones) ? recipe.instrucciones : [];
 
     const ingredientesLista = ingredientes
       .map((ing) => ing?.nombre)
@@ -55,15 +57,25 @@ export async function POST(request: NextRequest) {
       .slice(0, 12)
       .join(', ');
 
+    // Extraer los últimos 2 pasos: describen el emplatado y presentación final
+    const ultimosPasos = instrucciones
+      .slice(-2)
+      .map((p) => p.texto)
+      .filter(Boolean)
+      .join(' ');
+
     // Prompt completo para DALL-E 3 (límite 4000 chars)
     // Prompt compacto para DALL-E 2 (límite estricto de 1000 chars)
-    const promptDalle2 = `Hyperrealistic food photo of "${titulo.slice(0, 60)}". ${descripcion.slice(0, 200)} ${estilo ? `${estilo} cuisine. ` : ''}${ingredientesLista ? `Key ingredients: ${ingredientesLista.slice(0, 100)}. ` : ''}Natural window light, home-cooked look, soft focus background. No text, no watermark, no hands.`.slice(0, 950);
+    const promptDalle2 = `Hyperrealistic food photo of "${titulo.slice(0, 60)}". ${descripcion.slice(0, 150)} ${ultimosPasos ? `Final look: ${ultimosPasos.slice(0, 150)}. ` : ''}${estilo ? `${estilo} cuisine. ` : ''}Natural window light, home-cooked look, soft focus background. No text, no watermark, no hands.`.slice(0, 950);
 
     let b64: string | undefined;
 
     if (isPremium) {
       // PREMIUM: DALL-E 3 1024×1024
-      const promptDalle3 = `Professional food photography of "${titulo}". ${descripcion}${estilo ? ` ${estilo} cuisine style.` : ''} The dish is shown as a finished, plated meal — ingredients fully cooked and combined as they would appear when served. Natural soft window light, shallow depth of field, home-cooked aesthetic with realistic imperfections. No raw ingredients shown separately, no whole unprocessed items. No text, no watermark, no hands.`;
+      const finalDescription = ultimosPasos
+        ? `The finished dish looks like this: ${ultimosPasos}`
+        : 'The dish is shown as a finished, plated meal — ingredients fully cooked and combined as they would appear when served.';
+      const promptDalle3 = `Professional food photography of "${titulo}". ${descripcion}${estilo ? ` ${estilo} cuisine style.` : ''} ${finalDescription} Natural soft window light, shallow depth of field, home-cooked aesthetic with realistic imperfections. No raw ingredients shown separately, no whole unprocessed items. No text, no watermark, no hands.`;
       try {
         const result = await openai.images.generate({
           model: 'dall-e-3',
