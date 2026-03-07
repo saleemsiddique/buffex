@@ -112,9 +112,8 @@ function ProfileContent() {
   const { t } = useTranslation();
 
   const { go, checkoutLoading } = useCheckout(user?.uid);
-  const paygPriceId    = process.env.NEXT_PUBLIC_STRIPE_PRICE_PAYG            || "";
-  const monthlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_PREMIUM         || "";
-  const annualPriceId  = process.env.NEXT_PUBLIC_STRIPE_PRICE_PREMIUM_ANNUAL  || "";
+  const paygPriceId   = process.env.NEXT_PUBLIC_STRIPE_PRICE_PAYG           || "";
+  const annualPriceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_PREMIUM_ANNUAL || "";
 
   const [isLoading, setIsLoading] = useState(false);
   const [showCancelDialog, setShowCancelDialog] = useState(false);
