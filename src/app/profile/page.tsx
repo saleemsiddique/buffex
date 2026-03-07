@@ -1,36 +1,43 @@
-// components/ProfileContent.tsx
 "use client";
 
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { CustomUser, useUser } from "@/context/user-context";
-import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
-  CreditCard,
-  Calendar,
-  AlertTriangle,
-  Edit,
-  Save,
-  X,
-  AlertCircle,
-  CheckCircle,
-  User,
-  Mail,
-  Crown,
-  Coins,
-  Settings,
-  LogOut,
-  History,
-  BookOpen,
-  Zap,
-  ChevronRight, // ⬅️ flecha para el final
+  CreditCard, Calendar, AlertTriangle, Edit, Save, X,
+  AlertCircle, CheckCircle, User, Mail, Crown, Coins,
+  LogOut, History, BookOpen, Zap, ChevronRight, ArrowDownCircle,
 } from "lucide-react";
 import { useSubscription } from "@/context/subscription-context";
 import Onboarding from "@/components/onboarding";
 import { TokensModal } from "@/components/SideMenu/TokensModal";
 import { useTranslation } from "react-i18next";
 import i18n from "@/lib/i18n";
+import { useCallback } from "react";
+import { auth } from "@/lib/firebase";
+
+function useCheckout(userId?: string | null) {
+  const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
+  const go = useCallback(async (priceId: string) => {
+    if (!priceId) return;
+    setCheckoutLoading(priceId);
+    try {
+      const idToken = await auth.currentUser?.getIdToken();
+      const res = await fetch("/api/embedded-checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${idToken}` },
+        body: JSON.stringify({ priceId, userId }),
+      });
+      if (!res.ok) throw new Error();
+      const { url } = await res.json();
+      window.location.href = url;
+    } catch {
+      setCheckoutLoading(null);
+    }
+  }, [userId]);
+  return { go, checkoutLoading };
+}
 
 export default function ProfilePage() {
   return (
@@ -40,798 +47,562 @@ export default function ProfilePage() {
   );
 }
 
+// ── Spinner ────────────────────────────────────────────────────────────────────
+const Spinner = () => (
+  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin inline-block" />
+);
+
+// ── Confirm Dialog ─────────────────────────────────────────────────────────────
+function ConfirmDialog({ icon, iconBg, title, message, confirmLabel, confirmStyle, onConfirm, onCancel, loading, cancelLabel }: {
+  icon: React.ReactNode; iconBg: string; title: string; message: string;
+  confirmLabel: string; confirmStyle: React.CSSProperties;
+  onConfirm: () => void; onCancel: () => void; loading: boolean; cancelLabel: string;
+}) {
+  return (
+    <div className="fixed inset-0 flex items-center justify-center p-4 z-50"
+      style={{ background: "rgba(0,0,0,0.8)", backdropFilter: "blur(8px)" }}>
+      <div className="w-full max-w-sm rounded-3xl p-7 text-center"
+        style={{ background: "#161616", border: "1px solid rgba(255,255,255,0.08)", boxShadow: "0 32px 80px rgba(0,0,0,0.7)" }}>
+        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4 ${iconBg}`}>{icon}</div>
+        <h3 className="text-lg font-bold text-white mb-2">{title}</h3>
+        <p className="text-white/40 mb-7 text-sm leading-relaxed">{message}</p>
+        <div className="flex gap-2.5">
+          <button onClick={onCancel} disabled={loading}
+            className="flex-1 py-2.5 rounded-xl text-sm font-semibold"
+            style={{ border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.4)" }}>
+            {cancelLabel}
+          </button>
+          <button onClick={onConfirm} disabled={loading}
+            className="flex-1 py-2.5 rounded-xl text-sm font-bold text-white flex items-center justify-center"
+            style={confirmStyle}>
+            {loading ? <Spinner /> : confirmLabel}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Message Modal ──────────────────────────────────────────────────────────────
+function MessageModal({ title, text, isError, onClose }: {
+  title: string; text: string; isError: boolean; onClose: () => void;
+}) {
+  return (
+    <div className="fixed inset-0 flex items-center justify-center p-4 z-50"
+      style={{ background: "rgba(0,0,0,0.8)", backdropFilter: "blur(8px)" }}>
+      <div className="w-full max-w-sm rounded-3xl p-7 text-center"
+        style={{ background: "#161616", border: "1px solid rgba(255,255,255,0.08)", boxShadow: "0 32px 80px rgba(0,0,0,0.7)" }}>
+        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4 ${isError ? "bg-red-500/10" : "bg-emerald-500/10"}`}>
+          {isError ? <AlertCircle className="w-7 h-7 text-red-400" /> : <CheckCircle className="w-7 h-7 text-emerald-400" />}
+        </div>
+        <h3 className="text-lg font-bold text-white mb-2">{title}</h3>
+        <p className="text-white/40 mb-7 text-sm leading-relaxed">{text}</p>
+        <button onClick={onClose} className="w-full py-2.5 rounded-xl text-sm font-bold text-white"
+          style={{ background: "linear-gradient(135deg,#f97316,#ea580c)" }}>Cerrar</button>
+      </div>
+    </div>
+  );
+}
+
+// ── Main ───────────────────────────────────────────────────────────────────────
 function ProfileContent() {
   const { user, logout, updateUserName, setNewsletterConsent } = useUser();
   const { subscription } = useSubscription();
   const router = useRouter();
+  const { t } = useTranslation();
+
+  const { go, checkoutLoading } = useCheckout(user?.uid);
+  const paygPriceId    = process.env.NEXT_PUBLIC_STRIPE_PRICE_PAYG            || "";
+  const monthlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_PREMIUM         || "";
+  const annualPriceId  = process.env.NEXT_PUBLIC_STRIPE_PRICE_PREMIUM_ANNUAL  || "";
+
   const [isLoading, setIsLoading] = useState(false);
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [showCancelNowDialog, setShowCancelNowDialog] = useState(false);
   const [showReactivateDialog, setShowReactivateDialog] = useState(false);
+  const [showDowngradeDialog, setShowDowngradeDialog] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showPremium, setShowPremium] = useState(false);
-  const [newsletterChecked, setNewsletterChecked] = useState<boolean>(!!user?.newsletterConsent);
+  const [newsletterChecked, setNewsletterChecked] = useState(!!user?.newsletterConsent);
   const [newsletterSaving, setNewsletterSaving] = useState(false);
-  const { t } = useTranslation();
-
-  // Estados para editar nombre
   const [isEditingName, setIsEditingName] = useState(false);
   const [newName, setNewName] = useState(user?.firstName || "");
   const [isSavingName, setIsSavingName] = useState(false);
+  const [messageModal, setMessageModal] = useState({ visible: false, title: "", text: "", isError: false });
 
-  useEffect(() => {
-    setNewsletterChecked(!!user?.newsletterConsent);
-  }, [user?.newsletterConsent]);
+  useEffect(() => { setNewsletterChecked(!!user?.newsletterConsent); }, [user?.newsletterConsent]);
+
+  const totalOfTokens = (user?.monthly_recipes ?? 0) + (user?.extra_recipes ?? 0);
+  const isAnnual = !!(
+    subscription?.planName?.toLowerCase().includes("anual") ||
+    subscription?.planName?.toLowerCase().includes("annual")
+  );
+  const isActiveSubscription = user?.isSubscribed && !user?.subscriptionCanceled && user?.subscriptionStatus !== "payment_failed";
+
+  const formatDate = (date: string | Date) =>
+    (typeof date === "string" ? new Date(date) : date)
+      .toLocaleDateString("es-ES", { day: "numeric", month: "short", year: "numeric" });
+
+  const msg = (title: string, text: string, isError = false) =>
+    setMessageModal({ visible: true, title, text, isError });
+
+  const handleLogout = async () => {
+    try { await logout(); router.push("/"); } catch (e) { console.error(e); }
+  };
 
   const handleToggleNewsletter = async (checked: boolean) => {
     if (!setNewsletterConsent) return;
     setNewsletterSaving(true);
     try {
       await setNewsletterConsent(checked);
-
-      setMessageModal({
-        visible: true,
-        title: t("profile.modals.message.success"),
-        text: checked
-          ? t("profile.newsletter.subscribed")
-          : t("profile.newsletter.unsubscribed"),
-        isError: false,
-      });
-
       setNewsletterChecked(checked);
-    } catch (e) {
-      console.error("Newsletter toggle error:", e);
-      setMessageModal({
-        visible: true,
-        title: t("profile.modals.message.error"),
-        text: t("profile.newsletter.error"),
-        isError: true,
-      });
-      setNewsletterChecked((prev) => !prev);
-    } finally {
-      setNewsletterSaving(false);
-    }
+      msg(t("profile.modals.message.success"), checked ? t("profile.newsletter.subscribed") : t("profile.newsletter.unsubscribed"));
+    } catch {
+      msg(t("profile.modals.message.error"), t("profile.newsletter.error"), true);
+      setNewsletterChecked(p => !p);
+    } finally { setNewsletterSaving(false); }
   };
 
-  // Modal de mensaje
-  const [messageModal, setMessageModal] = useState({
-    visible: false,
-    title: "",
-    text: "",
-    isError: false,
-  });
-
-  const totalOfTokens = (user?.monthly_recipes ?? 0) + (user?.extra_recipes ?? 0);
-
-  const handleLogout = async () => {
-    try {
-      await logout();
-      router.push("/");
-    } catch (error) {
-      console.error(t("profile.errors.logout"), error);
-    }
-  };
-
-  const handlePaymentHistory = () => {
-    router.push("/profile/payment_history");
-  };
-
-  const handleCustomerPortal = () => {
-    router.push("/profile/billing");
-  };
-
-  // Guardar nombre
   const handleSaveName = async () => {
-    if (!newName.trim()) {
-      setMessageModal({
-        visible: true,
-        title: t("profile.modals.message.error"),
-        text: t("profile.personalInfo.nameRequired"),
-        isError: true,
-      });
-      return;
-    }
-
+    if (!newName.trim()) { msg(t("profile.modals.message.error"), t("profile.personalInfo.nameRequired"), true); return; }
     setIsSavingName(true);
     try {
-      if (updateUserName) {
-        await updateUserName(newName.trim());
-      } else {
-        const response = await fetch("/api/user/update-name", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId: user?.uid, firstName: newName.trim() }),
-        });
-        if (!response.ok) throw new Error("Error al actualizar el nombre");
+      if (updateUserName) { await updateUserName(newName.trim()); }
+      else {
+        const res = await fetch("/api/user/update-name", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ userId: user?.uid, firstName: newName.trim() }) });
+        if (!res.ok) throw new Error();
       }
-
       setIsEditingName(false);
-      setMessageModal({
-        visible: true,
-        title: t("profile.modals.message.success"),
-        text: t("profile.personalInfo.nameUpdated"),
-        isError: false,
-      });
-
+      msg(t("profile.modals.message.success"), t("profile.personalInfo.nameUpdated"));
       if (!updateUserName) window.location.reload();
-    } catch (error) {
-      console.error("Error:", error);
-      setMessageModal({
-        visible: true,
-        title: t("profile.modals.message.error"),
-        text: t("profile.personalInfo.nameError"),
-        isError: true,
-      });
-    } finally {
-      setIsSavingName(false);
-    }
+    } catch { msg(t("profile.modals.message.error"), t("profile.personalInfo.nameError"), true); }
+    finally { setIsSavingName(false); }
   };
 
-  const handleCancelEdit = () => {
-    setNewName(user?.firstName || "");
-    setIsEditingName(false);
-  };
-
-  // Suscripción
   const handleCancelSubscription = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch("/api/subscription/cancel", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user?.uid }),
-      });
-      if (!response.ok) throw new Error("Error al cancelar la suscripción");
-
-      // Calcular próxima renovación a partir de lastRenewal + 30 días
-      const subscriptionEndDate = user?.lastRenewal
-        ? new Date(user.lastRenewal.toDate().getTime() + 30 * 24 * 60 * 60 * 1000)
-        : null;
-      const formattedEndDate = subscriptionEndDate
-        ?.toLocaleDateString("es-ES", { year: "numeric", month: "long", day: "numeric" });
-
-      const emailResponse = await fetch("/api/send-email", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          type: "unsubscribe",
-          to: user?.email,
-          data: { name: user?.firstName || user?.email, endDate: formattedEndDate },
-          lang: i18n.language,
-        }),
-      });
-
-      if (!emailResponse.ok) console.error("Error al enviar el correo de confirmación");
-
-      setMessageModal({
-        visible: true,
-        title: t("profile.modals.message.success"),
-        text: t("profile.modals.message.subscriptionCancelled"),
-        isError: false,
-      });
-
+      const res = await fetch("/api/subscription/cancel", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ userId: user?.uid }) });
+      if (!res.ok) throw new Error();
+      msg(t("profile.modals.message.success"), t("profile.modals.message.subscriptionCancelled"));
       window.location.reload();
-    } catch (error) {
-      console.error("Error:", error);
-      setMessageModal({
-        visible: true,
-        title: t("profile.modals.message.error"),
-        text: t("profile.modals.message.subscriptionError"),
-        isError: true,
-      });
-    } finally {
-      setIsLoading(false);
-      setShowCancelDialog(false);
-      setShowReactivateDialog(false);
-    }
+    } catch { msg(t("profile.modals.message.error"), t("profile.modals.message.subscriptionError"), true); }
+    finally { setIsLoading(false); setShowCancelDialog(false); }
   };
 
   const handleCancelImmediateSubscription = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch("/api/subscription/cancel-now", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user?.uid }),
-      });
-      if (!response.ok) throw new Error("Error al cancelar la suscripción");
-
-      setMessageModal({
-        visible: true,
-        title: t("profile.modals.message.success"),
-        text: t("profile.modals.message.subscriptionCancelledNow"),
-        isError: false,
-      });
-
+      const res = await fetch("/api/subscription/cancel-now", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ userId: user?.uid }) });
+      if (!res.ok) throw new Error();
+      msg(t("profile.modals.message.success"), t("profile.modals.message.subscriptionCancelledNow"));
       window.location.reload();
-    } catch (error) {
-      console.error("Error:", error);
-      setMessageModal({
-        visible: true,
-        title: t("profile.modals.message.error"),
-        text: t("profile.modals.message.subscriptionError"),
-        isError: true,
-      });
-    } finally {
-      setIsLoading(false);
-      setShowCancelDialog(false);
-      setShowReactivateDialog(false);
-    }
+    } catch { msg(t("profile.modals.message.error"), t("profile.modals.message.subscriptionError"), true); }
+    finally { setIsLoading(false); setShowCancelNowDialog(false); }
   };
 
   const handleReactivateSubscription = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch("/api/subscription/reactivate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user?.uid }),
-      });
-      if (!response.ok) throw new Error("Error al reactivar la suscripción");
-
-      setMessageModal({
-        visible: true,
-        title: t("profile.modals.message.success"),
-        text: t("profile.modals.message.subscriptionReactivated"),
-        isError: false,
-      });
-
+      const res = await fetch("/api/subscription/reactivate", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ userId: user?.uid }) });
+      if (!res.ok) throw new Error();
+      msg(t("profile.modals.message.success"), t("profile.modals.message.subscriptionReactivated"));
       window.location.reload();
-    } catch (error) {
-      console.error("Error:", error);
-      setMessageModal({
-        visible: true,
-        title: t("profile.modals.message.error"),
-        text: t("profile.modals.message.subscriptionReactivateError"),
-        isError: true,
-      });
-    } finally {
-      setIsLoading(false);
-      setShowCancelDialog(false);
-      setShowReactivateDialog(false);
-    }
+    } catch { msg(t("profile.modals.message.error"), t("profile.modals.message.subscriptionReactivateError"), true); }
+    finally { setIsLoading(false); setShowReactivateDialog(false); }
   };
 
-  const formatDate = (date: string | Date) => {
-    const d = typeof date === "string" ? new Date(date) : date;
-    return d.toLocaleDateString("es-ES", { year: "numeric", month: "long", day: "numeric" });
+  const handleDowngradeToMonthly = async () => {
+    setIsLoading(true);
+    try {
+      const res = await fetch("/api/subscription/downgrade-to-monthly", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ userId: user?.uid }) });
+      if (!res.ok) throw new Error();
+      msg("Plan cambiado", "Tu suscripción pasará a €8,99/mes al final del período anual. Sin cargos adicionales.");
+      window.location.reload();
+    } catch { msg("Error", "No se pudo cambiar el plan. Inténtalo de nuevo.", true); }
+    finally { setIsLoading(false); setShowDowngradeDialog(false); }
   };
 
-  const getSubscriptionStatus = () => {
-    if (!user?.isSubscribed)
-      return { text: t("profile.subscription.premium.status.noSubscription"), color: "text-[#6B7280]" };
-    if (user?.subscriptionCanceled)
-      return { text: t("profile.subscription.premium.status.cancelled"), color: "text-[var(--highlight)]" };
-    if (user?.subscriptionStatus === "payment_failed") {
-      return { text: t("profile.subscription.premium.status.paymentFailed"), color: "text-[var(--highlight)]" };
-    }
-    return { text: t("profile.subscription.premium.status.active"), color: "text-emerald-600" };
-  };
-
-  const subscriptionStatus = getSubscriptionStatus();
+  const status = (() => {
+    if (!user?.isSubscribed) return null;
+    if (user?.subscriptionCanceled) return { label: t("profile.subscription.premium.status.cancelled"), color: "#f97316" };
+    if (user?.subscriptionStatus === "payment_failed") return { label: t("profile.subscription.premium.status.paymentFailed"), color: "#ef4444" };
+    return { label: t("profile.subscription.premium.status.active"), color: "#34d399" };
+  })();
 
   return (
-    <div className="min-h-screen w-full py-18 px-4" style={{ background: "#FAFAF9" }}>
+    <div className="min-h-screen w-full flex flex-col" style={{ background: "#0a0a0a" }}>
       {showOnboarding && <Onboarding onClose={() => setShowOnboarding(false)} />}
 
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <div className="relative inline-block">
-            <div className="w-26 h-26 bg-gradient-to-br from-[var(--highlight)] to-[var(--highlight-dark)] rounded-full flex items-center justify-center shadow-2xl mb-6 border-4 border-white">
-              <User className="h-12 w-12 text-white" />
-            </div>
+      {/* ── Top bar ──────────────────────────────────────────────────────────── */}
+      <div className="flex-none px-6 pt-20 pb-5 flex items-center justify-between gap-4 max-w-7xl mx-auto w-full">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-2xl flex items-center justify-center flex-none shadow-lg"
+            style={{ background: "linear-gradient(135deg,#f97316,#ea580c)", boxShadow: "0 8px 20px rgba(249,115,22,0.3)" }}>
+            <User className="w-6 h-6 text-white" />
           </div>
-          <h1 className="text-4xl font-bold text-[#111111] mb-2">
-            {t("profile.greeting", { name: user?.firstName })}<br />
-          </h1>
-          <p className="text-[#6B7280] text-lg">{t("profile.subtitle")}</p>
+          <div>
+            <h1 className="text-lg font-bold text-white leading-tight">
+              {t("profile.greeting", { name: user?.firstName })}
+            </h1>
+            <p className="text-white/35 text-xs mt-0.5">{user?.email}</p>
+          </div>
         </div>
+        <button onClick={handleLogout}
+          className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white/50 transition-all hover:text-white"
+          style={{ border: "1px solid rgba(255,255,255,0.08)" }}
+          onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(239,68,68,0.4)")}
+          onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)")}>
+          <LogOut className="w-4 h-4" />
+          {t("profile.logout.button")}
+        </button>
+      </div>
 
-        {/* Grid */}
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Left Column */}
-          <div className="lg:col-span-1 space-y-6">
-            {/* Personal Info */}
-            <div className="bg-white rounded-2xl p-6" style={{ border: "1px solid #E5E5E3", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}>
-              <div className="flex items-center mb-6">
-                <div className="bg-gradient-to-r from-[var(--highlight)] to-[var(--highlight-dark)] rounded-lg p-2 mr-3">
-                  <User className="h-5 w-5 text-white" />
+      {/* ── Main grid ─────────────────────────────────────────────────────────── */}
+      <div className="flex-1 px-6 pb-30 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-3 gap-4">
+
+        {/* ── Col 1: Personal ────────────────────────────────────────────────── */}
+        <div className="flex flex-col gap-4">
+
+          {/* Name + Email */}
+          <div className="rounded-2xl p-5 flex-none"
+            style={{ background: "#161616", border: "1px solid rgba(255,255,255,0.06)" }}>
+            <p className="text-[11px] font-semibold uppercase tracking-widest text-white/25 mb-4">
+              {t("profile.personalInfo.title")}
+            </p>
+
+            <div className="mb-3">
+              <p className="text-[11px] text-white/30 mb-1.5">{t("profile.personalInfo.name")}</p>
+              {!isEditingName ? (
+                <div className="flex items-center justify-between rounded-xl px-3 py-2.5"
+                  style={{ background: "#1f1f1f", border: "1px solid rgba(255,255,255,0.05)" }}>
+                  <span className="text-white text-sm font-medium">{user?.firstName}</span>
+                  <button onClick={() => setIsEditingName(true)}
+                    className="p-1 rounded-lg hover:bg-white/10 transition-colors">
+                    <Edit className="w-3.5 h-3.5 text-white/30" />
+                  </button>
                 </div>
-                <h2 className="text-xl font-semibold text-[var(--foreground)]">
-                  {t("profile.personalInfo.title")}
-                </h2>
-              </div>
-
-              {/* Name */}
-              <div className="mb-6">
-                <label className="text-sm font-medium text-[var(--foreground)] opacity-70 block mb-2">
-                  {t("profile.personalInfo.name")}
-                </label>
-                {!isEditingName ? (
-                  <div className="flex items-center justify-between rounded-xl p-3" style={{ background: "#F5F5F4", border: "1px solid #E5E5E3" }}>
-                    <span className="text-[var(--foreground)] font-medium">
-                      {user?.firstName}
-                    </span>
-                    <Button
-                      onClick={() => setIsEditingName(true)}
-                      variant="ghost"
-                      size="sm"
-                      className="p-2 h-8 w-8 text-[var(--highlight)] hover:bg-orange-100 rounded-lg"
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    <input
-                      type="text"
-                      value={newName}
-                      onChange={(e) => setNewName(e.target.value)}
-                      className="w-full px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#f97316]/30 focus:border-[#f97316] transition-colors duration-200 bg-white"
-                      style={{ border: "1px solid #E5E5E3" }}
-                      placeholder={t("profile.personalInfo.namePlaceholder")}
-                      disabled={isSavingName}
-                    />
-                    <div className="flex space-x-2">
-                      <Button
-                        onClick={handleSaveName}
-                        size="sm"
-                        className="flex-1 bg-[var(--highlight)] text-white hover:bg-[var(--highlight-dark)] rounded-xl"
-                        disabled={isSavingName}
-                      >
-                        {isSavingName ? (
-                          t("profile.personalInfo.saving")
-                        ) : (
-                          <>
-                            <Save className="h-4 w-4 mr-1" /> {t("profile.personalInfo.save")}
-                          </>
-                        )}
-                      </Button>
-                      <Button
-                        onClick={handleCancelEdit}
-                        variant="outline"
-                        size="sm"
-                        className="px-4 border-gray-300 text-gray-600 hover:bg-gray-100 rounded-xl"
-                        disabled={isSavingName}
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Email */}
-              <div>
-                <label className="text-sm font-medium text-[var(--foreground)] opacity-70 block mb-2">
-                  {t("profile.personalInfo.email")}
-                </label>
-                <div className="flex items-center bg-gray-50/80 rounded-xl p-3 border border-gray-100 min-w-0">
-                  <Mail className="h-4 w-4 text-[var(--highlight)] mr-2" />
-                  <span className="text-[var(--foreground)] truncate">{user?.email}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Quick Actions */}
-            <div className="bg-white rounded-2xl p-6" style={{ border: "1px solid #E5E5E3", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}>
-              <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4 flex items-center">
-                <Settings className="h-5 w-5 mr-2 text-[var(--highlight)]" />
-                {t("profile.quickActions.title")}
-              </h3>
-              {/* How it works */}
-              <Button
-                onClick={() => setShowOnboarding(true)}
-                className="w-full justify-start bg-gradient-to-r from-emerald-500 to-emerald-600 text-white hover:from-emerald-600 hover:to-emerald-700 rounded-xl py-3 shadow-lg"
-              >
-                <BookOpen className="h-4 w-4 mr-3" />
-                {t("profile.quickActions.howItWorks")}
-              </Button>
-
-              {/* Newsletter quick action */}
-              <div className="mt-5 p-4 rounded-xl bg-[#f97316]/5" style={{ border: "1px solid rgba(249,115,22,0.2)" }}>
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex items-center gap-2">
-                    <Mail className="h-5 w-5 text-[var(--highlight)]" />
-                    <div>
-                      <p className="font-medium text-[var(--foreground)]">
-                        {t("profile.newsletter.title")}
-                      </p>
-                      <p className="text-sm text-[var(--foreground)]/70">
-                        {t("profile.newsletter.helper")}
-                      </p>
-                    </div>
-                  </div>
-
-                  <label className="inline-flex items-center cursor-pointer select-none">
-                    <input
-                      type="checkbox"
-                      className="sr-only peer"
-                      checked={newsletterChecked}
-                      onChange={(e) => handleToggleNewsletter(e.target.checked)}
-                      disabled={newsletterSaving}
-                      aria-label={t("profile.newsletter.aria") || "Suscripción al newsletter"}
-                    />
-                    <div
-                      className={`
-                        w-11 h-6 rounded-full transition
-                        ${newsletterChecked ? "bg-[var(--highlight)]" : "bg-gray-300"}
-                        relative
-                      `}
-                    >
-                      <span
-                        className={`
-                          absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition
-                          ${newsletterChecked ? "translate-x-5" : ""}
-                        `}
-                      />
-                    </div>
-                  </label>
-                </div>
-              </div>
-
-              {/* Language Switcher */}
-              <div className="mt-4 flex space-x-3">
-                <button
-                  onClick={() => i18n.changeLanguage("en")}
-                  className={`flex-1 py-3 rounded-xl font-semibold shadow-lg transition-all relative ${i18n.language === "en"
-                      ? "bg-gradient-to-r from-[var(--highlight)] to-[var(--highlight-dark)] text-white ring-2 ring-[var(--highlight)]/50 ring-offset-2"
-                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                    }`}
-                >
-                  English
-                </button>
-                <button
-                  onClick={() => i18n.changeLanguage("es")}
-                  className={`flex-1 py-3 rounded-xl font-semibold shadow-lg transition-all relative ${i18n.language === "es"
-                      ? "bg-gradient-to-r from-[var(--highlight)] to-[var(--highlight-dark)] text-white ring-2 ring-[var(--highlight)]/50 ring-offset-2"
-                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                    }`}
-                >
-                  Español
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Right Column */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Premium Subscription Card */}
-            {user?.isSubscribed && (
-              <div className="bg-gradient-to-br from-[var(--primary)] via-[var(--primary)] to-slate-800 text-white rounded-2xl shadow-2xl overflow-hidden">
-                <div className="p-8">
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center">
-                      <div className="bg-[var(--highlight)] rounded-full p-3 mr-4">
-                        <Crown className="h-6 w-6 text-white" />
-                      </div>
-                      <div>
-                        <h2 className="text-2xl font-bold">{t("profile.subscription.premium.title")}</h2>
-                        <p className="text-white/80">{t("profile.subscription.premium.description")}</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div
-                        className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${subscriptionStatus.text === t("profile.subscription.premium.status.active")
-                            ? "bg-emerald-500/20 text-emerald-300"
-                            : "bg-[var(--highlight)]/20 text-orange-300"
-                          }`}
-                      >
-                        <div
-                          className={`w-2 h-2 rounded-full mr-2 ${subscriptionStatus.text === t("profile.subscription.premium.status.active")
-                              ? "bg-emerald-300"
-                              : "bg-orange-300"
-                            }`}
-                        />
-                        {subscriptionStatus.text}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="grid md:grid-cols-2 gap-6 mb-8">
-                    <div className="bg-white/10 rounded-xl p-4 backdrop-blur-sm border border-white/20">
-                      <div className="flex items-center mb-2">
-                        <Calendar className="h-5 w-5 text-[var(--highlight)] mr-2" />
-                        <span className="text-sm text-white/80">{t("profile.subscription.premium.nextBilling")}</span>
-                      </div>
-                      <p className="text-xl font-semibold">
-                        {subscription?.endsAt ? formatDate(subscription.endsAt.toDate()) : "N/A"}
-                      </p>
-                    </div>
-
-                    <div className="bg-white/10 rounded-xl p-4 backdrop-blur-sm border border-white/20">
-                      <div className="flex items-center mb-2">
-                        <Coins className="h-5 w-5 text-[var(--highlight)] mr-2" />
-                        <span className="text-sm text-white/80">{t("profile.subscription.premium.availableTokens")}</span>
-                      </div>
-                      <p className="text-xl font-semibold text-[var(--highlight)]">
-                        {totalOfTokens.toLocaleString()}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Subscription Actions */}
-                  {user?.isSubscribed &&
-                    !user?.subscriptionCanceled &&
-                    user?.subscriptionStatus !== "payment_failed" && (
-                      <div className="flex justify-center">
-                        <Button
-                          onClick={() => setShowCancelDialog(true)}
-                          variant="outline"
-                          className="border-red-900 text-red-900 hover:bg-red-100 hover:border-red-400 rounded-xl backdrop-blur-sm"
-                        >
-                          <AlertTriangle className="h-4 w-4 mr-2" />
-                          {t("profile.subscription.premium.cancel")}
-                        </Button>
-                      </div>
-                    )}
-
-                  {/* Payment Failed Action */}
-                  {user?.subscriptionStatus === "payment_failed" && (
-                    <div className="text-center">
-                      <Button
-                        onClick={() => setShowCancelNowDialog(true)}
-                        className="bg-red-600 text-white hover:bg-red-700 rounded-xl"
-                      >
-                        <AlertTriangle className="h-4 w-4 mr-2" />
-                        {t("profile.subscription.premium.cancelNow")}
-                      </Button>
-                    </div>
-                  )}
-
-                  {/* Cancelled Notice */}
-                  {user?.isSubscribed && user?.subscriptionCanceled && (
-                    <div className="bg-red-500/20 border border-red-400/30 rounded-xl p-6 backdrop-blur-sm">
-                      <div className="flex items-center justify-center mb-4">
-                        <AlertTriangle className="h-6 w-6 text-red-300 mr-3" />
-                        <p className="text-red-200 font-medium text-center">
-                          {t("profile.subscription.premium.cancelledNotice", {
-                            date: subscription?.endsAt ? formatDate(subscription.endsAt.toDate()) : "final del período",
-                          })}
-                        </p>
-                      </div>
-                      <div className="text-center">
-                        <Button
-                          onClick={() => setShowReactivateDialog(true)}
-                          className="bg-[var(--highlight)] text-white hover:bg-[var(--highlight-dark)] rounded-xl"
-                        >
-                          <Zap className="h-4 w-4 mr-2" />
-                          {t("profile.subscription.premium.reactivate")}
-                        </Button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* Free Account Upgrade */}
-            {!user?.isSubscribed && (
-              <div className="bg-white rounded-2xl p-8 text-center" style={{ border: "2px dashed rgba(249,115,22,0.3)" }}>
-                <div className="bg-gradient-to-r from-[var(--highlight)] to-[var(--highlight-dark)] rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
-                  <Crown className="h-8 w-8 text-white" />
-                </div>
-                <h2 className="text-2xl font-bold text-[var(--foreground)] mb-3">
-                  {t("profile.subscription.free.title")}
-                </h2>
-                <p className="text-[var(--foreground)]/70 mb-6 text-lg">
-                  {t("profile.subscription.free.description")}
-                </p>
-                <div className="max-w-md mx-auto" onClick={() => setShowPremium(true)}>
-                  <div className="w-full flex flex-col items-center gap-4">
-                    <button className="w-full cursor-pointer px-5 flex-1 py-3 bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-lg font-semibold hover:from-amber-600 hover:to-orange-700 transition-all duration-300 ease-in-out">
-                      {t("profile.subscription.free.subscribe")}
+              ) : (
+                <div className="space-y-2">
+                  <input type="text" value={newName} onChange={e => setNewName(e.target.value)}
+                    disabled={isSavingName} placeholder={t("profile.personalInfo.namePlaceholder")}
+                    className="w-full px-3 py-2.5 rounded-xl text-sm text-white bg-transparent focus:outline-none"
+                    style={{ border: "1px solid rgba(249,115,22,0.5)", background: "#1f1f1f" }} />
+                  <div className="flex gap-2">
+                    <button onClick={handleSaveName} disabled={isSavingName}
+                      className="flex-1 py-2 rounded-xl text-xs font-bold text-white flex items-center justify-center gap-1"
+                      style={{ background: "linear-gradient(135deg,#f97316,#ea580c)" }}>
+                      {isSavingName ? <Spinner /> : <><Save className="w-3 h-3" />{t("profile.personalInfo.save")}</>}
+                    </button>
+                    <button onClick={() => { setNewName(user?.firstName || ""); setIsEditingName(false); }}
+                      className="px-3 py-2 rounded-xl hover:bg-white/5 transition-colors">
+                      <X className="w-3.5 h-3.5 text-white/30" />
                     </button>
                   </div>
                 </div>
-              </div>
-            )}
-
-
-            {/* Billing (card completa clicable) */}
-            <div
-              role="button"
-              tabIndex={0}
-              onClick={handleCustomerPortal}
-              onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && handleCustomerPortal()}
-              className="group bg-white rounded-2xl p-6 mb-3 cursor-pointer transition-all duration-200 hover:shadow-md"
-              style={{ border: "1px solid #E5E5E3", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}
-              aria-label={t("profile.quickActions.billing")}
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="bg-gradient-to-r from-[var(--primary)] to-[var(--primary)]/90 rounded-lg p-2">
-                    <CreditCard className="h-5 w-5 text-white" />
-                  </div>
-                  <h4 className="text-lg font-semibold text-[var(--foreground)]">
-                    {t("profile.quickActions.billing")}
-                  </h4>
-                </div>
-                <ChevronRight className="h-5 w-5 text-[var(--foreground)]/50 transition-transform group-hover:translate-x-0.5" />
-              </div>
+              )}
             </div>
 
-            {/* Payment History (card completa clicable) */}
-            <div
-              role="button"
-              tabIndex={0}
-              onClick={handlePaymentHistory}
-              onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && handlePaymentHistory()}
-              className="group bg-white rounded-2xl p-6 mb-3 cursor-pointer transition-all duration-200 hover:shadow-md"
-              style={{ border: "1px solid #E5E5E3", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}
-              aria-label={t("profile.quickActions.paymentHistory")}
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="bg-gradient-to-r from-[var(--highlight)] to-[var(--highlight-dark)] rounded-lg p-2">
-                    <History className="h-5 w-5 text-white" />
-                  </div>
-                  <h4 className="text-lg font-semibold text-[var(--foreground)]">
-                    {t("profile.quickActions.paymentHistory")}
-                  </h4>
-                </div>
-                <ChevronRight className="h-5 w-5 text-[var(--foreground)]/50 transition-transform group-hover:translate-x-0.5" />
-              </div>
-            </div>
-
-
-            {/* Logout Section */}
-            <div className="bg-white rounded-2xl p-6" style={{ border: "1px solid #E5E5E3", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}>
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-lg font-semibold text-[var(--foreground)] mb-1">
-                    {t("profile.logout.title")}
-                  </h3>
-                  <p className="text-[var(--foreground)]/60 text-sm">
-                    {t("profile.logout.description")}
-                  </p>
-                </div>
-                <Button
-                  onClick={handleLogout}
-                  className="bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700 rounded-xl px-6 py-3 shadow-lg"
-                >
-                  <LogOut className="h-4 w-4 mr-2" />
-                  {t("profile.logout.button")}
-                </Button>
+            <div>
+              <p className="text-[11px] text-white/30 mb-1.5">{t("profile.personalInfo.email")}</p>
+              <div className="flex items-center gap-2 rounded-xl px-3 py-2.5"
+                style={{ background: "#1f1f1f", border: "1px solid rgba(255,255,255,0.05)" }}>
+                <Mail className="w-3.5 h-3.5 text-white/25 flex-none" />
+                <span className="text-white/50 text-sm truncate">{user?.email}</span>
               </div>
             </div>
           </div>
+
+          {/* Language */}
+          <div className="rounded-2xl p-5 flex-none"
+            style={{ background: "#161616", border: "1px solid rgba(255,255,255,0.06)" }}>
+            <p className="text-[11px] font-semibold uppercase tracking-widest text-white/25 mb-3">Idioma</p>
+            <div className="flex gap-2">
+              {(["es", "en"] as const).map(lang => (
+                <button key={lang} onClick={() => i18n.changeLanguage(lang)}
+                  className="flex-1 py-2 rounded-xl text-sm font-semibold transition-all"
+                  style={i18n.language === lang
+                    ? { background: "linear-gradient(135deg,#f97316,#ea580c)", color: "#fff" }
+                    : { background: "#1f1f1f", color: "rgba(255,255,255,0.35)", border: "1px solid rgba(255,255,255,0.05)" }}>
+                  {lang === "en" ? "English" : "Español"}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Newsletter */}
+          <div className="rounded-2xl p-5 flex-none"
+            style={{ background: "#161616", border: "1px solid rgba(255,255,255,0.06)" }}>
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="text-sm font-semibold text-white">{t("profile.newsletter.title")}</p>
+                <p className="text-[11px] text-white/30 mt-0.5">{t("profile.newsletter.helper")}</p>
+              </div>
+              <label className="inline-flex items-center cursor-pointer flex-none">
+                <input type="checkbox" className="sr-only" checked={newsletterChecked}
+                  onChange={e => handleToggleNewsletter(e.target.checked)} disabled={newsletterSaving} />
+                <div className="relative w-10 h-[22px] rounded-full transition-colors duration-200"
+                  style={{ background: newsletterChecked ? "#f97316" : "rgba(255,255,255,0.1)" }}>
+                  <span className="absolute top-[3px] left-[3px] w-4 h-4 bg-white rounded-full shadow transition-transform duration-200"
+                    style={{ transform: newsletterChecked ? "translateX(18px)" : "translateX(0)" }} />
+                </div>
+              </label>
+            </div>
+          </div>
+
+          {/* How it works */}
+          <button onClick={() => setShowOnboarding(true)}
+            className="w-full flex items-center gap-3 p-4 rounded-2xl text-left transition-all"
+            style={{ background: "rgba(52,211,153,0.06)", border: "1px solid rgba(52,211,153,0.15)" }}
+            onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(52,211,153,0.35)")}
+            onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(52,211,153,0.15)")}>
+            <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-none"
+              style={{ background: "rgba(52,211,153,0.12)" }}>
+              <BookOpen className="w-4 h-4 text-emerald-400" />
+            </div>
+            <span className="text-sm font-semibold text-emerald-400">{t("profile.quickActions.howItWorks")}</span>
+          </button>
+        </div>
+
+        {/* ── Col 2: Subscription ────────────────────────────────────────────── */}
+        <div className="flex flex-col gap-4">
+          {user?.isSubscribed ? (
+            <div className="rounded-2xl overflow-hidden flex flex-col h-full"
+              style={{ background: "#161616", border: "1px solid rgba(249,115,22,0.2)", boxShadow: "0 0 40px rgba(249,115,22,0.05)" }}>
+
+              {/* Header */}
+              <div className="px-5 py-4 flex items-center justify-between"
+                style={{ background: "linear-gradient(135deg,rgba(249,115,22,0.14),rgba(234,88,12,0.06))", borderBottom: "1px solid rgba(249,115,22,0.12)" }}>
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl flex items-center justify-center"
+                    style={{ background: "linear-gradient(135deg,#f97316,#ea580c)", boxShadow: "0 4px 12px rgba(249,115,22,0.35)" }}>
+                    <Crown className="w-4 h-4 text-white" />
+                  </div>
+                  <div>
+                    <p className="text-white font-bold text-sm">{t("profile.subscription.premium.title")}</p>
+                    <p className="text-white/35 text-[11px]">
+                      {isAnnual ? "Plan anual · €74,99/año" : "Plan mensual · €8,99/mes"}
+                    </p>
+                  </div>
+                </div>
+                {status && (
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold"
+                    style={{ background: `${status.color}18`, color: status.color }}>
+                    <span className="w-1.5 h-1.5 rounded-full" style={{ background: status.color }} />
+                    {status.label}
+                  </div>
+                )}
+              </div>
+
+              {/* Stats */}
+              <div className="grid grid-cols-2 gap-3 p-4">
+                <div className="rounded-xl p-3.5" style={{ background: "#1f1f1f", border: "1px solid rgba(255,255,255,0.05)" }}>
+                  <div className="flex items-center gap-1.5 mb-1.5">
+                    <Calendar className="w-3.5 h-3.5 text-white/25" />
+                    <span className="text-[11px] text-white/30">{t("profile.subscription.premium.nextBilling")}</span>
+                  </div>
+                  <p className="text-white font-semibold text-sm">
+                    {subscription?.endsAt ? formatDate(subscription.endsAt.toDate()) : "N/A"}
+                  </p>
+                </div>
+                <div className="rounded-xl p-3.5" style={{ background: "#1f1f1f", border: "1px solid rgba(255,255,255,0.05)" }}>
+                  <div className="flex items-center gap-1.5 mb-1.5">
+                    <Coins className="w-3.5 h-3.5 text-white/25" />
+                    <span className="text-[11px] text-white/30">{t("profile.subscription.premium.availableTokens")}</span>
+                  </div>
+                  <p className="font-bold text-base" style={{ color: "#f97316" }}>{totalOfTokens}</p>
+                </div>
+              </div>
+
+              {/* Plan actions */}
+              <div className="px-4 pb-4 space-y-2 mt-auto">
+
+                {/* Buy extra tokens — always visible for subscribers */}
+                <button onClick={() => go(paygPriceId)} disabled={!!checkoutLoading}
+                  className="w-full flex items-center justify-between p-3 rounded-xl transition-all disabled:opacity-50"
+                  style={{ background: "rgba(245,158,11,0.07)", border: "1px solid rgba(245,158,11,0.18)" }}
+                  onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(245,158,11,0.4)")}
+                  onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(245,158,11,0.18)")}>
+                  <div className="flex items-center gap-3">
+                    <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-none"
+                      style={{ background: "rgba(245,158,11,0.15)" }}>
+                      <Zap className="w-3.5 h-3.5 text-amber-400" />
+                    </div>
+                    <div className="text-left">
+                      <p className="text-sm font-semibold text-white/75">+30 recetas extra</p>
+                      <p className="text-[11px] text-white/30">Pago único · no caducan</p>
+                    </div>
+                  </div>
+                  <span className="text-sm font-bold text-amber-400">
+                    {checkoutLoading === paygPriceId ? <Spinner /> : "€3,99"}
+                  </span>
+                </button>
+
+                {/* Upgrade monthly → annual */}
+                {isActiveSubscription && !isAnnual && (
+                  <button onClick={() => go(annualPriceId)} disabled={!!checkoutLoading}
+                    className="w-full flex items-center justify-between p-3 rounded-xl transition-all disabled:opacity-50"
+                    style={{ background: "rgba(249,115,22,0.07)", border: "1px solid rgba(249,115,22,0.2)" }}
+                    onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(249,115,22,0.45)")}
+                    onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(249,115,22,0.2)")}>
+                    <div className="flex items-center gap-3">
+                      <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-none"
+                        style={{ background: "rgba(249,115,22,0.15)" }}>
+                        <Crown className="w-3.5 h-3.5 text-orange-400" />
+                      </div>
+                      <div className="text-left">
+                        <p className="text-sm font-semibold text-white/75">Pasarte al plan anual</p>
+                        <p className="text-[11px] text-emerald-400/80">Ahorra 30% · €6,25/mes</p>
+                      </div>
+                    </div>
+                    <span className="text-sm font-bold text-orange-400">
+                      {checkoutLoading === annualPriceId ? <Spinner /> : "€74,99"}
+                    </span>
+                  </button>
+                )}
+
+                {/* Downgrade annual → monthly */}
+                {isActiveSubscription && isAnnual && (
+                  <button onClick={() => setShowDowngradeDialog(true)}
+                    className="w-full flex items-center gap-3 p-3 rounded-xl text-left transition-all"
+                    style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}
+                    onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.14)")}
+                    onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.06)")}>
+                    <ArrowDownCircle className="w-4 h-4 text-white/25 flex-none" />
+                    <div>
+                      <p className="text-sm font-semibold text-white/50">Bajar a plan mensual</p>
+                      <p className="text-[11px] text-white/25 mt-0.5">Al final del período · €8,99/mes</p>
+                    </div>
+                  </button>
+                )}
+
+                {/* Cancel */}
+                {isActiveSubscription && (
+                  <button onClick={() => setShowCancelDialog(true)}
+                    className="w-full flex items-center gap-3 p-3 rounded-xl text-left transition-all"
+                    style={{ background: "rgba(239,68,68,0.04)", border: "1px solid rgba(239,68,68,0.1)" }}
+                    onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(239,68,68,0.3)")}
+                    onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(239,68,68,0.1)")}>
+                    <AlertTriangle className="w-4 h-4 text-red-400/40 flex-none" />
+                    <p className="text-sm font-semibold text-red-400/60">{t("profile.subscription.premium.cancel")}</p>
+                  </button>
+                )}
+
+                {/* Payment failed */}
+                {user?.subscriptionStatus === "payment_failed" && (
+                  <button onClick={() => setShowCancelNowDialog(true)}
+                    className="w-full py-2.5 rounded-xl text-sm font-bold text-white"
+                    style={{ background: "#ef4444" }}>
+                    {t("profile.subscription.premium.cancelNow")}
+                  </button>
+                )}
+
+                {/* Cancelled → reactivate */}
+                {user?.isSubscribed && user?.subscriptionCanceled && (
+                  <div className="rounded-xl p-3.5" style={{ background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.12)" }}>
+                    <p className="text-red-300/60 text-xs text-center mb-2.5">
+                      {t("profile.subscription.premium.cancelledNotice", { date: subscription?.endsAt ? formatDate(subscription.endsAt.toDate()) : "—" })}
+                    </p>
+                    <button onClick={() => setShowReactivateDialog(true)}
+                      className="w-full py-2.5 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2"
+                      style={{ background: "linear-gradient(135deg,#f97316,#ea580c)" }}>
+                      <Zap className="w-3.5 h-3.5" />{t("profile.subscription.premium.reactivate")}
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : (
+            // Free plan upgrade
+            <div className="rounded-2xl p-6 flex flex-col items-center justify-center text-center h-full"
+              style={{ background: "#161616", border: "1px dashed rgba(249,115,22,0.25)" }}>
+              <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4"
+                style={{ background: "linear-gradient(135deg,#f97316,#ea580c)", boxShadow: "0 8px 24px rgba(249,115,22,0.3)" }}>
+                <Crown className="w-7 h-7 text-white" />
+              </div>
+              <h2 className="text-lg font-bold text-white mb-1.5">{t("profile.subscription.free.title")}</h2>
+              <p className="text-white/35 text-sm mb-5 leading-relaxed">{t("profile.subscription.free.description")}</p>
+              <button onClick={() => setShowPremium(true)}
+                className="w-full py-3 rounded-xl text-sm font-bold text-white transition-opacity hover:opacity-90"
+                style={{ background: "linear-gradient(135deg,#f97316,#ea580c)", boxShadow: "0 4px 20px rgba(249,115,22,0.3)" }}>
+                {t("profile.subscription.free.subscribe")}
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* ── Col 3: Actions ─────────────────────────────────────────────────── */}
+        <div className="flex flex-col gap-4">
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-white/25 px-1">
+            {t("profile.quickActions.title")}
+          </p>
+
+          {[
+            { icon: <CreditCard className="w-4 h-4 text-[#f97316]" />, label: t("profile.quickActions.billing"), onClick: () => router.push("/profile/billing") },
+            { icon: <History className="w-4 h-4 text-[#f97316]" />, label: t("profile.quickActions.paymentHistory"), onClick: () => router.push("/profile/payment_history") },
+          ].map(({ icon, label, onClick }) => (
+            <button key={label} onClick={onClick}
+              className="w-full flex items-center justify-between p-4 rounded-2xl transition-all group text-left"
+              style={{ background: "#161616", border: "1px solid rgba(255,255,255,0.06)" }}
+              onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.14)")}
+              onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.06)")}>
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl flex items-center justify-center"
+                  style={{ background: "rgba(249,115,22,0.1)", border: "1px solid rgba(249,115,22,0.15)" }}>
+                  {icon}
+                </div>
+                <span className="text-sm font-semibold text-white">{label}</span>
+              </div>
+              <ChevronRight className="w-4 h-4 text-white/20 transition-transform group-hover:translate-x-0.5" />
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* Modals */}
+      {/* ── Modals ──────────────────────────────────────────────────────────────── */}
       {showCancelDialog && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-3xl p-8 max-w-md w-full" style={{ border: "1px solid #E5E5E3", boxShadow: "0 8px 32px rgba(0,0,0,0.12)" }}>
-            <div className="text-center text-[var(--foreground)]">
-              <div className="bg-red-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
-                <AlertTriangle className="h-8 w-8 text-red-500" />
-              </div>
-              <h3 className="text-xl font-bold mb-3">{t("profile.modals.cancelSubscription.title")}</h3>
-              <p className="text-[var(--foreground)]/70 mb-8 leading-relaxed">
-                {t("profile.modals.cancelSubscription.message")}
-              </p>
-              <div className="flex space-x-3">
-                <Button
-                  onClick={() => setShowCancelDialog(false)}
-                  variant="outline"
-                  className="flex-1 border-gray-300 text-gray-600 hover:bg-gray-100 rounded-xl py-3"
-                  disabled={isLoading}
-                >
-                  {t("profile.modals.cancelSubscription.keep")}
-                </Button>
-                <Button
-                  onClick={handleCancelSubscription}
-                  className="flex-1 bg-red-600 hover:bg-red-700 text-white rounded-xl py-3"
-                  disabled={isLoading}
-                >
-                  {isLoading ? t("profile.modals.cancelSubscription.cancelling") : t("profile.modals.cancelSubscription.confirm")}
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {showCancelNowDialog && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-3xl p-8 max-w-md w-full" style={{ border: "1px solid #E5E5E3", boxShadow: "0 8px 32px rgba(0,0,0,0.12)" }}>
-            <div className="text-center text-[var(--foreground)]">
-              <div className="bg-red-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
-                <AlertTriangle className="h-8 w-8 text-red-500" />
-              </div>
-              <h3 className="text-xl font-bold mb-3">{t("profile.modals.cancelNow.title")}</h3>
-              <p className="text-[var(--foreground)]/70 mb-8 leading-relaxed">
-                {t("profile.modals.cancelNow.message")}
-              </p>
-              <div className="flex space-x-3">
-                <Button
-                  onClick={() => setShowCancelNowDialog(false)}
-                  variant="outline"
-                  className="flex-1 border-gray-300 text-gray-600 hover:bg-gray-100 rounded-xl py-3"
-                  disabled={isLoading}
-                >
-                  {t("profile.modals.cancelNow.keep")}
-                </Button>
-                <Button
-                  onClick={handleCancelImmediateSubscription}
-                  className="flex-1 bg-red-600 hover:bg-red-700 text-white rounded-xl py-3"
-                  disabled={isLoading}
-                >
-                  {isLoading ? t("profile.modals.cancelNow.cancelling") : t("profile.modals.cancelNow.confirm")}
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {showReactivateDialog && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-3xl p-8 max-w-md w-full" style={{ border: "1px solid #E5E5E3", boxShadow: "0 8px 32px rgba(0,0,0,0.12)" }}>
-            <div className="text-center text-[var(--foreground)]">
-              <div className="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
-                <Zap className="h-8 w-8 text-green-500" />
-              </div>
-              <h3 className="text-xl font-bold mb-3">{t("profile.modals.reactivate.title")}</h3>
-              <p className="text-[var(--foreground)]/70 mb-8 leading-relaxed">
-                {t("profile.modals.reactivate.message")}
-              </p>
-              <div className="flex space-x-3">
-                <Button
-                  onClick={() => setShowReactivateDialog(false)}
-                  variant="outline"
-                  className="flex-1 border-gray-300 text-gray-600 hover:bg-gray-100 rounded-xl py-3"
-                  disabled={isLoading}
-                >
-                  {t("profile.modals.reactivate.cancel")}
-                </Button>
-                <Button
-                  onClick={handleReactivateSubscription}
-                  className="flex-1 bg-[var(--highlight)] hover:bg-[var(--highlight-dark)] text-white rounded-xl py-3"
-                  disabled={isLoading}
-                >
-                  {isLoading ? t("profile.modals.reactivate.reactivating") : t("profile.modals.reactivate.confirm")}
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {messageModal.visible && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-3xl p-8 max-w-md w-full" style={{ border: "1px solid #E5E5E3", boxShadow: "0 8px 32px rgba(0,0,0,0.12)" }}>
-            <div className="text-center text-[var(--foreground)]">
-              <div
-                className={`rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6 ${messageModal.isError ? "bg-red-100" : "bg-green-100"
-                  }`}
-              >
-                {messageModal.isError ? (
-                  <AlertCircle className="h-8 w-8 text-red-500" />
-                ) : (
-                  <CheckCircle className="h-8 w-8 text-green-500" />
-                )}
-              </div>
-              <h3 className="text-xl font-bold mb-3">{messageModal.title}</h3>
-              <p className="text-[var(--foreground)]/70 mb-8 leading-relaxed">{messageModal.text}</p>
-              <Button
-                onClick={() => setMessageModal({ ...messageModal, visible: false })}
-                className="bg-[var(--highlight)] hover:bg-[var(--highlight-dark)] text-white rounded-xl px-8 py-3"
-              >
-                {t("profile.modals.message.close")}
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {showPremium && (
-        <TokensModal
-          user={user as CustomUser | null}
-          onClose={() => setShowPremium(false)}
+        <ConfirmDialog
+          icon={<AlertTriangle className="w-7 h-7 text-red-400" />} iconBg="bg-red-500/10"
+          title={t("profile.modals.cancelSubscription.title")} message={t("profile.modals.cancelSubscription.message")}
+          confirmLabel={t("profile.modals.cancelSubscription.confirm")} confirmStyle={{ background: "#ef4444" }}
+          cancelLabel={t("profile.modals.cancelSubscription.keep")}
+          onConfirm={handleCancelSubscription} onCancel={() => setShowCancelDialog(false)} loading={isLoading}
         />
+      )}
+      {showCancelNowDialog && (
+        <ConfirmDialog
+          icon={<AlertTriangle className="w-7 h-7 text-red-400" />} iconBg="bg-red-500/10"
+          title={t("profile.modals.cancelNow.title")} message={t("profile.modals.cancelNow.message")}
+          confirmLabel={t("profile.modals.cancelNow.confirm")} confirmStyle={{ background: "#ef4444" }}
+          cancelLabel={t("profile.modals.cancelNow.keep")}
+          onConfirm={handleCancelImmediateSubscription} onCancel={() => setShowCancelNowDialog(false)} loading={isLoading}
+        />
+      )}
+      {showReactivateDialog && (
+        <ConfirmDialog
+          icon={<Zap className="w-7 h-7 text-emerald-400" />} iconBg="bg-emerald-500/10"
+          title={t("profile.modals.reactivate.title")} message={t("profile.modals.reactivate.message")}
+          confirmLabel={t("profile.modals.reactivate.confirm")} confirmStyle={{ background: "linear-gradient(135deg,#f97316,#ea580c)" }}
+          cancelLabel={t("profile.modals.reactivate.cancel")}
+          onConfirm={handleReactivateSubscription} onCancel={() => setShowReactivateDialog(false)} loading={isLoading}
+        />
+      )}
+      {showDowngradeDialog && (
+        <ConfirmDialog
+          icon={<ArrowDownCircle className="w-7 h-7 text-orange-400" />} iconBg="bg-orange-500/10"
+          title="Cambiar a plan mensual"
+          message="Al final del período anual tu suscripción pasará a €8,99/mes con 90 recetas. Sin cargos adicionales ahora."
+          confirmLabel="Confirmar cambio" confirmStyle={{ background: "linear-gradient(135deg,#f97316,#ea580c)" }}
+          cancelLabel="Mantener plan anual"
+          onConfirm={handleDowngradeToMonthly} onCancel={() => setShowDowngradeDialog(false)} loading={isLoading}
+        />
+      )}
+      {messageModal.visible && (
+        <MessageModal title={messageModal.title} text={messageModal.text} isError={messageModal.isError}
+          onClose={() => setMessageModal({ ...messageModal, visible: false })} />
+      )}
+      {showPremium && (
+        <TokensModal user={user as CustomUser | null} onClose={() => setShowPremium(false)} />
       )}
     </div>
   );

@@ -42,12 +42,16 @@ function useCheckout(userId?: string | null) {
 
 // ─── Already-subscribed view ──────────────────────────────────────────────────
 function SubscribedView({
-  user, onClose, t,
+  user, onClose, t, go, loading, paygPriceId, annualPriceId,
 }: {
   user: CustomUser | null;
   onClose: () => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   t: (key: string, opts?: any) => string;
+  go: (priceId: string) => void;
+  loading: string | null;
+  paygPriceId: string;
+  annualPriceId: string;
 }) {
   const renewalDate = user?.lastRenewal
     ? new Date(
@@ -56,7 +60,8 @@ function SubscribedView({
     : null;
 
   return (
-    <div className="px-5 pb-6 pt-3 flex flex-col items-center text-center gap-5">
+    <div className="px-5 pb-6 pt-3 flex flex-col items-center text-center gap-4">
+      {/* Icon */}
       <div className="relative mt-2">
         <div
           className="rounded-3xl flex items-center justify-center shadow-lg"
@@ -75,9 +80,10 @@ function SubscribedView({
         </div>
       </div>
 
+      {/* Status */}
       <div>
         <h3 className="text-lg font-bold text-white">{t("premium.modal.subscribed.title")}</h3>
-        <p className="text-sm text-white/50 mt-1 max-w-[260px]">{t("premium.modal.subscribed.message")}</p>
+        <p className="text-sm text-white/50 mt-1 max-w-[260px] mx-auto">{t("premium.modal.subscribed.message")}</p>
         {renewalDate && (
           <p className="text-xs text-white/35 mt-3 flex items-center justify-center gap-1.5">
             <CalendarDays className="w-3.5 h-3.5 flex-none" />
@@ -86,6 +92,7 @@ function SubscribedView({
         )}
       </div>
 
+      {/* Manage / Close */}
       <div className="flex gap-2.5 w-full">
         <button
           onClick={onClose}
@@ -103,6 +110,79 @@ function SubscribedView({
           <ArrowRight className="w-3.5 h-3.5" />
         </Link>
       </div>
+
+      {/* Divider */}
+      <div className="flex items-center gap-3 w-full">
+        <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.08)" }} />
+        <span className="text-[10px] font-medium uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.3)" }}>
+          {t("tokens.modal.or")}
+        </span>
+        <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.08)" }} />
+      </div>
+
+      {/* Extra recipes (PAYG) */}
+      <button
+        type="button"
+        onClick={() => go(paygPriceId)}
+        disabled={!!loading}
+        className="w-full rounded-2xl p-4 text-left transition-all duration-150 disabled:opacity-60"
+        style={{ border: "1px solid rgba(255,255,255,0.10)", background: "#1a1a1a" }}
+        onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.2)")}
+        onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.10)")}
+      >
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-none"
+              style={{ background: "rgba(245,158,11,0.12)", border: "1px solid rgba(245,158,11,0.2)" }}>
+              <Zap style={{ width: 15, height: 15, color: "#f59e0b" }} />
+            </div>
+            <div className="text-left">
+              <p className="text-[13px] font-semibold text-white">{t("tokens.modal.packages.150.label")}</p>
+              <p className="text-[11px] mt-0.5" style={{ color: "rgba(255,255,255,0.35)" }}>
+                {t("tokens.modal.oneTime")}
+              </p>
+            </div>
+          </div>
+          <div className="text-right flex-none">
+            {loading === paygPriceId ? <Spinner /> : (
+              <p className="text-lg font-extrabold text-white">€3.99</p>
+            )}
+          </div>
+        </div>
+      </button>
+
+      {/* Upgrade to annual */}
+      <button
+        type="button"
+        onClick={() => go(annualPriceId)}
+        disabled={!!loading}
+        className="w-full rounded-2xl p-4 text-left transition-all duration-150 disabled:opacity-60"
+        style={{ border: "1px solid rgba(249,115,22,0.25)", background: "#1a1a1a" }}
+        onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(249,115,22,0.5)")}
+        onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(249,115,22,0.25)")}
+      >
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-none"
+              style={{ background: "rgba(249,115,22,0.12)", border: "1px solid rgba(249,115,22,0.2)" }}>
+              <Crown style={{ width: 15, height: 15, color: "#f97316" }} />
+            </div>
+            <div className="text-left">
+              <p className="text-[13px] font-semibold text-white">
+                {t("premium.modal.subscribed.upgradeAnnual", { defaultValue: "Pasarte al plan anual" })}
+              </p>
+              <p className="text-[11px] mt-0.5" style={{ color: "#34d399" }}>
+                {t("premium.modal.subscribed.upgradeAnnualSave", { defaultValue: "Ahorra un 30% — €6,25/mes" })}
+              </p>
+            </div>
+          </div>
+          <div className="text-right flex-none">
+            {loading === annualPriceId ? <Spinner /> : (
+              <p className="text-lg font-extrabold text-white">€74.99</p>
+            )}
+          </div>
+        </div>
+      </button>
     </div>
   );
 }
@@ -236,7 +316,7 @@ export const TokensModal: React.FC<TokensModalProps> = ({ onClose, user }) => {
           <div className="overflow-y-auto flex-1">
             {isSubscribed ? (
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              <SubscribedView user={user} onClose={onClose} t={t as any} />
+              <SubscribedView user={user} onClose={onClose} t={t as any} go={go} loading={loading} paygPriceId={paygPriceId} annualPriceId={annualPriceId} />
             ) : (
               <div className="px-5 pt-5 pb-6 flex flex-col gap-3.5">
 
